@@ -17,5 +17,9 @@
   ],
   "devDependencies": {
     "normalize-css": "~3.0.3"
+  },
+  "dependencies": {
+    "leaflet": "~0.7.5",
+    "leaflet-image": "https://github.com/mapbox/leaflet-image.git"
   }
 }

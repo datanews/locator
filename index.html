@@ -8,12 +8,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="bower_components/normalize-css/normalize.css">
+    <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css">
     <link rel="stylesheet" href="styles/locator.css">
   </head>
   <body>
 
-    <div class="locator-container"></div>
+    <div class="locator-container">
+      <section class="locator-display">
+        <h1>Map</h1>
 
+        <div id="locator-map"></div>
+      </section>
+
+      <section class="locator-controls">
+        <h1>Controls</h1>
+
+        <button class="generate-image">Generate</button>
+        <a class="download-link" href="">Download</a>
+      </section>
+    </div>
+
+    <script src="bower_components/leaflet/dist/leaflet.js"></script>
+    <script src="bower_components/leaflet-image/leaflet-image.js"></script>
     <script src="js/locator.js"></script>
   </body>
 </html>
