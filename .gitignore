@@ -1,0 +1,29 @@
+# Project specific
+!dist
+
+# General git ignores
+node_modules/
+components/
+bower_components/
+.sass-cache
+.env
+.tmp
+tmp/
+.DS_Store
+*.psd
+*.[oa]
+*.py[co]
+*.rbc
+*.egg
+*.egg-info
+develop-eggs
+.installed.cfg
+.Python
+pip-log.txt
+.coverage
+.tox
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate

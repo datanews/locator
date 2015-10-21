@@ -1,0 +1,21 @@
+{
+  "name": "locator",
+  "homepage": "https://github.com/datanews/locator",
+  "authors": [
+    "Alan Palazzolo <github@zzolo.org>"
+  ],
+  "description": "Locator map creator",
+  "main": "index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "normalize-css": "~3.0.3"
+  }
+}
