@@ -10,34 +10,31 @@
     <link rel="stylesheet" href="bower_components/normalize-css/normalize.css">
     <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css">
     <link rel="stylesheet" href="bower_components/leaflet-minimap/dist/Control.MiniMap.min.css">
-    <link rel="stylesheet" href="styles/locator.css">
+    <link rel="stylesheet" href="app/locator.css">
   </head>
   <body>
 
-    <div class="locator-container">
-      <section class="locator-display">
-        <h1>Map</h1>
-
-        <div id="locator-map"></div>
-      </section>
-
-      <section class="locator-controls">
-        <h1>Controls</h1>
-
-        <button class="generate-image">Generate</button>
-        <a class="download-link" href="">Download</a>
-      </section>
-    </div>
+    <div class="locator-container"></div>
 
     <script type="text/javascript">
       // This forces Leaflet to render with canvas
       var L_PREFER_CANVAS = true;
     </script>
 
+    <script src="bower_components/ractive/ractive.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
     <script src="bower_components/leaflet/dist/leaflet.js"></script>
     <script src="bower_components/leaflet-minimap/dist/Control.MiniMap.min.js"></script>
     <script src="bower_components/leaflet-canvas-overlay/index.js"></script>
     <script src="bower_components/html2canvas/build/html2canvas.js"></script>
-    <script src="js/locator.js"></script>
+    <script src="app/locator.js"></script>
+
+    <script type="text/javascript">
+      // Create locator
+      var l = new window.Locator({
+        el: ".locator-container"
+      });
+    </script>
+
   </body>
 </html>

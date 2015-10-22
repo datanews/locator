@@ -1,0 +1,40 @@
+/**
+ * Main CSS for Locator.
+ */
+
+.locator {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+}
+
+.locator header {
+  font-size: 3em;
+  padding: 0.25em 0.5em;
+  background-color: #232323;
+  color: #FFFFFF;
+}
+
+.locator-interface {
+	display: flex;
+}
+
+.locator-display {
+  width: 66.666666666%;
+  padding: 0;
+}
+
+.locator-controls {
+  width: 33.3333323333%;
+  padding: 1em;
+  border-left: 1px solid #232323;
+}
+
+.locator-map {
+  width: 100%;
+  height: 40em;
+}
+
+#locator-map .leaflet-control-minimap {
+	border: 0;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+	border-radius: 0;
+}
