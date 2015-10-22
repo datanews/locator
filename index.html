@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" href="bower_components/normalize-css/normalize.css">
     <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css">
+    <link rel="stylesheet" href="bower_components/leaflet-minimap/dist/Control.MiniMap.min.css">
     <link rel="stylesheet" href="styles/locator.css">
   </head>
   <body>
@@ -28,9 +29,15 @@
       </section>
     </div>
 
+    <script type="text/javascript">
+      // This forces Leaflet to render with canvas
+      var L_PREFER_CANVAS = true;
+    </script>
+
     <script src="bower_components/leaflet/dist/leaflet.js"></script>
+    <script src="bower_components/leaflet-minimap/dist/Control.MiniMap.min.js"></script>
     <script src="bower_components/leaflet-canvas-overlay/index.js"></script>
-    <script src="bower_components/leaflet-image/leaflet-image.js"></script>
+    <script src="bower_components/html2canvas/build/html2canvas.js"></script>
     <script src="js/locator.js"></script>
   </body>
 </html>
