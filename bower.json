@@ -22,6 +22,8 @@
     "leaflet": "~0.7.5",
     "leaflet-canvas-overlay": "https://gist.githubusercontent.com/Sumbera/11114288/raw/b7076ce43055b78f27b54bf91b546d057a8d4173/L.CanvasOverlay.js",
     "leaflet-minimap": "leaflet-MiniMap#~3.0.0",
-    "html2canvas": "~0.4.1"
+    "html2canvas": "~0.4.1",
+    "ractive": "~0.7.3",
+    "underscore": "~1.8.3"
   }
 }
