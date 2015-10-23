@@ -21,8 +21,8 @@
       lng: -73.98566,
 
       // Mini map
-      miniWidth: 100,
-      miniHeight: 100,
+      miniWidth: "15w",
+      miniHeight: "15w",
       miniZoomOffset: -6,
       miniExtentStyles: {
         fill: false,
@@ -132,10 +132,26 @@
 
     // Draw minimap
     drawMinimap: function() {
+      // Determine height and width.  The value can be a number which
+      // we use as pixels, or it can be an percentage of height or width
+      var w = this.getEl(".locator-map").getBoundingClientRect().width;
+      var h = this.getEl(".locator-map").getBoundingClientRect().height;
+      var mW = (_.isNumber(this.options.miniWidth)) ? this.options.miniWidth :
+        (this.options.miniWidth.indexOf("w") !== -1) ?
+        +this.options.miniWidth.replace("w", "") / 100 * w :
+        +this.options.miniWidth.replace("h", "") / 100 * h;
+      var mH = (_.isNumber(this.options.miniHeight)) ? this.options.miniHeight :
+        (this.options.miniHeight.indexOf("w") !== -1) ?
+        +this.options.miniHeight.replace("w", "") / 100 * w :
+        +this.options.miniHeight.replace("h", "") / 100 * h;
+
+      // Create layer for minimap
       this.minimapLayer = new L.TileLayer(this.options.tileOptions[this.options.tiles]);
+
+      // Create control
       this.miniMap = new L.Control.MiniMap(this.minimapLayer, {
-        width: this.options.miniWidth,
-        height: this.options.miniWidth,
+        width: mW,
+        height: mH,
         zoomLevelOffset: this.options.miniZoomOffset,
         aimingRectOptions: this.options.miniExtentStyles
       });
