@@ -4,28 +4,33 @@
 
 .locator {
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #DFDFDF;
 }
 
-.locator header {
-  font-size: 3em;
-  padding: 0.25em 0.5em;
-  background-color: #232323;
-  color: #FFFFFF;
+.locator * {
+  box-sizing: border-box;
 }
 
-.locator-interface {
-	display: flex;
+.locator h1 {
+  font-size: 1em;
+  padding: 0;
+  margin: 0 0 1em 0;
 }
 
 .locator-display {
-  width: 66.666666666%;
-  padding: 0;
-}
-
-.locator-controls {
-  width: 33.3333323333%;
-  padding: 1em;
-  border-left: 1px solid #232323;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 66.666666%;
+  z-index: 0;
 }
 
 .locator-map {
@@ -33,8 +38,63 @@
   height: 40em;
 }
 
-#locator-map .leaflet-control-minimap {
+.locator-map .leaflet-control-minimap {
 	border: 0;
-	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+	box-shadow: none;
 	border-radius: 0;
+}
+
+.locator-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 33.33323333%;
+  z-index: 10;
+  border-left: 1px solid #464646;
+  box-shadow: -3px 0px 3px rgba(0, 0, 0, 0.3);
+  background-color: #FFFFFF;
+}
+
+.locator-controls header {
+  background-color: #212121;
+  color: #FFFFFF;
+  font-size: 2em;
+  padding: 0.25em 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.locator-controls footer {
+  position: absolute;
+  width: 100%;
+  text-align: right;
+  bottom: 0;
+  background-color: #212121;
+  color: #FFFFFF;
+  font-size: 0.85em;
+  padding: 0.25em 1em;
+}
+
+.locator-input {
+  padding: 1em;
+}
+
+.config-option {
+  margin-bottom: 1em;
+}
+
+.config-action {
+  margin-bottom: 1em;
+}
+
+.preview {
+  display: none;
+}
+
+.preview img {
+  max-width: 100%;
+}
+
+.download-link {
+  display: none;
 }

@@ -1,24 +1,47 @@
 
 <div class="locator">
-  <header>Locator</header>
+  <section class="locator-display">
+    <div class="locator-map"></div>
+  </section>
 
-  <div class="locator-interface">
-    <section class="locator-display">
-      <div class="locator-map"></div>
-    </section>
+  <section class="locator-controls">
+    <header>Locator</header>
 
-    <section class="locator-controls">
+    <div class="locator-input">
       <div class="config-option">
         <label>Tiles</label>
 
-        <select value="{{ options.tiles }}">
-          {{#options.tileOptions:i}}
+        <select value="{{ options.tileset }}">
+          {{#options.tilesets:i}}
             <option value="{{ i }}">{{ i }}</option>
-          {{/options.tileOptions}}
+          {{/options.tilesets}}
         </select>
       </div>
 
-      <button class="generate-image" on-click="generate">Generate</button>
-    </section>
-  </div>
+      <div class="config-option">
+        <label>Ratio</label>
+
+        <select value="{{ options.ratio }}">
+          {{#options.ratios:i}}
+            <option value="{{ i }}">{{ i }}</option>
+          {{/options.ratios}}
+        </select>
+      </div>
+
+      <div class="config-action">
+        <button class="generate-image" on-click="generate">Generate</button>
+      </div>
+
+      <div class="preview">
+        <h1>Preview</h1>
+        <img src="" />
+      </div>
+
+      <a href="" class="download-link">Download</a>
+    </div>
+
+    <footer>
+      <p>Made by WNYC</p>
+    </footer>
+  </section>
 </div>
