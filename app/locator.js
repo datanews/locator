@@ -19,6 +19,8 @@
       zoom: 17,
       lat: 40.74844,
       lng: -73.98566,
+      minZoom: 1,
+      maxZoom: 18,
 
       // Mini map
       miniWidth: "15w",
@@ -164,6 +166,8 @@
 
       // Make map and set view
       this.map = new L.Map(mapEl.id, {
+        minZoom: this.options.minZoom,
+        maxZoom: this.options.maxZoom,
         attributionControl: false
       });
       this.map.setView([view[0], view[1]], view[2]);

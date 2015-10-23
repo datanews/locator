@@ -46,6 +46,12 @@
         </div>
       {{/()}}
 
+      <div class="config-option">
+        <label>Mini-map zoom</label>
+
+        <input type="range" min="-10" max="1" value="{{ options.miniZoomOffset }}" title="Adjust zoom level for map">
+      </div>
+
       <div class="config-action">
         <button class="generate-image" on-click="generate">Generate</button>
       </div>
