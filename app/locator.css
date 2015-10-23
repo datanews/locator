@@ -12,6 +12,7 @@
   width: 100%;
   height: 100%;
   background-color: #DFDFDF;
+  overflow-y: scroll;
 }
 
 .locator * {
@@ -33,9 +34,16 @@
   z-index: 0;
 }
 
+.locator-map-wrapper {
+  width: 100%;
+  padding: 2em;
+}
+
 .locator-map {
   width: 100%;
   height: 40em;
+  border: 1px solid #676767;
+  margin: 0 auto;
 }
 
 .locator-map .leaflet-control-minimap {

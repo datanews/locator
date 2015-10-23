@@ -53,6 +53,12 @@
       markerPadding: 10,
 
       // Interface
+      widths: {
+        "400px": 400,
+        "600px": 600,
+        "800px": 800,
+      },
+      width: "600px",
       ratios: {
         "1:1": 1 / 1,
         "4:3": 4 / 3,
@@ -99,7 +105,8 @@
         el: this.options.el,
         template: this.template,
         data: {
-          options: this.options
+          options: this.options,
+          _: _
         }
       });
 
@@ -128,8 +135,11 @@
 
     // Make main map
     drawMap: function() {
-      // Generate an id for the map
       var mapEl = this.getEl(".locator-map");
+      var width;
+      var height;
+
+      // Generate an id for the map
       mapEl.id = this.id + "-map";
 
       // Kill map if existings
@@ -137,9 +147,13 @@
         this.map.remove();
       }
 
-      // Determine size of map
-      var width = mapEl.getBoundingClientRect().width;
-      var height = width / this.options.ratios[this.options.ratio];
+      // Determine size of map.  Use options if available.
+      width = _.size(this.options.widths) ?
+        this.options.widths[this.options.width] :
+        mapEl.getBoundingClientRect().width;
+      height = _.size(this.options.ratios) ?
+        width / this.options.ratios[this.options.ratio] :
+        mapEl.getBoundingClientRect().height;
       mapEl.style.width = width + "px";
       mapEl.style.height = height + "px";
 
