@@ -163,9 +163,10 @@
       mapEl.style.height = height + "px";
 
       // Make map and set view
-      this.map = L.map(mapEl.id, {
+      this.map = new L.Map(mapEl.id, {
         attributionControl: false
-      }).setView([view[0], view[1]], view[2]);
+      });
+      this.map.setView([view[0], view[1]], view[2]);
 
       // Tile layer
       this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset]);
@@ -175,6 +176,9 @@
     // Draw minimap
     drawMinimap: function() {
       var miniEl;
+
+      // Forces Leaflet to use Canvas
+      window.L_PREFER_CANVAS = true;
 
       // Determine height and width.  The value can be a number which
       // we use as pixels, or it can be an percentage of height or width
@@ -209,6 +213,10 @@
       _.each(this.miniStylesToCSS(this.options.miniStyles), function(def, prop) {
         miniEl.style[prop] = def;
       });
+
+      // Turn off since it does some odd things to panning and zooming the
+      // map.
+      window.L_PREFER_CANVAS = false;
     },
 
     // Draw marker layer
