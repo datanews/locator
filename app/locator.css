@@ -26,10 +26,7 @@
 }
 
 .locator-display {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
+  position: relative;
   width: 66.666666%;
   z-index: 0;
 }

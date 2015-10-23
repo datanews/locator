@@ -138,12 +138,17 @@
       var mapEl = this.getEl(".locator-map");
       var width;
       var height;
+      var view;
 
       // Generate an id for the map
       mapEl.id = this.id + "-map";
 
-      // Kill map if existings
+      // Kill map if existings, but get the current view
+      view = [this.options.lat, this.options.lng, this.options.zoom];
       if (this.map) {
+        view[0] = this.map.getCenter().lat;
+        view[1] = this.map.getCenter().lng;
+        view[2] = this.map.getZoom();
         this.map.remove();
       }
 
@@ -160,7 +165,7 @@
       // Make map and set view
       this.map = L.map(mapEl.id, {
         attributionControl: false
-      }).setView([this.options.lat, this.options.lng], this.options.zoom);
+      }).setView([view[0], view[1]], view[2]);
 
       // Tile layer
       this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset]);
