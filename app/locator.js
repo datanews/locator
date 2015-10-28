@@ -181,9 +181,6 @@
     drawMinimap: function() {
       var miniEl;
 
-      // Forces Leaflet to use Canvas
-      window.L_PREFER_CANVAS = true;
-
       // Determine height and width.  The value can be a number which
       // we use as pixels, or it can be an percentage of height or width
       var w = this.getEl(".locator-map").getBoundingClientRect().width;
@@ -217,35 +214,47 @@
       _.each(this.miniStylesToCSS(this.options.miniStyles), function(def, prop) {
         miniEl.style[prop] = def;
       });
-
-      // Turn off since it does some odd things to panning and zooming the
-      // map.
-      window.L_PREFER_CANVAS = false;
     },
 
     // Draw marker layer
     drawMarker: function() {
-      L.canvasOverlay()
-        .drawing(_.bind(this.drawMarkerTile, this))
-        .addTo(this.map);
+      this.markerCanvas = L.tileLayer.canvas();
+      this.markerCanvas.drawTile = _.bind(this.drawMarkerTile, this);
+      this.markerCanvas.addTo(this.map);
     },
 
     // Marker layer draw handler
-    drawMarkerTile: function(canvasOverlay, params) {
-      var point = [this.options.lat, this.options.lng];
-      var ctx = params.canvas.getContext("2d");
+    drawMarkerTile: function(canvas, tilePoint, zoom) {
+      var ctx = canvas.getContext("2d");
       var labelHeight = (this.options.markerFontSize * 0.75) + (this.options.markerPadding * 2);
       var placement;
       var textWidth;
       var labelWidth;
 
       // Clear out tile
-      ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Only draw if marker is in tile
-      if (params.bounds.contains(point)) {
+      // Get some dimensions
+      var dim = {};
+      dim.nwPoint = tilePoint.multiplyBy(256);
+      dim.sePoint = dim.nwPoint.add(new L.Point(256, 256));
+      dim.nwCoord = this.map.unproject(dim.nwPoint, zoom, true);
+      dim.seCoord = this.map.unproject(dim.sePoint, zoom, true);
+      dim.bCoord = L.latLngBounds([[dim.nwCoord.lat, dim.seCoord.lng],
+        [dim.seCoord.lat, dim.nwCoord.lng]]);
+      dim.bPoint = [dim.nwPoint, dim.sePoint];
+      dim.locCoord = L.latLng(this.options.lat, this.options.lng);
+      dim.locPoint = this.map.project(dim.locCoord, zoom, true);
+
+      // TODO: Use a buffer or some calculation so that we only draw into tiles
+      // that the marker spills into.
+      // bCoord.contains(bCoord)
+      if (true) {
         // Determine placement in tile
-        placement = canvasOverlay._map.latLngToContainerPoint(point);
+        placement = {
+          x: dim.locPoint.x - dim.nwPoint.x,
+          y: dim.locPoint.y - dim.nwPoint.y
+        };
 
         // Draw point on location
         ctx.beginPath();
