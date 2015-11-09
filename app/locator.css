@@ -25,6 +25,15 @@
   margin: 0 0 1em 0;
 }
 
+.locator a {
+  color: #3366FF;
+  text-decoration: none;
+}
+
+.locator a:hover {
+  text-decoration: underline;
+}
+
 .locator-display {
   position: relative;
   width: 66.666666%;
@@ -98,8 +107,9 @@
 
 .preview img {
   max-width: 100%;
+  margin-bottom: 0.5em;
 }
 
 .download-link {
-  display: none;
+  font-size: 0.85em;
 }

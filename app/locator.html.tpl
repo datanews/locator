@@ -10,6 +10,34 @@
     <header>Locator</header>
 
     <div class="locator-input">
+      <h1>Locate</h1>
+
+      {{^options.geocoder}}
+        <div class="config-option">
+          <label>Latitude and longitude</label>
+
+          <br><input type="number" placeholder="Latitude" value="{{ options.lat }}" lazy>
+          <br><input type="number" placeholder="Longitude" value="{{ options.lng }}" lazy>
+        </div>
+      {{/options.geocoder}}
+
+
+      {{#options.geocoder}}
+        <div class="config-option">
+          <label>Geocode</label>
+          <input type="text" placeholder="Address or place" value="{{ geocodeInput }}" lazy disabled="{{ isGeocoding }}">
+        </div>
+      {{/options.geocoder}}
+
+      <h1>Marker</h1>
+
+      <div class="config-option">
+        <label>Label</label>
+        <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
+      </div>
+
+      <h1>Settings</h1>
+
       {{#(_.size(options.tilesets))}}
         <div class="config-option">
           <label>Tiles</label>
@@ -46,16 +74,21 @@
         </div>
       {{/()}}
 
+      <div class="config-option">
+        <label>Mini-map zoom</label>
+
+        <input type="range" min="-10" max="1" value="{{ options.miniZoomOffset }}" title="Adjust zoom level for map">
+      </div>
+
       <div class="config-action">
         <button class="generate-image" on-click="generate">Generate</button>
       </div>
 
       <div class="preview">
         <h1>Preview</h1>
-        <img src="" />
+        <img src="" /><br>
+        <a href="" class="download-link">Download</a>
       </div>
-
-      <a href="" class="download-link">Download</a>
     </div>
 
     <footer>

@@ -19,6 +19,8 @@
       zoom: 17,
       lat: 40.74844,
       lng: -73.98566,
+      minZoom: 1,
+      maxZoom: 18,
 
       // Mini map
       miniWidth: "15w",
@@ -29,7 +31,7 @@
         stroke: true,
         color: "#000000",
         opacity: 0.9,
-        weight: 2
+        weight: 4
       },
       miniStyles: {
         backgroundColor: "#FFFFFF",
@@ -64,7 +66,10 @@
         "4:3": 4 / 3,
         "16:9": 16 / 9
       },
-      ratio: "4:3"
+      ratio: "4:3",
+
+      // Basic defalt geocoder with Google
+      geocoder: this.defaultGeocoder
     }, options);
 
     // Generate a unique id
@@ -101,11 +106,17 @@
 
     // Make interface
     drawInterface: function() {
+      // Place holder to work around object reference changes
+      var oldReference = _.clone(this.options);
+
+      // Create ractive object
       this.interface = new Ractive({
         el: this.options.el,
         template: this.template,
         data: {
           options: this.options,
+          isGeocoding: false,
+          geocodeInput: "",
           _: _
         }
       });
@@ -113,13 +124,33 @@
       // Match up events
       this.interface.on("generate", _.bind(this.generate, this));
 
-      // Make throttled map draw
+      // Throttle some functions
       this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 1500);
+      if (_.isFunction(this.options.geocoder)) {
+        this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 1500);
+      }
 
-      // Handle config updates
-      this.interface.observe("options", _.bind(function() {
+      // Handle general config updates
+      this.interface.observe("options", _.bind(function(options) {
+        var recenter = (options.lat !== oldReference.lat ||
+          options.lng !== oldReference.lng);
+
         // The reference to options is maintained
-        this.throttledDrawMaps();
+        this.throttledDrawMaps(recenter);
+
+        // Update past reference
+        oldReference = _.clone(options);
+      }, this), { init: false });
+
+      // Handle geocoding
+      this.interface.observe("geocodeInput", _.bind(function(input) {
+        if (_.isFunction(this.throttledGeocoder)) {
+          this.throttledGeocoder(input, _.bind(function(lat, lng) {
+            this.options.lat = lat;
+            this.options.lng = lng;
+            this.throttledDrawMaps(true);
+          }, this));
+        }
       }, this), { init: false });
 
       // Initialize map parts
@@ -127,14 +158,15 @@
     },
 
     // Draw map parts
-    drawMaps: function() {
-      this.drawMap();
+    drawMaps: function(recenter) {
+      this.drawMap(recenter);
       this.drawMarker();
       this.drawMinimap();
     },
 
     // Make main map
-    drawMap: function() {
+    drawMap: function(recenter) {
+      recenter = recenter || false;
       var mapEl = this.getEl(".locator-map");
       var width;
       var height;
@@ -143,12 +175,16 @@
       // Generate an id for the map
       mapEl.id = this.id + "-map";
 
-      // Kill map if existings, but get the current view
+      // Kill map if existings, but get the current view if we are
+      // not recentering
       view = [this.options.lat, this.options.lng, this.options.zoom];
-      if (this.map) {
+      if (this.map && !recenter) {
         view[0] = this.map.getCenter().lat;
         view[1] = this.map.getCenter().lng;
         view[2] = this.map.getZoom();
+        this.map.remove();
+      }
+      else if (this.map) {
         this.map.remove();
       }
 
@@ -163,9 +199,12 @@
       mapEl.style.height = height + "px";
 
       // Make map and set view
-      this.map = L.map(mapEl.id, {
+      this.map = new L.Map(mapEl.id, {
+        minZoom: this.options.minZoom,
+        maxZoom: this.options.maxZoom,
         attributionControl: false
-      }).setView([view[0], view[1]], view[2]);
+      });
+      this.map.setView([view[0], view[1]], view[2]);
 
       // Tile layer
       this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset]);
@@ -197,11 +236,21 @@
         width: mW,
         height: mH,
         zoomLevelOffset: this.options.miniZoomOffset,
-        aimingRectOptions: this.options.miniExtentStyles
+
+        // Don't show original rectangle (see below)
+        aimingRectOptions: {
+          fill: false,
+          stroke: false
+        }
       });
 
       // Add control
       this.map.addControl(this.miniMap);
+
+      // We have to manually create a canvas layer, since using the L.preferCanvas
+      // method really screws things up, and Leaflet 1.0.0 which has better
+      // support for the canvas preference does not work with Leaflet Minimap
+      this.miniMap._miniMap.addLayer(this.drawMiniCanvasLayer(this.options.miniExtentStyles));
 
       // Manually style due to canvas2html limitations that require
       // us to manually make box
@@ -211,29 +260,88 @@
       });
     },
 
+    // Minimap custom canvas layer
+    drawMiniCanvasLayer: function(styles) {
+      this.miniCanvasLayer = L.tileLayer.canvas();
+      this.miniCanvasLayer.drawTile = _.bind(function(canvas, tilePoint, zoom) {
+        var ctx = canvas.getContext("2d");
+
+        // Clear out tile
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Get some dimensions
+        var dim = {};
+        dim.nwPoint = tilePoint.multiplyBy(256);
+        dim.sePoint = dim.nwPoint.add(new L.Point(256, 256));
+        dim.nwCoord = this.map.unproject(dim.nwPoint, zoom, true);
+        dim.seCoord = this.map.unproject(dim.sePoint, zoom, true);
+        dim.bCoord = L.latLngBounds([[dim.nwCoord.lat, dim.seCoord.lng],
+          [dim.seCoord.lat, dim.nwCoord.lng]]);
+        dim.bPoint = [dim.nwPoint, dim.sePoint];
+
+        // TODO: Use a buffer or some calculation so that we only draw into tiles
+        // that the marker spills into.
+        // bCoord.contains(bCoord)
+        if (true) {
+          var bounds = this.map.getBounds();
+          var nw = this.map.project(bounds.getNorthWest(), zoom, true);
+          var se = this.map.project(bounds.getSouthEast(), zoom, true);
+
+          // Draw box
+          ctx.beginPath();
+          ctx.rect(nw.x - dim.nwPoint.x, nw.y - dim.nwPoint.y, se.x - nw.x, se.y - nw.y);
+          ctx = this.leafletStylesToCanvas(styles, ctx);
+          ctx.closePath();
+        }
+      }, this);
+
+      // Track the movements of the main map
+      this.map.on("moveend", _.bind(function() {
+        this.miniCanvasLayer.redraw();
+      }, this));
+
+      return this.miniCanvasLayer;
+    },
+
     // Draw marker layer
     drawMarker: function() {
-      L.canvasOverlay()
-        .drawing(_.bind(this.drawMarkerTile, this))
-        .addTo(this.map);
+      this.markerCanvas = L.tileLayer.canvas();
+      this.markerCanvas.drawTile = _.bind(this.drawMarkerTile, this);
+      this.markerCanvas.addTo(this.map);
     },
 
     // Marker layer draw handler
-    drawMarkerTile: function(canvasOverlay, params) {
-      var point = [this.options.lat, this.options.lng];
-      var ctx = params.canvas.getContext("2d");
+    drawMarkerTile: function(canvas, tilePoint, zoom) {
+      var ctx = canvas.getContext("2d");
       var labelHeight = (this.options.markerFontSize * 0.75) + (this.options.markerPadding * 2);
       var placement;
       var textWidth;
       var labelWidth;
 
       // Clear out tile
-      ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Only draw if marker is in tile
-      if (params.bounds.contains(point)) {
+      // Get some dimensions
+      var dim = {};
+      dim.nwPoint = tilePoint.multiplyBy(256);
+      dim.sePoint = dim.nwPoint.add(new L.Point(256, 256));
+      dim.nwCoord = this.map.unproject(dim.nwPoint, zoom, true);
+      dim.seCoord = this.map.unproject(dim.sePoint, zoom, true);
+      dim.bCoord = L.latLngBounds([[dim.nwCoord.lat, dim.seCoord.lng],
+        [dim.seCoord.lat, dim.nwCoord.lng]]);
+      dim.bPoint = [dim.nwPoint, dim.sePoint];
+      dim.locCoord = L.latLng(this.options.lat, this.options.lng);
+      dim.locPoint = this.map.project(dim.locCoord, zoom, true);
+
+      // TODO: Use a buffer or some calculation so that we only draw into tiles
+      // that the marker spills into.
+      // bCoord.contains(bCoord)
+      if (true) {
         // Determine placement in tile
-        placement = canvasOverlay._map.latLngToContainerPoint(point);
+        placement = {
+          x: dim.locPoint.x - dim.nwPoint.x,
+          y: dim.locPoint.y - dim.nwPoint.y
+        };
 
         // Draw point on location
         ctx.beginPath();
@@ -374,7 +482,8 @@
       var download = this.getEl(".download-link");
       download.href = mapCtx.canvas.toDataURL();
       download.download = _.uniqueId("locator_image-") + ".png";
-      download.click();
+
+      //download.click();
     },
 
     // Get element from query selector relative to locator
@@ -397,6 +506,49 @@
       }
 
       return props;
+    },
+
+    // Leaflet path styles to canvas context
+    // Borrowed from:
+    // https://github.com/Leaflet/Leaflet/blob/2a5857d172f0fa982c6c54fa5511e9b29ae13ec7/src/layer/vector/Canvas.js#L175
+    leafletStylesToCanvas: function(styles, context) {
+      if (styles.fill) {
+        context.globalAlpha = styles.fillOpacity || 1;
+        context.fillStyle = styles.fillColor || styles.color;
+        context.fill(styles.fillRule || "evenodd");
+      }
+
+      if (styles.stroke && styles.weight !== 0) {
+        context.globalAlpha = styles.opacity || 1;
+        context.strokeStyle = styles.color;
+        context.lineCap = styles.lineCap;
+        context.lineJoin = styles.lineJoin;
+        context.stroke();
+      }
+
+      return context;
+    },
+
+    // A vrey crude geocoder that uses Google goeocoding
+    defaultGeocoder: function(address, done) {
+      var httpRequest = new XMLHttpRequest();
+      var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURIComponent(address);
+      var once = _.once(done);
+
+      httpRequest.onreadystatechange = function() {
+        var data;
+
+        if (httpRequest.status === 200 && httpRequest.responseText) {
+          data = JSON.parse(httpRequest.responseText);
+
+          if (data && data.results && data.results.length) {
+            once(data.results[0].geometry.location.lat, data.results[0].geometry.location.lng);
+          }
+        }
+      };
+
+      httpRequest.open("GET", url);
+      httpRequest.send();
     }
   });
 
