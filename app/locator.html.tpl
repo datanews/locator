@@ -58,10 +58,9 @@
 
       <div class="preview">
         <h1>Preview</h1>
-        <img src="" />
+        <img src="" /><br>
+        <a href="" class="download-link">Download</a>
       </div>
-
-      <a href="" class="download-link">Download</a>
     </div>
 
     <footer>

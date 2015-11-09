@@ -448,7 +448,8 @@
       var download = this.getEl(".download-link");
       download.href = mapCtx.canvas.toDataURL();
       download.download = _.uniqueId("locator_image-") + ".png";
-      download.click();
+
+      //download.click();
     },
 
     // Get element from query selector relative to locator
