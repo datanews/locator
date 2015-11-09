@@ -10,6 +10,27 @@
     <header>Locator</header>
 
     <div class="locator-input">
+      <h1>Locate</h1>
+
+      {{^options.geocoder}}
+        <div class="config-option">
+          <label>Latitude and longitude</label>
+
+          <br><input type="number" placeholder="Latitude" value="{{ options.lat }}" lazy>
+          <br><input type="number" placeholder="Longitude" value="{{ options.lng }}" lazy>
+        </div>
+      {{/options.geocoder}}
+
+      <h1>Marker</h1>
+
+      <div class="config-option">
+        <label>Label</label>
+
+        <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
+      </div>
+
+      <h1>Settings</h1>
+
       {{#(_.size(options.tilesets))}}
         <div class="config-option">
           <label>Tiles</label>

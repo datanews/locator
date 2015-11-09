@@ -31,7 +31,7 @@
         stroke: true,
         color: "#000000",
         opacity: 0.9,
-        weight: 2
+        weight: 4
       },
       miniStyles: {
         backgroundColor: "#FFFFFF",
@@ -66,7 +66,9 @@
         "4:3": 4 / 3,
         "16:9": 16 / 9
       },
-      ratio: "4:3"
+      ratio: "4:3",
+
+      // Geocode
     }, options);
 
     // Generate a unique id
@@ -103,6 +105,10 @@
 
     // Make interface
     drawInterface: function() {
+      // Place holder to work around object reference changes
+      var oldReference = _.clone(this.options);
+
+      // Create ractive object
       this.interface = new Ractive({
         el: this.options.el,
         template: this.template,
@@ -118,10 +124,16 @@
       // Make throttled map draw
       this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 1500);
 
-      // Handle config updates
-      this.interface.observe("options", _.bind(function() {
+      // Handle general config updates
+      this.interface.observe("options", _.bind(function(options) {
+        var recenter = (options.lat !== oldReference.lat ||
+          options.lng !== oldReference.lng);
+
         // The reference to options is maintained
-        this.throttledDrawMaps();
+        this.throttledDrawMaps(recenter);
+
+        // Update past reference
+        oldReference = _.clone(options);
       }, this), { init: false });
 
       // Initialize map parts
@@ -129,14 +141,15 @@
     },
 
     // Draw map parts
-    drawMaps: function() {
-      this.drawMap();
+    drawMaps: function(recenter) {
+      this.drawMap(recenter);
       this.drawMarker();
       this.drawMinimap();
     },
 
     // Make main map
-    drawMap: function() {
+    drawMap: function(recenter) {
+      recenter = recenter || false;
       var mapEl = this.getEl(".locator-map");
       var width;
       var height;
@@ -145,12 +158,16 @@
       // Generate an id for the map
       mapEl.id = this.id + "-map";
 
-      // Kill map if existings, but get the current view
+      // Kill map if existings, but get the current view if we are
+      // not recentering
       view = [this.options.lat, this.options.lng, this.options.zoom];
-      if (this.map) {
+      if (this.map && !recenter) {
         view[0] = this.map.getCenter().lat;
         view[1] = this.map.getCenter().lng;
         view[2] = this.map.getZoom();
+        this.map.remove();
+      }
+      else if (this.map) {
         this.map.remove();
       }
 
