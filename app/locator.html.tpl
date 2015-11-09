@@ -21,11 +21,18 @@
         </div>
       {{/options.geocoder}}
 
+
+      {{#options.geocoder}}
+        <div class="config-option">
+          <label>Geocode</label>
+          <input type="text" placeholder="Address or place" value="{{ geocodeInput }}" lazy disabled="{{ isGeocoding }}">
+        </div>
+      {{/options.geocoder}}
+
       <h1>Marker</h1>
 
       <div class="config-option">
         <label>Label</label>
-
         <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
       </div>
 

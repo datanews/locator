@@ -68,7 +68,8 @@
       },
       ratio: "4:3",
 
-      // Geocode
+      // Basic defalt geocoder with Google
+      geocoder: this.defaultGeocoder
     }, options);
 
     // Generate a unique id
@@ -114,6 +115,8 @@
         template: this.template,
         data: {
           options: this.options,
+          isGeocoding: false,
+          geocodeInput: "",
           _: _
         }
       });
@@ -121,8 +124,11 @@
       // Match up events
       this.interface.on("generate", _.bind(this.generate, this));
 
-      // Make throttled map draw
+      // Throttle some functions
       this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 1500);
+      if (_.isFunction(this.options.geocoder)) {
+        this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 1500);
+      }
 
       // Handle general config updates
       this.interface.observe("options", _.bind(function(options) {
@@ -134,6 +140,17 @@
 
         // Update past reference
         oldReference = _.clone(options);
+      }, this), { init: false });
+
+      // Handle geocoding
+      this.interface.observe("geocodeInput", _.bind(function(input) {
+        if (_.isFunction(this.throttledGeocoder)) {
+          this.throttledGeocoder(input, _.bind(function(lat, lng) {
+            this.options.lat = lat;
+            this.options.lng = lng;
+            this.throttledDrawMaps(true);
+          }, this));
+        }
       }, this), { init: false });
 
       // Initialize map parts
@@ -510,6 +527,28 @@
       }
 
       return context;
+    },
+
+    // A vrey crude geocoder that uses Google goeocoding
+    defaultGeocoder: function(address, done) {
+      var httpRequest = new XMLHttpRequest();
+      var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURIComponent(address);
+      var once = _.once(done);
+
+      httpRequest.onreadystatechange = function() {
+        var data;
+
+        if (httpRequest.status === 200 && httpRequest.responseText) {
+          data = JSON.parse(httpRequest.responseText);
+
+          if (data && data.results && data.results.length) {
+            once(data.results[0].geometry.location.lat, data.results[0].geometry.location.lng);
+          }
+        }
+      };
+
+      httpRequest.open("GET", url);
+      httpRequest.send();
     }
   });
 
