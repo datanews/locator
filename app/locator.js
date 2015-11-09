@@ -202,11 +202,21 @@
         width: mW,
         height: mH,
         zoomLevelOffset: this.options.miniZoomOffset,
-        aimingRectOptions: this.options.miniExtentStyles
+
+        // Don't show original rectangle (see below)
+        aimingRectOptions: {
+          fill: false,
+          stroke: false
+        }
       });
 
       // Add control
       this.map.addControl(this.miniMap);
+
+      // We have to manually create a canvas layer, since using the L.preferCanvas
+      // method really screws things up, and Leaflet 1.0.0 which has better
+      // support for the canvas preference does not work with Leaflet Minimap
+      this.miniMap._miniMap.addLayer(this.drawMiniCanvasLayer(this.options.miniExtentStyles));
 
       // Manually style due to canvas2html limitations that require
       // us to manually make box
@@ -214,6 +224,49 @@
       _.each(this.miniStylesToCSS(this.options.miniStyles), function(def, prop) {
         miniEl.style[prop] = def;
       });
+    },
+
+    // Minimap custom canvas layer
+    drawMiniCanvasLayer: function(styles) {
+      this.miniCanvasLayer = L.tileLayer.canvas();
+      this.miniCanvasLayer.drawTile = _.bind(function(canvas, tilePoint, zoom) {
+        var ctx = canvas.getContext("2d");
+
+        // Clear out tile
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Get some dimensions
+        var dim = {};
+        dim.nwPoint = tilePoint.multiplyBy(256);
+        dim.sePoint = dim.nwPoint.add(new L.Point(256, 256));
+        dim.nwCoord = this.map.unproject(dim.nwPoint, zoom, true);
+        dim.seCoord = this.map.unproject(dim.sePoint, zoom, true);
+        dim.bCoord = L.latLngBounds([[dim.nwCoord.lat, dim.seCoord.lng],
+          [dim.seCoord.lat, dim.nwCoord.lng]]);
+        dim.bPoint = [dim.nwPoint, dim.sePoint];
+
+        // TODO: Use a buffer or some calculation so that we only draw into tiles
+        // that the marker spills into.
+        // bCoord.contains(bCoord)
+        if (true) {
+          var bounds = this.map.getBounds();
+          var nw = this.map.project(bounds.getNorthWest(), zoom, true);
+          var se = this.map.project(bounds.getSouthEast(), zoom, true);
+
+          // Draw box
+          ctx.beginPath();
+          ctx.rect(nw.x - dim.nwPoint.x, nw.y - dim.nwPoint.y, se.x - nw.x, se.y - nw.y);
+          ctx = this.leafletStylesToCanvas(styles, ctx);
+          ctx.closePath();
+        }
+      }, this);
+
+      // Track the movements of the main map
+      this.map.on("moveend", _.bind(function() {
+        this.miniCanvasLayer.redraw();
+      }, this));
+
+      return this.miniCanvasLayer;
     },
 
     // Draw marker layer
@@ -418,6 +471,27 @@
       }
 
       return props;
+    },
+
+    // Leaflet path styles to canvas context
+    // Borrowed from:
+    // https://github.com/Leaflet/Leaflet/blob/2a5857d172f0fa982c6c54fa5511e9b29ae13ec7/src/layer/vector/Canvas.js#L175
+    leafletStylesToCanvas: function(styles, context) {
+      if (styles.fill) {
+        context.globalAlpha = styles.fillOpacity || 1;
+        context.fillStyle = styles.fillColor || styles.color;
+        context.fill(styles.fillRule || "evenodd");
+      }
+
+      if (styles.stroke && styles.weight !== 0) {
+        context.globalAlpha = styles.opacity || 1;
+        context.strokeStyle = styles.color;
+        context.lineCap = styles.lineCap;
+        context.lineJoin = styles.lineJoin;
+        context.stroke();
+      }
+
+      return context;
     }
   });
 

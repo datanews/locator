@@ -19,8 +19,8 @@
     "normalize-css": "~3.0.3"
   },
   "dependencies": {
-    "leaflet": "~0.7.5",
-    "leaflet-minimap": "leaflet-MiniMap#~3.0.0",
+    "leaflet": "0.7.7",
+    "leaflet-minimap": "~3.0.0",
     "html2canvas": "~0.4.1",
     "ractive": "~0.7.3",
     "underscore": "~1.8.3"
