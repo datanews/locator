@@ -42,6 +42,5 @@
   },
   "_source": "git://github.com/Norkart/Leaflet-MiniMap.git",
   "_target": "~3.0.0",
-  "_originalSource": "leaflet-MiniMap",
-  "_direct": true
+  "_originalSource": "leaflet-minimap"
 }
