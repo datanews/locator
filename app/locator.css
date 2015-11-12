@@ -12,7 +12,6 @@
   width: 100%;
   height: 100%;
   background-color: #DFDFDF;
-  overflow-y: scroll;
 }
 
 .locator * {
@@ -23,15 +22,6 @@
   font-size: 1em;
   padding: 0;
   margin: 0 0 1em 0;
-}
-
-.locator a {
-  color: #3366FF;
-  text-decoration: none;
-}
-
-.locator a:hover {
-  text-decoration: underline;
 }
 
 .locator-display {
@@ -68,6 +58,16 @@
   border-left: 1px solid #464646;
   box-shadow: -3px 0px 3px rgba(0, 0, 0, 0.3);
   background-color: #FFFFFF;
+  overflow-y: scroll;
+}
+
+.locator-controls a {
+  color: #3366FF;
+  text-decoration: none;
+}
+
+.locator-controls a:hover {
+  text-decoration: underline;
 }
 
 .locator-controls header {
@@ -87,6 +87,9 @@
   color: #FFFFFF;
   font-size: 0.85em;
   padding: 0.25em 1em;
+
+  /* TODO: Make footer work */
+  display: none;
 }
 
 .locator-input {
