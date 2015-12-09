@@ -128,8 +128,11 @@ gulp.task("webserver", function() {
           return (file.match(/dist|examples|index\.html/)) ? true : false;
         }
       },
-      directoryListing: true,
-      open: true
+
+      // Directory listing means that the fallback wont work
+      //directoryListing: true,
+      open: true,
+      fallback: "index.html"
     }));
 });
 
