@@ -38,7 +38,6 @@ var supportedBrowsers = ["> 1%", "last 2 versions", "Firefox ESR", "Opera 12.1"]
 // Plumber allows for better error handling and makes it so that
 // gulp doesn"t crash so hard.  Good for watching and linting tasks
 var plumberHandler = function(error) {
-  console.log(error);
   if (error) {
     util.beep();
   }
@@ -112,7 +111,7 @@ gulp.task("styles", function() {
 // Watch for files that need to be processed
 gulp.task("watch", function() {
   gulp.watch(["gulpfile.js"], ["support-js"]);
-  gulp.watch(["src/**/*.js", "src/**/*.html"], ["js"]);
+  gulp.watch(["src/**/*.js", "src/**/*.tpl"], ["js"]);
   gulp.watch("src/**/*.less", ["styles"]);
 });
 

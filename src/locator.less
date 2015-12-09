@@ -2,8 +2,23 @@
  * Main CSS for Locator.
  */
 
+// Variables
+@black: #000000;
+@white: #FFFFFF;
+@dark-grey: #343434;
+@medium-grey: #878787;
+@light-grey: #BDBDBD;
+@lighter-grey: #F1F1F1;
+
+@blue: #3366FF;
+@orange: #F5B800;
+
+
+// Wrap all so its a bit more specific and maybe it will be embedded in
+// a page
 .locator {
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  font-size: 18px;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -11,108 +26,198 @@
   right: 0;
   width: 100%;
   height: 100%;
-  background-color: #DFDFDF;
-}
-
-.locator * {
+  background-color: @lighter-grey;
   box-sizing: border-box;
-}
 
-.locator h1 {
-  font-size: 1em;
-  padding: 0;
-  margin: 0 0 1em 0;
-}
+  * {
+    box-sizing: border-box;
+  }
 
-.locator-display {
-  position: relative;
-  width: 66.666666%;
-  z-index: 0;
-}
+  h1 {
+    font-size: 1em;
+    padding: 0;
+    margin: 0 0 1em 0;
+  }
 
-.locator-map-wrapper {
-  width: 100%;
-  padding: 2em;
-}
+  // Main interactive map display (preview)
+  .locator-display {
+    position: relative;
+    width: 66.6665666%;
+    height: 100%;
+    z-index: 0;
+  }
 
-.locator-map {
-  width: 100%;
-  height: 40em;
-  border: 1px solid #676767;
-  margin: 0 auto;
-}
+  .locator-map-wrapper {
+    width: 100%;
+    padding: 2em;
+  }
 
-.locator-map .leaflet-control-minimap {
-	border: 0;
-	box-shadow: none;
-	border-radius: 0;
-}
+  .locator-map {
+    width: 100%;
+    height: 40em;
+    border: 1px solid @dark-grey;
+    margin: 0 auto;
+  }
 
-.locator-controls {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 33.33323333%;
-  z-index: 10;
-  border-left: 1px solid #464646;
-  box-shadow: -3px 0 3px rgba(0, 0, 0, 0.3);
-  background-color: #FFFFFF;
-  overflow-y: scroll;
-}
+  .leaflet-control-minimap {
+  	border: 0;
+  	box-shadow: none;
+  	border-radius: 0;
+  }
 
-.locator-controls a {
-  color: #3366FF;
-  text-decoration: none;
-}
+  // Controls
+  .locator-controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 33.33323333%;
+    z-index: 10;
+    border-left: 1px solid @light-grey;
+    box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
+    background-color: @white;
+    overflow-y: scroll;
 
-.locator-controls a:hover {
-  text-decoration: underline;
-}
+    a {
+      color: @blue;
+      text-decoration: none;
 
-.locator-controls header {
-  background-color: #212121;
-  color: #FFFFFF;
-  font-size: 2em;
-  padding: 0.25em 0.5em;
-  margin-bottom: 0.5em;
-}
+      &:hover {
+        text-decoration: underline;
+      }
+    }
 
-.locator-controls footer {
-  position: absolute;
-  width: 100%;
-  text-align: right;
-  bottom: 0;
-  background-color: #212121;
-  color: #FFFFFF;
-  font-size: 0.85em;
-  padding: 0.25em 1em;
+    header {
+      background-color: @dark-grey;
+      color: @white;
+      font-size: 1.5em;
+      padding: 0.35em 0.75em;
+      margin-bottom: 0.5em;
+      text-transform: uppercase;
+    }
 
-  /* TODO: Make footer work */
-  display: none;
-}
+    footer {
+      position: absolute;
+      width: 100%;
+      text-align: right;
+      bottom: 0;
+      background-color: #212121;
+      color: #FFFFFF;
+      font-size: 0.85em;
+      padding: 0.25em 1em;
 
-.locator-input {
-  padding: 1em;
-}
+      /* TODO: Make footer work */
+      display: none;
+    }
 
-.config-option {
-  margin-bottom: 1em;
-}
+    // Controls inputs
+    .locator-input {
+      padding: 1em;
+    }
 
-.config-action {
-  margin-bottom: 1em;
-}
+    .config-option {
+      margin: 0 -1em 1em -1em;
+    }
 
-.preview {
-  display: none;
-}
+    .config-action {
+      margin-bottom: 1em;
+    }
 
-.preview img {
-  max-width: 100%;
-  margin-bottom: 0.5em;
-}
+    label {
+      font-size: 0.85em;
+      color: @medium-grey;
+      display: block;
+      margin-bottom: 0.25em;
+    }
 
-.download-link {
-  font-size: 0.85em;
+    .config-option label {
+      padding-left: 1.15em;
+    }
+
+    input,
+    select,
+    button {
+      display: block;
+      font-size: 1.25em;
+      padding: 0.5em 0.75em;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      color: @dark-grey;
+    }
+
+    input[type=text] {
+      width: 100%;
+      border-left: none;
+      border-right: none;
+      border-top: 1px solid @medium-grey;
+      border-bottom: 1px solid @medium-grey;
+      background-color: @lighter-grey;
+    }
+
+    select {
+      width: 90%;
+      margin: 0 auto;
+      background-color: @lighter-grey;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        border: 0;
+        height: 1em;
+        width: 0.85em;
+        border-radius: 3px;
+        background: @dark-grey;
+        cursor: pointer;
+        margin-top: -0.4em;
+      }
+
+      &::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 0.25em;
+        cursor: pointer;
+        background: @light-grey;
+      }
+    }
+
+    .config-select {
+      position: relative;
+
+      &:after {
+        content: "▾";
+        position: absolute;
+        right: 9%;
+        bottom: 0.4em;
+        color: @medium-grey;
+        font-size: 1.5em;
+      }
+    }
+
+    button {
+      border: 0;
+      background-color: @blue;
+      color: @white;
+    }
+
+
+    // Preview pane
+    .preview {
+      display: none;
+
+      img {
+        max-width: 100%;
+        margin-bottom: 0.5em;
+      }
+
+      .download-link {
+        font-size: 0.85em;
+      }
+    }
+  }
 }

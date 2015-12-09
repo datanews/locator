@@ -9,6 +9,7 @@
  */
 .locator {
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  font-size: 18px;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -16,7 +17,8 @@
   right: 0;
   width: 100%;
   height: 100%;
-  background-color: #DFDFDF;
+  background-color: #F1F1F1;
+  box-sizing: border-box;
 }
 .locator * {
   box-sizing: border-box;
@@ -26,53 +28,55 @@
   padding: 0;
   margin: 0 0 1em 0;
 }
-.locator-display {
+.locator .locator-display {
   position: relative;
-  width: 66.666666%;
+  width: 66.6665666%;
+  height: 100%;
   z-index: 0;
 }
-.locator-map-wrapper {
+.locator .locator-map-wrapper {
   width: 100%;
   padding: 2em;
 }
-.locator-map {
+.locator .locator-map {
   width: 100%;
   height: 40em;
-  border: 1px solid #676767;
+  border: 1px solid #343434;
   margin: 0 auto;
 }
-.locator-map .leaflet-control-minimap {
+.locator .leaflet-control-minimap {
   border: 0;
   box-shadow: none;
   border-radius: 0;
 }
-.locator-controls {
+.locator .locator-controls {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   width: 33.33323333%;
   z-index: 10;
-  border-left: 1px solid #464646;
-  box-shadow: -3px 0 3px rgba(0, 0, 0, 0.3);
+  border-left: 1px solid #BDBDBD;
+  box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
   background-color: #FFFFFF;
   overflow-y: scroll;
 }
-.locator-controls a {
+.locator .locator-controls a {
   color: #3366FF;
   text-decoration: none;
 }
-.locator-controls a:hover {
+.locator .locator-controls a:hover {
   text-decoration: underline;
 }
-.locator-controls header {
-  background-color: #212121;
+.locator .locator-controls header {
+  background-color: #343434;
   color: #FFFFFF;
-  font-size: 2em;
-  padding: 0.25em 0.5em;
+  font-size: 1.5em;
+  padding: 0.35em 0.75em;
   margin-bottom: 0.5em;
+  text-transform: uppercase;
 }
-.locator-controls footer {
+.locator .locator-controls footer {
   position: absolute;
   width: 100%;
   text-align: right;
@@ -84,22 +88,93 @@
   /* TODO: Make footer work */
   display: none;
 }
-.locator-input {
+.locator .locator-controls .locator-input {
   padding: 1em;
 }
-.config-option {
+.locator .locator-controls .config-option {
+  margin: 0 -1em 1em -1em;
+}
+.locator .locator-controls .config-action {
   margin-bottom: 1em;
 }
-.config-action {
-  margin-bottom: 1em;
+.locator .locator-controls label {
+  font-size: 0.85em;
+  color: #878787;
+  display: block;
+  margin-bottom: 0.25em;
 }
-.preview {
+.locator .locator-controls .config-option label {
+  padding-left: 1.15em;
+}
+.locator .locator-controls input,
+.locator .locator-controls select,
+.locator .locator-controls button {
+  display: block;
+  font-size: 1.25em;
+  padding: 0.5em 0.75em;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  color: #343434;
+}
+.locator .locator-controls input[type=text] {
+  width: 100%;
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid #878787;
+  border-bottom: 1px solid #878787;
+  background-color: #F1F1F1;
+}
+.locator .locator-controls select {
+  width: 90%;
+  margin: 0 auto;
+  background-color: #F1F1F1;
+  cursor: pointer;
+  border-radius: 0;
+}
+.locator .locator-controls input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+}
+.locator .locator-controls input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 0;
+  height: 1em;
+  width: 0.85em;
+  border-radius: 3px;
+  background: #343434;
+  cursor: pointer;
+  margin-top: -0.4em;
+}
+.locator .locator-controls input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 0.25em;
+  cursor: pointer;
+  background: #BDBDBD;
+}
+.locator .locator-controls .config-select {
+  position: relative;
+}
+.locator .locator-controls .config-select:after {
+  content: "▾";
+  position: absolute;
+  right: 9%;
+  bottom: 0.4em;
+  color: #878787;
+  font-size: 1.5em;
+}
+.locator .locator-controls button {
+  border: 0;
+  background-color: #3366FF;
+  color: #FFFFFF;
+}
+.locator .locator-controls .preview {
   display: none;
 }
-.preview img {
+.locator .locator-controls .preview img {
   max-width: 100%;
   margin-bottom: 0.5em;
 }
-.download-link {
+.locator .locator-controls .preview .download-link {
   font-size: 0.85em;
 }
