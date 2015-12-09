@@ -10,7 +10,12 @@
     <header>Locator</header>
 
     <div class="locator-input">
-      <h1>Locate</h1>
+      <h1>Marker</h1>
+
+      <div class="config-option">
+        <label>Label</label>
+        <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
+      </div>
 
       {{^options.geocoder}}
         <div class="config-option">
@@ -21,20 +26,12 @@
         </div>
       {{/options.geocoder}}
 
-
       {{#options.geocoder}}
         <div class="config-option">
-          <label>Geocode</label>
+          <label>Address</label>
           <input type="text" placeholder="Address or place" value="{{ geocodeInput }}" lazy disabled="{{ isGeocoding }}">
         </div>
       {{/options.geocoder}}
-
-      <h1>Marker</h1>
-
-      <div class="config-option">
-        <label>Label</label>
-        <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
-      </div>
 
       <h1>Settings</h1>
 

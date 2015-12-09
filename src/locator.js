@@ -10,6 +10,9 @@
   // Main contructor
   var Locator = function(options) {
     this.options = _.extend({}, {
+      // Template
+      template: "REPLACE-DEFAULT-TEMPLATE",
+
       // Main map
       tilesets: {
         "Mapbox Streets": "http://a.tiles.mapbox.com/v3/jkeefe.np44bm6o/{z}/{x}/{y}.png",
@@ -78,32 +81,12 @@
     // Make some options that won't change more accessible
     this.el = this.options.el;
 
-    // Get template
-    this.getTemplate(_.bind(function() {
-      this.drawInterface();
-    }, this));
+    // Build interface
+    this.drawInterface();
   };
 
   // Add methods and properties
   _.extend(Locator.prototype, {
-    // Get template.  For now, this just pulls in HTML, but should be
-    // embedded into build
-    getTemplate: function(done) {
-      var _this = this;
-      var httpRequest = new XMLHttpRequest();
-      var once = _.once(done);
-
-      httpRequest.onreadystatechange = function() {
-        if (httpRequest.status === 200 && httpRequest.responseText) {
-          _this.template = httpRequest.responseText;
-          once();
-        }
-      };
-
-      httpRequest.open("GET", "./app/locator.html.tpl");
-      httpRequest.send();
-    },
-
     // Make interface
     drawInterface: function() {
       // Place holder to work around object reference changes
@@ -112,7 +95,7 @@
       // Create ractive object
       this.interface = new Ractive({
         el: this.options.el,
-        template: this.template,
+        template: this.options.template,
         data: {
           options: this.options,
           isGeocoding: false,
