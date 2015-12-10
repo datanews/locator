@@ -1,0 +1,15 @@
+{
+  "name": "ractive-events-tap",
+  "homepage": "https://github.com/RactiveJS/Ractive-events-tap",
+  "version": "0.3.0",
+  "_release": "0.3.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.3.0",
+    "commit": "fb3e528755760d0a940c4fb5dd4fb1b819c503cc"
+  },
+  "_source": "git://github.com/RactiveJS/Ractive-events-tap.git",
+  "_target": "~0.3.0",
+  "_originalSource": "ractive-events-tap",
+  "_direct": true
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset='utf-8'>
+	<title>ractive-events-tap test suite</title>
+	<link rel='stylesheet' href='../node_modules/mocha/mocha.css'>
+</head>
+<body>
+	<div id='mocha'></div>
+
+	<script src='../node_modules/simulant/dist/simulant.js'></script>
+	<script src='../node_modules/ractive/ractive-legacy.js'></script>
+	<script src='../dist/ractive-events-tap.umd.js'></script>
+	<script src='../node_modules/mocha/mocha.js'></script>
+	<script src='../node_modules/chai/chai.js'></script>
+
+	<script>
+		var assert = chai.assert;
+
+		mocha.setup({
+			ui: 'bdd',
+			timeout: 200,
+			ignoreLeaks: true
+		});
+	</script>
+
+	<!-- load test modules -->
+	<script src='tests.js'></script>
+
+	<script>mocha.run();</script>
+</body>
+</html>
