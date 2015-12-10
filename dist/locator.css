@@ -19,6 +19,7 @@
   height: 100%;
   background-color: #F1F1F1;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 .locator * {
   box-sizing: border-box;
@@ -33,10 +34,19 @@
   width: 66.6665666%;
   height: 100%;
   z-index: 0;
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+}
+.locator.controls-closed .locator-display {
+  width: 100%;
 }
 .locator .locator-map-wrapper {
   width: 100%;
   padding: 2em;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 .locator .locator-map {
   width: 100%;
@@ -58,6 +68,9 @@
   height: 2.75em;
   background-color: #343434;
   box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+  cursor: pointer;
 }
 .locator .toggle-controls:after {
   content: "▾";
@@ -73,9 +86,15 @@
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
 }
-.locator .toggle-controls.closed:after {
+.locator.controls-closed .toggle-controls {
+  right: 0;
+}
+.locator.controls-closed .toggle-controls:after {
   -webkit-transform: rotate(90deg);
           transform: rotate(90deg);
+}
+.locator.controls-closed .locator-controls {
+  right: -35%;
 }
 .locator .locator-controls {
   position: absolute;
@@ -88,6 +107,8 @@
   box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
   background-color: #FFFFFF;
   overflow-y: scroll;
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
 }
 .locator .locator-controls a {
   color: #3366FF;

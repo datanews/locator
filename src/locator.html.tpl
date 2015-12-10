@@ -1,12 +1,12 @@
 
-<div class="locator">
+<div class="locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }}">
   <section class="locator-display">
     <div class="locator-map-wrapper">
       <div class="locator-map"></div>
     </div>
   </section>
 
-  <div class="toggle-controls"></div>
+  <div class="toggle-controls" on-tap="toggle:'noGenerate.controlsOpen'"></div>
 
   <section class="locator-controls">
     <header>Locator</header>

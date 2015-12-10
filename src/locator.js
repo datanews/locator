@@ -57,7 +57,7 @@
       markerLabelWidth: 3,
       markerPadding: 10,
 
-      // Interface
+      // Dimensions
       widths: {
         "400px": 400,
         "600px": 600,
@@ -70,6 +70,9 @@
         "16:9": 16 / 9
       },
       ratio: "4:3",
+
+      // Interface
+      controlsOpen: true,
 
       // Basic defalt geocoder with Google
       geocoder: this.defaultGeocoder
@@ -92,12 +95,18 @@
       // Place holder to work around object reference changes
       var oldReference = _.clone(this.options);
 
+      // Certain properties should not re-generate map but may be updated.
+      var noGenerate = {
+        controlsOpen: this.options.controlsOpen
+      };
+
       // Create ractive object
       this.interface = new Ractive({
         el: this.options.el,
         template: this.options.template,
         data: {
           options: this.options,
+          noGenerate: noGenerate,
           isGeocoding: false,
           geocodeInput: "",
           _: _
@@ -135,6 +144,11 @@
           }, this));
         }
       }, this), { init: false });
+
+      // General toggle event functions
+      this.interface.on("toggle", function(e, property) {
+        this.set(property, !this.get(property));
+      });
 
       // Initialize map parts
       this.drawMaps();
