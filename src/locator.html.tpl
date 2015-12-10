@@ -6,6 +6,8 @@
     </div>
   </section>
 
+  <div class="toggle-controls"></div>
+
   <section class="locator-controls">
     <header>Locator</header>
 

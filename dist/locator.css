@@ -49,6 +49,34 @@
   box-shadow: none;
   border-radius: 0;
 }
+.locator .toggle-controls {
+  z-index: 9999;
+  position: absolute;
+  top: 0;
+  right: 33.2%;
+  width: 1.75em;
+  height: 2.75em;
+  background-color: #343434;
+  box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
+}
+.locator .toggle-controls:after {
+  content: "▾";
+  position: absolute;
+  top: 0;
+  left: 0;
+  line-height: 1.57142857em;
+  font-size: 1.75em;
+  margin-left: 0.25em;
+  color: #878787;
+  -webkit-transform: rotate(-90deg);
+          transform: rotate(-90deg);
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+}
+.locator .toggle-controls.closed:after {
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+}
 .locator .locator-controls {
   position: absolute;
   top: 0;
@@ -132,6 +160,17 @@
   cursor: pointer;
   border-radius: 0;
 }
+.locator .locator-controls .config-select {
+  position: relative;
+}
+.locator .locator-controls .config-select:after {
+  content: "▾";
+  position: absolute;
+  right: 9%;
+  bottom: 0.4em;
+  color: #878787;
+  font-size: 1.5em;
+}
 .locator .locator-controls input[type=range] {
   -webkit-appearance: none;
   width: 100%;
@@ -152,21 +191,13 @@
   cursor: pointer;
   background: #BDBDBD;
 }
-.locator .locator-controls .config-select {
-  position: relative;
-}
-.locator .locator-controls .config-select:after {
-  content: "▾";
-  position: absolute;
-  right: 9%;
-  bottom: 0.4em;
-  color: #878787;
-  font-size: 1.5em;
-}
 .locator .locator-controls button {
   border: 0;
   background-color: #3366FF;
   color: #FFFFFF;
+}
+.locator .locator-controls button:hover {
+  background-color: #0039e5;
 }
 .locator .locator-controls .preview {
   display: none;
