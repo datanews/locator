@@ -23,6 +23,7 @@
     "leaflet-minimap": "~3.0.0",
     "html2canvas": "~0.4.1",
     "ractive": "~0.7.3",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "ractive-events-tap": "~0.3.0"
   }
 }

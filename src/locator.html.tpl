@@ -1,46 +1,45 @@
 
-<div class="locator">
+<div class="locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }}">
   <section class="locator-display">
     <div class="locator-map-wrapper">
       <div class="locator-map"></div>
+
+      <div class="locator-map-help">
+        Move the marker by dragging the base.
+      </div>
     </div>
   </section>
+
+  <div class="toggle-controls" on-tap="toggle:'noGenerate.controlsOpen'"></div>
 
   <section class="locator-controls">
     <header>Locator</header>
 
     <div class="locator-input">
-      <h1>Locate</h1>
+      <div class="config-option">
+        <label>Marker label</label>
+        <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
+      </div>
 
       {{^options.geocoder}}
         <div class="config-option">
-          <label>Latitude and longitude</label>
+          <label>Latitude and longitude location</label>
 
           <br><input type="number" placeholder="Latitude" value="{{ options.lat }}" lazy>
           <br><input type="number" placeholder="Longitude" value="{{ options.lng }}" lazy>
         </div>
       {{/options.geocoder}}
 
-
       {{#options.geocoder}}
         <div class="config-option">
-          <label>Geocode</label>
+          <label>Search location by address</label>
           <input type="text" placeholder="Address or place" value="{{ geocodeInput }}" lazy disabled="{{ isGeocoding }}">
         </div>
       {{/options.geocoder}}
 
-      <h1>Marker</h1>
-
-      <div class="config-option">
-        <label>Label</label>
-        <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
-      </div>
-
-      <h1>Settings</h1>
-
       {{#(_.size(options.tilesets))}}
-        <div class="config-option">
-          <label>Tiles</label>
+        <div class="config-option config-select">
+          <label>Background map set</label>
 
           <select value="{{ options.tileset }}">
             {{#options.tilesets:i}}
@@ -51,8 +50,8 @@
       {{/()}}
 
       {{#(_.size(options.widths))}}
-        <div class="config-option">
-          <label>Width</label>
+        <div class="config-option config-select">
+          <label>Map width</label>
 
           <select value="{{ options.width }}">
             {{#options.widths:i}}
@@ -63,8 +62,8 @@
       {{/()}}
 
       {{#(_.size(options.ratios))}}
-        <div class="config-option">
-          <label>Ratio</label>
+        <div class="config-option config-select">
+          <label>Map aspect ratio</label>
 
           <select value="{{ options.ratio }}">
             {{#options.ratios:i}}

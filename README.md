@@ -2,6 +2,14 @@
 
 Map locator image generator (needs better name)
 
+## Build
+
+Build is managed with [Gulp](http://gulpjs.com/).
+
+1. Install dependencies with `npm install gulp -g && npm install`.
+1. `gulp`: This command will do the default build which combines, lints, etc files from the `src` directory into the `dist` directory.
+1. `gulp server`: This starts a webserver for development and watches for changes in the code.
+
 ## Project page
 
 The main project page is hosted on Github Pages through this repository.

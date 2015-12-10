@@ -1,0 +1,38 @@
+{
+  "name": "locator",
+  "version": "0.0.1",
+  "description": "In browser locator map generator",
+  "main": "dist/locator.js",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-header": "^1.7.1",
+    "gulp-jscs": "^3.0.2",
+    "gulp-jshint": "^2.0.0",
+    "gulp-less": "^3.0.5",
+    "gulp-minify-css": "^1.2.2",
+    "gulp-plumber": "^1.0.1",
+    "gulp-recess": "^1.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-uglify": "^1.5.1",
+    "gulp-util": "^3.0.7",
+    "gulp-webserver": "^0.9.1",
+    "jshint": "^2.8.0",
+    "jshint-stylish": "^2.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/datanews/locator.git"
+  },
+  "author": "Alan Palazzolo <apalazzolo@wync.org>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/datanews/locator/issues"
+  },
+  "homepage": "https://github.com/datanews/locator#readme"
+}
