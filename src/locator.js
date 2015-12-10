@@ -15,10 +15,23 @@
 
       // Main map
       tilesets: {
-        "Mapbox Streets": "http://a.tiles.mapbox.com/v3/jkeefe.np44bm6o/{z}/{x}/{y}.png",
-        "Stamen Toner": "http://tile.stamen.com/toner/{z}/{x}/{y}.png"
+        "CartoDB Positron": {
+          url: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+          attribution: "&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>"
+        },
+        "Stamen Toner": {
+          url: "http://tile.stamen.com/toner/{z}/{x}/{y}.png",
+          attribution: "Map tiles by <a href=\"http://stamen.com\">Stamen Design</a>, under <a href=\"http://creativecommons.org/licenses/by/3.0\">CC BY 3.0</a>. Data by <a href=\"http://openstreetmap.org\">OpenStreetMap</a>, under <a href=\"http://www.openstreetmap.org/copyright\">ODbL</a>"
+        },
+        "Mapbox Streets": {
+          url: "https://api.mapbox.com/v4/jkeefe.np44bm6o/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
+          attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+        }
+
+        // Example of just url
+        //"Stamen Toner": "http://tile.stamen.com/toner/{z}/{x}/{y}.png"
       },
-      tileset: "Mapbox Streets",
+      tileset: "CartoDB Positron",
       zoom: 17,
       lat: 40.74844,
       lng: -73.98566,
@@ -83,6 +96,10 @@
 
     // Make some options that won't change more accessible
     this.el = this.options.el;
+
+    // Tilesets can be just a URL, or an object with a URL and
+    // preview
+    this.options.tilesets = this.parseTilesets(this.options.tilesets);
 
     // Build interface
     this.drawInterface();
@@ -150,6 +167,11 @@
         this.set(property, !this.get(property));
       });
 
+      // General set event functions
+      this.interface.on("set", function(e, property, value) {
+        this.set(property, value);
+      });
+
       // Initialize map parts
       this.drawMaps();
     },
@@ -204,7 +226,7 @@
       this.map.setView([view[0], view[1]], view[2]);
 
       // Tile layer
-      this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset]);
+      this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
       this.map.addLayer(this.mapLayer);
     },
 
@@ -226,7 +248,7 @@
         +this.options.miniHeight.replace("h", "") / 100 * h;
 
       // Create layer for minimap
-      this.minimapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset]);
+      this.minimapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
 
       // Create control
       this.miniMap = new L.Control.MiniMap(this.minimapLayer, {
@@ -580,6 +602,29 @@
 
       httpRequest.open("GET", url);
       httpRequest.send();
+    },
+
+    // Standarize tileset options
+    parseTilesets: function(tilesets) {
+      _.each(tilesets, function(t, ti) {
+        // Make into object
+        if (_.isString(t)) {
+          tilesets[ti] = {
+            url: t
+          };
+        }
+
+        // Check for preview
+        if (!tilesets[ti].preview) {
+          // Pick a fairly arbitrary tile to use
+          tilesets[ti].preview = tilesets[ti].url.replace("{s}", "a")
+            .replace("{x}", "301")
+            .replace("{y}", "385")
+            .replace("{z}", "10");
+        }
+      });
+
+      return tilesets;
     }
   });
 

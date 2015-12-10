@@ -6,6 +6,10 @@
 
       <div class="locator-map-help">
         Move the marker by dragging the base.
+        {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}
+          Required attribution for this map:
+          <span class="attribution">{{{ options.tilesets[options.tileset].attribution }}}</span>
+        {{/()}}
       </div>
     </div>
   </section>
@@ -38,14 +42,14 @@
       {{/options.geocoder}}
 
       {{#(_.size(options.tilesets))}}
-        <div class="config-option config-select">
+        <div class="config-option">
           <label>Background map set</label>
 
-          <select value="{{ options.tileset }}">
+          <div class="image-picker images-{{ _.size(options.tilesets) }}">
             {{#options.tilesets:i}}
-              <option value="{{ i }}">{{ i }}</option>
+              <div class="image-picker-item {{ (options.tileset === i) ? 'active' : '' }}" style="background-image: url({{= preview }});" title="{{ i }}" on-tap="set:'options.tileset',{{ i }}"></div>
             {{/options.tilesets}}
-          </select>
+          </div>
         </div>
       {{/()}}
 
