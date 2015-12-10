@@ -17,7 +17,7 @@
   var Locator = function(options) {
     this.options = _.extend({}, {
       // Template
-      template: " <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-map\"></div>  </div>  </section>   <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   <section class=\"locator-controls\">  <header>Locator</header>   <div class=\"locator-input\">  <div class=\"config-option\">  <label>Marker label</label>  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ options.markerText }}\" lazy>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   {{#(_.size(options.tilesets))}}  <div class=\"config-option config-select\">  <label>Background map set</label>   <select value=\"{{ options.tileset }}\">  {{#options.tilesets:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.tilesets}}  </select>  </div>  {{/()}}   {{#(_.size(options.widths))}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios))}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>   <div class=\"config-action\">  <button class=\"generate-image\" on-click=\"generate\">Generate</button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  <p>Made by WNYC</p>  </footer>  </section> </div> ",
+      template: " <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-map\"></div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  </div>  </div>  </section>   <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   <section class=\"locator-controls\">  <header>Locator</header>   <div class=\"locator-input\">  <div class=\"config-option\">  <label>Marker label</label>  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ options.markerText }}\" lazy>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   {{#(_.size(options.tilesets))}}  <div class=\"config-option config-select\">  <label>Background map set</label>   <select value=\"{{ options.tileset }}\">  {{#options.tilesets:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.tilesets}}  </select>  </div>  {{/()}}   {{#(_.size(options.widths))}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios))}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>   <div class=\"config-action\">  <button class=\"generate-image\" on-click=\"generate\">Generate</button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  <p>Made by WNYC</p>  </footer>  </section> </div> ",
 
       // Main map
       tilesets: {
@@ -308,9 +308,43 @@
 
     // Draw marker layer
     drawMarker: function() {
+      // Remove existing layer if there
+      if (this.markerCanvas && this.map) {
+        this.map.removeLayer(this.markerCanvas);
+      }
+
+      // Set up canvas layer
       this.markerCanvas = L.tileLayer.canvas();
       this.markerCanvas.drawTile = _.bind(this.drawMarkerTile, this);
       this.markerCanvas.addTo(this.map);
+
+      // Make marker draggable via an invisble marker, remove first
+      if (this.draggableMarker && this.map) {
+        this.map.removeLayer(this.draggableMarker);
+      }
+
+      this.draggableMarker = L.marker(L.latLng(this.options.lat, this.options.lng), {
+        radius: 10,
+        draggable: true,
+        opacity: 0,
+        title: "Drag marker here"
+      }).addTo(this.map);
+
+      // Start dragging
+      this.draggableMarker.on("dragstart", function(e) {
+        e.target.setOpacity(1);
+      });
+
+      // Start dragging
+      this.draggableMarker.on("dragend", _.bind(function(e) {
+        e.target.setOpacity(0);
+
+        // Set lat, lng
+        var l = e.target.getLatLng();
+        this.options.lat = l.lat;
+        this.options.lng = l.lng;
+        this.drawMarker();
+      }, this));
     },
 
     // Marker layer draw handler

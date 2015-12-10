@@ -59,6 +59,12 @@
   box-shadow: none;
   border-radius: 0;
 }
+.locator .locator-map-help {
+  text-align: center;
+  font-size: 0.85em;
+  padding-top: 0.5em;
+  color: #878787;
+}
 .locator .toggle-controls {
   z-index: 9999;
   position: absolute;

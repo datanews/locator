@@ -302,9 +302,43 @@
 
     // Draw marker layer
     drawMarker: function() {
+      // Remove existing layer if there
+      if (this.markerCanvas && this.map) {
+        this.map.removeLayer(this.markerCanvas);
+      }
+
+      // Set up canvas layer
       this.markerCanvas = L.tileLayer.canvas();
       this.markerCanvas.drawTile = _.bind(this.drawMarkerTile, this);
       this.markerCanvas.addTo(this.map);
+
+      // Make marker draggable via an invisble marker, remove first
+      if (this.draggableMarker && this.map) {
+        this.map.removeLayer(this.draggableMarker);
+      }
+
+      this.draggableMarker = L.marker(L.latLng(this.options.lat, this.options.lng), {
+        radius: 10,
+        draggable: true,
+        opacity: 0,
+        title: "Drag marker here"
+      }).addTo(this.map);
+
+      // Start dragging
+      this.draggableMarker.on("dragstart", function(e) {
+        e.target.setOpacity(1);
+      });
+
+      // Start dragging
+      this.draggableMarker.on("dragend", _.bind(function(e) {
+        e.target.setOpacity(0);
+
+        // Set lat, lng
+        var l = e.target.getLatLng();
+        this.options.lat = l.lat;
+        this.options.lng = l.lng;
+        this.drawMarker();
+      }, this));
     },
 
     // Marker layer draw handler

@@ -3,6 +3,10 @@
   <section class="locator-display">
     <div class="locator-map-wrapper">
       <div class="locator-map"></div>
+
+      <div class="locator-map-help">
+        Move the marker by dragging the base.
+      </div>
     </div>
   </section>
 
