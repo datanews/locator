@@ -2948,6 +2948,15 @@ _html2canvas.Renderer.Canvas = function(options) {
       markerLabelWidth: 3,
       markerPadding: 10,
 
+      // Draggable marker.  For URI, See src/images and generated at
+      // http://dopiaza.org/tools/datauri/index.php
+      draggableMarker: L.icon({
+        iconUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wwLFSU1meAbBQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACOUlEQVR42u3bP0sjQRjH8W8S/wYVFEFR1LOxMaSxsrKQlPcaBH1bCvcSvMrCQhAsbE5FwcZ/hVUQQcQ7CLheMSPYqjOzzyS/DyzpdnZ/u5k8s/sERERERERERERERERERERERERERERExJCKkeOoA7PAFDANjABjQD/QAZ791vbbPfDS6wH2AfPAug/rsx6AI+AWeO2lAKtAA2gF3Oc+cAEU3R7gOLAZad9vwC/gsVsDbAHNBONcA7vdFuAGMJnwYj0B2ykGqiUYYwuYSDxVDPl59iT3ADdKCO/dIPADOM81wBawWHKZNuqDvItZUsT6tW1iwwowl1OA1Yilylf9zCnAhsEl6zCwlkOAfYFXGCE1cwhwHrsGYoQYOsB1bFu1HGCdrz1VSaluOcBZ7KsCC1YDnCIPy1YDnM4kwCWrAY7Qg0IGONaD5xx0Z/2ZBFixGmAnkwDfrAb4nEmAhQLs0juwnUmAVwrwey6tBnifyfx3YzXAF1y7hWV/TReVuF4Vy46tB3hrOLwOcGo9wFdco49FZ+bXhd5F6ForgH/AYS4BFrguKUv2Yu041ov1R1yXlAV/Ys7N1YgHvovrkipTGziIOUAtwdVv4PpTypj3dmIPkqK97QTXJTWa+M7bSTFQLdEJnfu7cCbRnPc71ZVK3SM9h2v0GY70ld1LXcyX9TeHNVybxUCgFcZZrDrPaoDvmrh2i/onK4LCPxg4jrE8yynAjxZwL72XPpRYFb+qKfznFe553g0iAvwHgeJXccwK1poAAAAASUVORK5CYII=",
+        iconSize:     [80, 80],
+        iconAnchor:   [40, 55],
+        popupAnchor:  [-75, 0]
+      }),
+
       // Dimensions
       widths: {
         "400px": 400,
@@ -3218,7 +3227,7 @@ _html2canvas.Renderer.Canvas = function(options) {
       }
 
       this.draggableMarker = L.marker(L.latLng(this.options.lat, this.options.lng), {
-        radius: 10,
+        icon: this.options.draggableMarker,
         draggable: true,
         opacity: 0,
         title: "Drag marker here"
