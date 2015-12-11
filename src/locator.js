@@ -527,16 +527,17 @@
     // Preview
     preview: function(mapCtx) {
       this.getEl(".preview img").src = mapCtx.canvas.toDataURL();
-      this.getEl(".preview").style.display = "block";
+
+      // Uncomment for some more debugging
+      //this.getEl(".preview").style.display = "block";
     },
 
     // Export/download.  TODO: use marker text for name
     export: function(mapCtx) {
       var download = this.getEl(".download-link");
       download.href = mapCtx.canvas.toDataURL();
-      download.download = _.uniqueId("locator_image-") + ".png";
-
-      //download.click();
+      download.download = this.makeID(this.options.markerText) + ".png";
+      download.click();
     },
 
     // Get element from query selector relative to locator
@@ -625,6 +626,14 @@
       });
 
       return tilesets;
+    },
+
+    // Create a slug/id
+    makeID: function(input) {
+      input = input.toString();
+      input = input.toLowerCase().trim().replace(/\W+/g, "-");
+      input = input ? input : "locator";
+      return _.uniqueId(input + "-");
     }
   });
 
