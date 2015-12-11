@@ -21,4 +21,13 @@ We want to include the Bower dependencies in this branch, so this is a helpful c
 
 ## Notes
 
+* https://github.com/datadesk/print-map-maker
 * http://bl.ocks.org/sumbera/11114288
+
+## Hacks
+
+This project is pushing the limits of browsers and the consistency of their rendering and APIs.  This means we have to hack some libraries to make work; these are stored in `libs`;
+
+* [html2canvas](https://github.com/niklasvh/html2canvas) has been altered to Make the canvas dimensions integers which alleviates some blurring issues.  In function: `Util.Bounds`
+    * [Relevant issue](https://github.com/niklasvh/html2canvas/issues/576).
+    * No pull request was created because it is unsure if this is actually the best way to fix this issue.

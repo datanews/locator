@@ -14,6 +14,7 @@ var plumber = require("gulp-plumber");
 var replace = require("gulp-replace");
 var util = require("gulp-util");
 var header = require("gulp-header");
+var concat = require("gulp-concat");
 var uglify = require("gulp-uglify");
 var rename = require("gulp-rename");
 var less = require("gulp-less");
@@ -29,6 +30,7 @@ var banner = ["/**",
   " * @version v<%= pkg.version %>",
   " * @link <%= pkg.homepage %>",
   " * @license <%= pkg.license %>",
+  " * @notes External libraries may be bundled here and their respective, original license applies.",
   " */",
   ""].join("\n");
 
@@ -57,10 +59,20 @@ gulp.task("support-js", function() {
     .pipe(jscs());
 });
 
-// Main JS task.  Takes in files from src and outputs
-// to dist.  Gets template and uses JSHint, JSCS, add header, minify
-gulp.task("js", function() {
+// Linting and related tasks
+gulp.task("js-linting", function() {
   return gulp.src("src/**/*.js")
+    .pipe(plumber(plumberHandler))
+    .pipe(jshint())
+    .pipe(jshint.reporter("jshint-stylish"))
+    .pipe(jshint.reporter("fail"))
+    .pipe(jscs());
+});
+
+// Main JS task.  Takes in files from src and outputs
+// to dist.  Gets template and add header, concats, minify
+gulp.task("js", ["js-linting"], function() {
+  return gulp.src(["libs/*.js", "src/**/*.js"])
     .pipe(plumber(plumberHandler))
     .pipe(replace(
       "REPLACE-DEFAULT-TEMPLATE",
@@ -68,12 +80,11 @@ gulp.task("js", function() {
         encoding: "utf-8"
       }).replace(/"/g, "\\\"").replace(/(\r\n|\n|\r|\s+)/g, " ")
     ))
-    .pipe(jshint())
-    .pipe(jshint.reporter("jshint-stylish"))
-    .pipe(jshint.reporter("fail"))
-    .pipe(jscs())
+    .pipe(concat("locator.js"))
     .pipe(header(banner, { pkg: pkg }))
     .pipe(gulp.dest("dist"))
+
+    // Create minified version
     .pipe(uglify())
     .pipe(header(banner, { pkg: pkg }))
     .pipe(rename({
