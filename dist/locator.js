@@ -3249,24 +3249,6 @@ _html2canvas.Renderer.Canvas = function(options) {
       var textWidth;
       var labelWidth;
 
-      // Some hackery to get Chrome to scale correctly on hi density screens
-      // http://www.html5rocks.com/en/tutorials/canvas/hidpi/
-      var devicePixelRatio = window.devicePixelRatio || 1;
-      var backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
-        ctx.mozBackingStorePixelRatio ||
-        ctx.msBackingStorePixelRatio ||
-        ctx.oBackingStorePixelRatio ||
-        ctx.backingStorePixelRatio || 1;
-      var ratio = devicePixelRatio / backingStoreRatio;
-      var oldWidth = canvas.width;
-      var oldHeight = canvas.height;
-      ratio = 2;
-      canvas.width = oldWidth * ratio;
-      canvas.height = oldHeight * ratio;
-      canvas.style.width = oldWidth + "px";
-      canvas.style.height = oldHeight + "px";
-      ctx.scale(ratio, ratio);
-
       // Clear out tile
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
