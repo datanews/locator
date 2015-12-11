@@ -97,7 +97,20 @@
       controlsOpen: true,
 
       // Basic defalt geocoder with Google
-      geocoder: this.defaultGeocoder
+      geocoder: this.defaultGeocoder,
+
+      // Use this hook to change options with each re-draw
+      /*
+      preDraw: function(options) {
+        // Update marker color on darker tileset
+        if (options.tileset === "Stamen Toner") {
+          options.markerBackground = "rgba(51, 102, 255, 1)";
+        }
+        else {
+          options.markerBackground = "rgba(0, 0, 0, 0.9)";
+        }
+      }
+      */
     }, options);
 
     // Generate a unique id
@@ -150,6 +163,8 @@
 
       // Handle general config updates
       this.interface.observe("options", _.bind(function(options) {
+        // TODO: Recenter should only happen if the lat, lng is outside
+        // the current map view.
         var recenter = (options.lat !== oldReference.lat ||
           options.lng !== oldReference.lng);
 
@@ -187,9 +202,17 @@
 
     // Draw map parts
     drawMaps: function(recenter) {
+      this.alterOptions("preDraw");
       this.drawMap(recenter);
       this.drawMarker();
       this.drawMinimap();
+    },
+
+    // Alter options with custom function
+    alterOptions: function(property) {
+      if (_.isFunction(this.options[property])) {
+        _.bind(this.options[property], this)(this.options);
+      }
     },
 
     // Make main map
