@@ -1,4 +1,6 @@
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
 <div class="locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }}">
   <section class="locator-display">
     <div class="locator-map-wrapper">
@@ -14,9 +16,13 @@
     </div>
   </section>
 
-  <div class="toggle-controls" on-tap="toggle:'noGenerate.controlsOpen'"></div>
 
   <section class="locator-controls">
+    <div class="minor-controls">
+      <div class="toggle-controls" on-tap="toggle:'noGenerate.controlsOpen'"></div>
+      <div class="minor-generate"  on-tap="generate"><i class="fa fa-download"></i></div>
+    </div>
+
     <header>Locator</header>
 
     <div class="locator-input">
@@ -84,7 +90,7 @@
       </div>
 
       <div class="config-action">
-        <button class="generate-image" on-click="generate">Generate</button>
+        <button class="generate-image" on-tap="generate">Generate <i class="fa fa-download"></i></button>
       </div>
 
       <div class="preview">

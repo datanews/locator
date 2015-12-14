@@ -92,16 +92,19 @@
     }
   }
 
-  // Control toggler
-  .toggle-controls {
+  // Minor controls (control toggler)
+  .minor-controls {
     z-index: 9999;
     position: absolute;
     top: 0;
-    right: 33.2%;
-    width: 1.75em;
+    left: -2em;
+    box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .toggle-controls {
+    width: 2em;
     height: 2.75em;
     background-color: @dark-grey;
-    box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
     transition: 0.5s ease-in-out;
     cursor: pointer;
 
@@ -127,9 +130,25 @@
     }
   }
 
+  .minor-generate {
+    width: 2em;
+    height: 0;
+    background-color: @blue;
+    color: @white;
+    transition: 0.5s ease-in-out;
+    cursor: pointer;
+    line-height: 2.75em;
+    text-align: center;
+    overflow-y: hidden;
+  }
+
+  &.controls-closed .minor-generate {
+    height: 2.75em;
+  }
+
   // Controls
   &.controls-closed .locator-controls {
-    right: -35%;
+    right: -33.4%;
   }
 
   .locator-controls {
@@ -142,7 +161,7 @@
     border-left: 1px solid @light-grey;
     box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
     background-color: @white;
-    overflow-y: scroll;
+    //overflow-y: scroll;
     transition: 0.5s ease-in-out;
 
     a {
