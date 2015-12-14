@@ -13,6 +13,8 @@
 @blue: #3366FF;
 @orange: #F5B800;
 
+@down-arrow: "\f107";
+
 
 // Wrap all so its a bit more specific and maybe it will be embedded in
 // a page
@@ -109,7 +111,8 @@
     cursor: pointer;
 
     &:after {
-      content: "▾";
+      font-family: FontAwesome;
+      content: @down-arrow;
       position: absolute;
       top: 0;
       left: 0;
@@ -253,7 +256,8 @@
       position: relative;
 
       &:after {
-        content: "▾";
+        font-family: FontAwesome;
+        content: @down-arrow;
         position: absolute;
         right: 9%;
         bottom: 0.4em;

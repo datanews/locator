@@ -89,7 +89,8 @@
   cursor: pointer;
 }
 .locator .toggle-controls:after {
-  content: "▾";
+  font-family: FontAwesome;
+  content: "\f107";
   position: absolute;
   top: 0;
   left: 0;
@@ -215,7 +216,8 @@
   position: relative;
 }
 .locator .locator-controls .config-select:after {
-  content: "▾";
+  font-family: FontAwesome;
+  content: "\f107";
   position: absolute;
   right: 9%;
   bottom: 0.4em;
