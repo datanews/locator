@@ -37,17 +37,25 @@
   z-index: 0;
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
+  overflow: scroll;
 }
 .locator.controls-closed .locator-display {
   width: 100%;
 }
 .locator .locator-map-wrapper {
   width: 100%;
-  padding: 2em;
   position: relative;
   top: 50%;
   -webkit-transform: translateY(-50%);
-  transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+.locator .overflowed-y .locator-map-wrapper {
+  top: 0;
+  -webkit-transform: translateY(0);
+          transform: translateY(0);
+}
+.locator .locator-display-inner {
+  padding: 1em;
 }
 .locator .locator-map {
   width: 100%;
@@ -65,6 +73,8 @@
   font-size: 0.85em;
   padding-top: 0.5em;
   color: #878787;
+  max-width: 75%;
+  margin: 0 auto;
 }
 .locator .locator-map-help a {
   color: #343434;
@@ -73,21 +83,24 @@
 .locator .locator-map-help .attribution {
   font-style: italic;
 }
-.locator .toggle-controls {
+.locator .minor-controls {
   z-index: 9999;
   position: absolute;
   top: 0;
-  right: 33.2%;
-  width: 1.75em;
+  left: -2em;
+  box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
+}
+.locator .minor-controls .toggle-controls {
+  width: 2em;
   height: 2.75em;
   background-color: #343434;
-  box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
   cursor: pointer;
 }
-.locator .toggle-controls:after {
-  content: "▾";
+.locator .minor-controls .toggle-controls:after {
+  font-family: FontAwesome;
+  content: "\f107";
   position: absolute;
   top: 0;
   left: 0;
@@ -100,6 +113,32 @@
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
 }
+.locator .minor-controls .minor-button {
+  font-size: 1em;
+  padding: 0;
+  width: 2em;
+  height: 0;
+  background-color: #F5B800;
+  color: #FFFFFF;
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+  cursor: pointer;
+  line-height: 2.75em;
+  text-align: center;
+  overflow-y: hidden;
+}
+.locator .minor-controls .minor-button:hover {
+  background-color: #a97f00;
+}
+.locator .minor-controls .minor-button.minor-generate {
+  background-color: #3366FF;
+}
+.locator .minor-controls .minor-button.minor-generate:hover {
+  background-color: #0039e5;
+}
+.locator.controls-closed .minor-button {
+  height: 2.75em;
+}
 .locator.controls-closed .toggle-controls {
   right: 0;
 }
@@ -108,7 +147,11 @@
           transform: rotate(90deg);
 }
 .locator.controls-closed .locator-controls {
-  right: -35%;
+  right: -33.4%;
+}
+.locator .locator-controls-wrapper {
+  height: 100%;
+  overflow-y: scroll;
 }
 .locator .locator-controls {
   position: absolute;
@@ -120,7 +163,6 @@
   border-left: 1px solid #BDBDBD;
   box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
   background-color: #FFFFFF;
-  overflow-y: scroll;
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
 }
@@ -199,7 +241,8 @@
   position: relative;
 }
 .locator .locator-controls .config-select:after {
-  content: "▾";
+  font-family: FontAwesome;
+  content: "\f107";
   position: absolute;
   right: 9%;
   bottom: 0.4em;
@@ -256,6 +299,24 @@
   width: 44.9%;
   margin-right: 4%;
   height: 5em;
+}
+.locator .locator-controls .config-button {
+  padding: 0 1em;
+}
+.locator .locator-controls .config-button label {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+.locator .locator-controls .config-button button {
+  display: inline-block;
+  font-size: 1em;
+  padding: 0.25em 0.5em;
+  background-color: #F5B800;
+  color: #FFFFFF;
+}
+.locator .locator-controls .config-button button:hover {
+  background-color: #a97f00;
 }
 .locator .locator-controls button {
   border: 0;

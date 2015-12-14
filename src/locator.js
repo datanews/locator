@@ -13,6 +13,9 @@
       // Template
       template: "REPLACE-DEFAULT-TEMPLATE",
 
+      // Title
+      title: "Locator",
+
       // Main map
       tilesets: {
         "CartoDB Positron": {
@@ -81,11 +84,11 @@
 
       // Dimensions
       widths: {
-        "400px": 400,
-        "600px": 600,
-        "800px": 800,
+        Small: 400,
+        Medium: 600,
+        Large: 800,
       },
-      width: "600px",
+      width: "Medium",
       ratios: {
         "1:1": 1 / 1,
         "4:3": 4 / 3,
@@ -95,6 +98,8 @@
 
       // Interface
       controlsOpen: true,
+      centerToMarker: true,
+      markerToCenter: true,
 
       // Basic defalt geocoder with Google
       geocoder: this.defaultGeocoder,
@@ -196,6 +201,19 @@
         this.set(property, value);
       });
 
+      // Move marker to center of map
+      this.interface.on("marker-to-center", _.bind(function() {
+        var center = this.map.getCenter();
+        this.options.lat = center.lat;
+        this.options.lng = center.lng;
+        this.interface.update();
+      }, this));
+
+      // Center map around marker
+      this.interface.on("center-to-marker", _.bind(function() {
+        this.map.setView([this.options.lat, this.options.lng]);
+      }, this));
+
       // Initialize map parts
       this.drawMaps();
     },
@@ -206,6 +224,9 @@
       this.drawMap(recenter);
       this.drawMarker();
       this.drawMinimap();
+
+      // Some style fixes
+      this.fixMapVerticalAlign();
     },
 
     // Alter options with custom function
@@ -398,10 +419,20 @@
     // Marker layer draw handler
     drawMarkerTile: function(canvas, tilePoint, zoom) {
       var ctx = canvas.getContext("2d");
-      var labelHeight = (this.options.markerFontSize * 0.75) + (this.options.markerPadding * 2);
       var placement;
       var textWidth;
       var labelWidth;
+
+      // Handle line breaks in text
+      var text = this.options.markerText.split("<br>");
+      text = _.map(text, function(t) {
+        return t.trim();
+      });
+
+      // Determine lines values
+      var lines = text.length;
+      var lineHeight = 1.25;
+      var labelHeight = ((this.options.markerFontSize * lineHeight) * lines) + (this.options.markerPadding * 2);
 
       // Clear out tile
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -430,24 +461,25 @@
 
         // Draw point on location
         ctx.beginPath();
+        ctx.translate(placement.x - this.options.markerRadius, placement.y - this.options.markerRadius);
         ctx.fillStyle = this.options.markerBackground;
-        ctx.fillRect(
-          placement.x - this.options.markerRadius,
-          placement.y - this.options.markerRadius,
+        ctx.fillRect(0, 0,
           this.options.markerRadius * 2,
           this.options.markerRadius * 2
         );
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
         // Label connection line
         ctx.beginPath();
+        ctx.translate(placement.x - (this.options.markerLabelWidth / 2),
+          placement.y - this.options.markerRadius - this.options.markerLabelDistance);
         ctx.fillStyle = this.options.markerBackground;
-        ctx.fillRect(
-          placement.x - (this.options.markerLabelWidth / 2),
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance,
+        ctx.fillRect(0, 0,
           this.options.markerLabelWidth,
           this.options.markerLabelDistance
         );
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
         // Determine width of text
@@ -455,28 +487,45 @@
         ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
         ctx.fillStyle = this.options.markerForeground;
         ctx.textAlign = "center";
-        textWidth = ctx.measureText(this.options.markerText).width;
+
+        // Get the width of the longest text
+        textWidth = _.max(text, function(t) {
+          return ctx.measureText(t).width;
+        });
+
+        textWidth = ctx.measureText(textWidth).width;
         labelWidth = textWidth + this.options.markerPadding * 2;
         ctx.closePath();
 
         // Make label rectangle
         ctx.beginPath();
+        ctx.translate(placement.x - (labelWidth / 2),
+          placement.y - this.options.markerRadius - this.options.markerLabelDistance - labelHeight);
         ctx.fillStyle = this.options.markerBackground;
-        ctx.fillRect(
-          placement.x - (labelWidth / 2),
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance - labelHeight,
-          labelWidth, labelHeight);
+        ctx.fillRect(0, 0, labelWidth, labelHeight);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
-        // Add label
-        ctx.beginPath();
-        ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
-        ctx.fillStyle = this.options.markerForeground;
-        ctx.textAlign = "center";
-        ctx.fillText(this.options.markerText,
-          placement.x,
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance - this.options.markerPadding);
-        ctx.closePath();
+        // Add label(s)
+        _.each(text, _.bind(function(t, ti) {
+          // There's a tad extra space at bottom of text
+          var offset = 1;
+
+          ctx.beginPath();
+          ctx.translate(placement.x,
+            placement.y - this.options.markerRadius - this.options.markerLabelDistance -
+            labelHeight + this.options.markerPadding + offset +
+            ((this.options.markerFontSize * lineHeight) * (ti)));
+
+          ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
+          ctx.fillStyle = this.options.markerForeground;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText(t, 0, 0);
+
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.closePath();
+        }, this));
       }
     },
 
@@ -666,6 +715,26 @@
       input = input.toLowerCase().trim().replace(/\W+/g, "-");
       input = input ? input : "locator";
       return _.uniqueId(input + "-");
+    },
+
+    // Check if element is overflowed
+    overflowed: function(element, direction) {
+      return (!direction) ?
+        (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth) :
+        (direction === "y") ? (element.scrollHeight > element.clientHeight) :
+        (direction === "x") ? (element.scrollWidth > element.clientWidth) : false;
+    },
+
+    // Some hackery to fix the map vertical alignment
+    fixMapVerticalAlign: function() {
+      var display = this.getEl(".locator-display");
+
+      if (this.overflowed(display, "y")) {
+        display.classList.add("overflowed-y");
+      }
+      else {
+        display.classList.remove("overflowed-y");
+      }
     }
   });
 

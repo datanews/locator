@@ -13,6 +13,8 @@
 @blue: #3366FF;
 @orange: #F5B800;
 
+@down-arrow: "\f107";
+
 
 // Wrap all so its a bit more specific and maybe it will be embedded in
 // a page
@@ -47,6 +49,7 @@
     height: 100%;
     z-index: 0;
     transition: 0.5s ease-in-out;
+    overflow: scroll;
   }
 
   &.controls-closed .locator-display {
@@ -55,12 +58,18 @@
 
   .locator-map-wrapper {
     width: 100%;
-    padding: 2em;
     position: relative;
     top: 50%;
-    -ms-transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
+  }
+
+  .overflowed-y .locator-map-wrapper {
+    top: 0;
+    transform: translateY(0)
+  }
+
+  .locator-display-inner {
+    padding: 1em;
   }
 
   .locator-map {
@@ -81,6 +90,8 @@
     font-size: 0.85em;
     padding-top: 0.5em;
     color: @medium-grey;
+    max-width: 75%;
+    margin: 0 auto;
 
     a {
       color: @dark-grey;
@@ -92,32 +103,67 @@
     }
   }
 
-  // Control toggler
-  .toggle-controls {
+  // Minor controls (control toggler)
+  .minor-controls {
     z-index: 9999;
     position: absolute;
     top: 0;
-    right: 33.2%;
-    width: 1.75em;
-    height: 2.75em;
-    background-color: @dark-grey;
+    left: -2em;
     box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
-    transition: 0.5s ease-in-out;
-    cursor: pointer;
 
-    &:after {
-      content: "▾";
-      position: absolute;
-      top: 0;
-      left: 0;
-      line-height: 2.75em / 1.75em;
-      font-size: 1.75em;
-      margin-left: 0.25em;
-      color: @medium-grey;
-      transform: rotate(-90deg);
+    .toggle-controls {
+      width: 2em;
+      height: 2.75em;
+      background-color: @dark-grey;
       transition: 0.5s ease-in-out;
+      cursor: pointer;
+
+      &:after {
+        font-family: FontAwesome;
+        content: @down-arrow;
+        position: absolute;
+        top: 0;
+        left: 0;
+        line-height: 2.75em / 1.75em;
+        font-size: 1.75em;
+        margin-left: 0.25em;
+        color: @medium-grey;
+        transform: rotate(-90deg);
+        transition: 0.5s ease-in-out;
+      }
+    }
+
+    .minor-button {
+      font-size: 1em;
+      padding: 0;
+      width: 2em;
+      height: 0;
+      background-color: @orange;
+      color: @white;
+      transition: 0.5s ease-in-out;
+      cursor: pointer;
+      line-height: 2.75em;
+      text-align: center;
+      overflow-y: hidden;
+
+      &:hover {
+        background-color: darken(@orange, 15);
+      }
+
+      &.minor-generate {
+        background-color: @blue;
+
+        &:hover {
+          background-color: darken(@blue, 15);
+        }
+      }
     }
   }
+
+  &.controls-closed .minor-button {
+    height: 2.75em;
+  }
+
 
   &.controls-closed .toggle-controls {
     right: 0;
@@ -129,7 +175,12 @@
 
   // Controls
   &.controls-closed .locator-controls {
-    right: -35%;
+    right: -33.4%;
+  }
+
+  .locator-controls-wrapper {
+    height: 100%;
+    overflow-y: scroll;
   }
 
   .locator-controls {
@@ -142,7 +193,7 @@
     border-left: 1px solid @light-grey;
     box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
     background-color: @white;
-    overflow-y: scroll;
+    //overflow-y: scroll;
     transition: 0.5s ease-in-out;
 
     a {
@@ -234,7 +285,8 @@
       position: relative;
 
       &:after {
-        content: "▾";
+        font-family: FontAwesome;
+        content: @down-arrow;
         position: absolute;
         right: 9%;
         bottom: 0.4em;
@@ -300,6 +352,28 @@
         width: 44.9%;
         margin-right: 4%;
         height: 5em;
+      }
+    }
+
+    .config-button {
+      padding: 0 1em;
+
+      label {
+        display: inline;
+        margin: 0;
+        padding: 0;
+      }
+
+      button {
+        display: inline-block;
+        font-size: 1em;
+        padding: 0.25em 0.5em;
+        background-color: @orange;
+        color: @white;
+
+        &:hover {
+          background-color: darken(@orange, 15);
+        }
       }
     }
 
