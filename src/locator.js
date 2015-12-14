@@ -398,10 +398,20 @@
     // Marker layer draw handler
     drawMarkerTile: function(canvas, tilePoint, zoom) {
       var ctx = canvas.getContext("2d");
-      var labelHeight = (this.options.markerFontSize * 0.75) + (this.options.markerPadding * 2);
       var placement;
       var textWidth;
       var labelWidth;
+
+      // Handle line breaks in text
+      var text = this.options.markerText.split("<br>");
+      text = _.map(text, function(t) {
+        return t.trim();
+      });
+
+      // Determine lines values
+      var lines = text.length;
+      var lineHeight = 1.25;
+      var labelHeight = ((this.options.markerFontSize * lineHeight) * lines) + (this.options.markerPadding * 2);
 
       // Clear out tile
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -430,24 +440,25 @@
 
         // Draw point on location
         ctx.beginPath();
+        ctx.translate(placement.x - this.options.markerRadius, placement.y - this.options.markerRadius);
         ctx.fillStyle = this.options.markerBackground;
-        ctx.fillRect(
-          placement.x - this.options.markerRadius,
-          placement.y - this.options.markerRadius,
+        ctx.fillRect(0, 0,
           this.options.markerRadius * 2,
           this.options.markerRadius * 2
         );
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
         // Label connection line
         ctx.beginPath();
+        ctx.translate(placement.x - (this.options.markerLabelWidth / 2),
+          placement.y - this.options.markerRadius - this.options.markerLabelDistance);
         ctx.fillStyle = this.options.markerBackground;
-        ctx.fillRect(
-          placement.x - (this.options.markerLabelWidth / 2),
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance,
+        ctx.fillRect(0, 0,
           this.options.markerLabelWidth,
           this.options.markerLabelDistance
         );
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
         // Determine width of text
@@ -455,28 +466,45 @@
         ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
         ctx.fillStyle = this.options.markerForeground;
         ctx.textAlign = "center";
-        textWidth = ctx.measureText(this.options.markerText).width;
+
+        // Get the width of the longest text
+        textWidth = _.max(text, function(t) {
+          return ctx.measureText(t).width;
+        });
+
+        textWidth = ctx.measureText(textWidth).width;
         labelWidth = textWidth + this.options.markerPadding * 2;
         ctx.closePath();
 
         // Make label rectangle
         ctx.beginPath();
+        ctx.translate(placement.x - (labelWidth / 2),
+          placement.y - this.options.markerRadius - this.options.markerLabelDistance - labelHeight);
         ctx.fillStyle = this.options.markerBackground;
-        ctx.fillRect(
-          placement.x - (labelWidth / 2),
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance - labelHeight,
-          labelWidth, labelHeight);
+        ctx.fillRect(0, 0, labelWidth, labelHeight);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
-        // Add label
-        ctx.beginPath();
-        ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
-        ctx.fillStyle = this.options.markerForeground;
-        ctx.textAlign = "center";
-        ctx.fillText(this.options.markerText,
-          placement.x,
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance - this.options.markerPadding);
-        ctx.closePath();
+        // Add label(s)
+        _.each(text, _.bind(function(t, ti) {
+          // There's a tad extra space at bottom of text
+          var offset = 1;
+
+          ctx.beginPath();
+          ctx.translate(placement.x,
+            placement.y - this.options.markerRadius - this.options.markerLabelDistance -
+            labelHeight + this.options.markerPadding + offset +
+            ((this.options.markerFontSize * lineHeight) * (ti)));
+
+          ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
+          ctx.fillStyle = this.options.markerForeground;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText(t, 0, 0);
+
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.closePath();
+        }, this));
       }
     },
 

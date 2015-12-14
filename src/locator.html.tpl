@@ -21,7 +21,7 @@
 
     <div class="locator-input">
       <div class="config-option">
-        <label>Marker label</label>
+        <label>Marker label.  Use <code>&lt;br&gt;</code> to make line breaks.</label>
         <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
       </div>
 
