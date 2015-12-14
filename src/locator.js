@@ -13,6 +13,9 @@
       // Template
       template: "REPLACE-DEFAULT-TEMPLATE",
 
+      // Title
+      title: "Locator",
+
       // Main map
       tilesets: {
         "CartoDB Positron": {
@@ -206,6 +209,9 @@
       this.drawMap(recenter);
       this.drawMarker();
       this.drawMinimap();
+
+      // Some style fixes
+      this.fixMapVerticalAlign();
     },
 
     // Alter options with custom function
@@ -694,6 +700,26 @@
       input = input.toLowerCase().trim().replace(/\W+/g, "-");
       input = input ? input : "locator";
       return _.uniqueId(input + "-");
+    },
+
+    // Check if element is overflowed
+    overflowed: function(element, direction) {
+      return (!direction) ?
+        (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth) :
+        (direction === "y") ? (element.scrollHeight > element.clientHeight) :
+        (direction === "x") ? (element.scrollWidth > element.clientWidth) : false;
+    },
+
+    // Some hackery to fix the map vertical alignment
+    fixMapVerticalAlign: function() {
+      var display = this.getEl(".locator-display");
+
+      if (this.overflowed(display, "y")) {
+        display.classList.add("overflowed-y");
+      }
+      else {
+        display.classList.remove("overflowed-y");
+      }
     }
   });
 

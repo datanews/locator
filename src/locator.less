@@ -49,6 +49,7 @@
     height: 100%;
     z-index: 0;
     transition: 0.5s ease-in-out;
+    overflow: scroll;
   }
 
   &.controls-closed .locator-display {
@@ -57,12 +58,18 @@
 
   .locator-map-wrapper {
     width: 100%;
-    padding: 2em;
     position: relative;
     top: 50%;
-    -ms-transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
+  }
+
+  .overflowed-y .locator-map-wrapper {
+    top: 0;
+    transform: translateY(0)
+  }
+
+  .locator-display-inner {
+    padding: 1em;
   }
 
   .locator-map {
@@ -83,6 +90,8 @@
     font-size: 0.85em;
     padding-top: 0.5em;
     color: @medium-grey;
+    max-width: 75%;
+    margin: 0 auto;
 
     a {
       color: @dark-grey;
@@ -152,6 +161,11 @@
   // Controls
   &.controls-closed .locator-controls {
     right: -33.4%;
+  }
+
+  .locator-controls-wrapper {
+    height: 100%;
+    overflow-y: scroll;
   }
 
   .locator-controls {
