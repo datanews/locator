@@ -84,11 +84,11 @@
 
       // Dimensions
       widths: {
-        "400px": 400,
-        "600px": 600,
-        "800px": 800,
+        Small: 400,
+        Medium: 600,
+        Large: 800,
       },
-      width: "600px",
+      width: "Medium",
       ratios: {
         "1:1": 1 / 1,
         "4:3": 4 / 3,
@@ -98,6 +98,8 @@
 
       // Interface
       controlsOpen: true,
+      centerToMarker: true,
+      markerToCenter: true,
 
       // Basic defalt geocoder with Google
       geocoder: this.defaultGeocoder,
@@ -198,6 +200,19 @@
       this.interface.on("set", function(e, property, value) {
         this.set(property, value);
       });
+
+      // Move marker to center of map
+      this.interface.on("marker-to-center", _.bind(function() {
+        var center = this.map.getCenter();
+        this.options.lat = center.lat;
+        this.options.lng = center.lng;
+        this.interface.update();
+      }, this));
+
+      // Center map around marker
+      this.interface.on("center-to-marker", _.bind(function() {
+        this.map.setView([this.options.lat, this.options.lng]);
+      }, this));
 
       // Initialize map parts
       this.drawMaps();

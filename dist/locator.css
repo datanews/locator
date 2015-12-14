@@ -90,7 +90,7 @@
   left: -2em;
   box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
 }
-.locator .toggle-controls {
+.locator .minor-controls .toggle-controls {
   width: 2em;
   height: 2.75em;
   background-color: #343434;
@@ -98,7 +98,7 @@
   transition: 0.5s ease-in-out;
   cursor: pointer;
 }
-.locator .toggle-controls:after {
+.locator .minor-controls .toggle-controls:after {
   font-family: FontAwesome;
   content: "\f107";
   position: absolute;
@@ -113,17 +113,19 @@
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
 }
-.locator.controls-closed .toggle-controls {
+.locator .minor-controls.controls-closed .toggle-controls {
   right: 0;
 }
-.locator.controls-closed .toggle-controls:after {
+.locator .minor-controls.controls-closed .toggle-controls:after {
   -webkit-transform: rotate(90deg);
           transform: rotate(90deg);
 }
-.locator .minor-generate {
+.locator .minor-controls .minor-button {
+  font-size: 1em;
+  padding: 0;
   width: 2em;
   height: 0;
-  background-color: #3366FF;
+  background-color: #F5B800;
   color: #FFFFFF;
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
@@ -132,7 +134,16 @@
   text-align: center;
   overflow-y: hidden;
 }
-.locator.controls-closed .minor-generate {
+.locator .minor-controls .minor-button:hover {
+  background-color: #a97f00;
+}
+.locator .minor-controls .minor-button.minor-generate {
+  background-color: #3366FF;
+}
+.locator .minor-controls .minor-button.minor-generate:hover {
+  background-color: #0039e5;
+}
+.locator.controls-closed .minor-button {
   height: 2.75em;
 }
 .locator.controls-closed .locator-controls {
@@ -288,6 +299,24 @@
   width: 44.9%;
   margin-right: 4%;
   height: 5em;
+}
+.locator .locator-controls .config-button {
+  padding: 0 1em;
+}
+.locator .locator-controls .config-button label {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+.locator .locator-controls .config-button button {
+  display: inline-block;
+  font-size: 1em;
+  padding: 0.25em 0.5em;
+  background-color: #F5B800;
+  color: #FFFFFF;
+}
+.locator .locator-controls .config-button button:hover {
+  background-color: #a97f00;
 }
 .locator .locator-controls button {
   border: 0;

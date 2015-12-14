@@ -110,51 +110,65 @@
     top: 0;
     left: -2em;
     box-shadow: -3px 0 5px rgba(0, 0, 0, 0.2);
-  }
 
-  .toggle-controls {
-    width: 2em;
-    height: 2.75em;
-    background-color: @dark-grey;
-    transition: 0.5s ease-in-out;
-    cursor: pointer;
-
-    &:after {
-      font-family: FontAwesome;
-      content: @down-arrow;
-      position: absolute;
-      top: 0;
-      left: 0;
-      line-height: 2.75em / 1.75em;
-      font-size: 1.75em;
-      margin-left: 0.25em;
-      color: @medium-grey;
-      transform: rotate(-90deg);
+    .toggle-controls {
+      width: 2em;
+      height: 2.75em;
+      background-color: @dark-grey;
       transition: 0.5s ease-in-out;
+      cursor: pointer;
+
+      &:after {
+        font-family: FontAwesome;
+        content: @down-arrow;
+        position: absolute;
+        top: 0;
+        left: 0;
+        line-height: 2.75em / 1.75em;
+        font-size: 1.75em;
+        margin-left: 0.25em;
+        color: @medium-grey;
+        transform: rotate(-90deg);
+        transition: 0.5s ease-in-out;
+      }
+    }
+
+    &.controls-closed .toggle-controls {
+      right: 0;
+
+      &:after {
+        transform: rotate(90deg);
+      }
+    }
+
+    .minor-button {
+      font-size: 1em;
+      padding: 0;
+      width: 2em;
+      height: 0;
+      background-color: @orange;
+      color: @white;
+      transition: 0.5s ease-in-out;
+      cursor: pointer;
+      line-height: 2.75em;
+      text-align: center;
+      overflow-y: hidden;
+
+      &:hover {
+        background-color: darken(@orange, 15);
+      }
+
+      &.minor-generate {
+        background-color: @blue;
+
+        &:hover {
+          background-color: darken(@blue, 15);
+        }
+      }
     }
   }
 
-  &.controls-closed .toggle-controls {
-    right: 0;
-
-    &:after {
-      transform: rotate(90deg);
-    }
-  }
-
-  .minor-generate {
-    width: 2em;
-    height: 0;
-    background-color: @blue;
-    color: @white;
-    transition: 0.5s ease-in-out;
-    cursor: pointer;
-    line-height: 2.75em;
-    text-align: center;
-    overflow-y: hidden;
-  }
-
-  &.controls-closed .minor-generate {
+  &.controls-closed .minor-button {
     height: 2.75em;
   }
 
@@ -337,6 +351,28 @@
         width: 44.9%;
         margin-right: 4%;
         height: 5em;
+      }
+    }
+
+    .config-button {
+      padding: 0 1em;
+
+      label {
+        display: inline;
+        margin: 0;
+        padding: 0;
+      }
+
+      button {
+        display: inline-block;
+        font-size: 1em;
+        padding: 0.25em 0.5em;
+        background-color: @orange;
+        color: @white;
+
+        &:hover {
+          background-color: darken(@orange, 15);
+        }
       }
     }
 
