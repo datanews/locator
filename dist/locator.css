@@ -113,13 +113,6 @@
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
 }
-.locator .minor-controls.controls-closed .toggle-controls {
-  right: 0;
-}
-.locator .minor-controls.controls-closed .toggle-controls:after {
-  -webkit-transform: rotate(90deg);
-          transform: rotate(90deg);
-}
 .locator .minor-controls .minor-button {
   font-size: 1em;
   padding: 0;
@@ -145,6 +138,13 @@
 }
 .locator.controls-closed .minor-button {
   height: 2.75em;
+}
+.locator.controls-closed .toggle-controls {
+  right: 0;
+}
+.locator.controls-closed .toggle-controls:after {
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
 }
 .locator.controls-closed .locator-controls {
   right: -33.4%;
