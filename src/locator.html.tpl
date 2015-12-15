@@ -59,7 +59,7 @@
           </div>
         {{/options.geocoder}}
 
-        {{#(_.size(options.tilesets))}}
+        {{#(_.size(options.tilesets) > 1)}}
           <div class="config-option">
             <label>Background map set</label>
 
@@ -85,7 +85,7 @@
           </div>
         {{/}}
 
-        {{#(_.size(options.widths))}}
+        {{#(_.size(options.widths) > 1)}}
           <div class="config-option config-select">
             <label>Map width</label>
 
@@ -97,7 +97,7 @@
           </div>
         {{/()}}
 
-        {{#(_.size(options.ratios))}}
+        {{#(_.size(options.ratios) > 1)}}
           <div class="config-option config-select">
             <label>Map aspect ratio</label>
 
