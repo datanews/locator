@@ -261,13 +261,18 @@
         this.map.remove();
       }
 
-      // Determine size of map.  Use options if available.
+      // Determine size of map.  Use options if available, or check for
+      // number, or use size of container
       width = _.size(this.options.widths) ?
         this.options.widths[this.options.width] :
+        _.isNumber(this.options.width) ? this.options.width :
         mapEl.getBoundingClientRect().width;
+
       height = _.size(this.options.ratios) ?
         width / this.options.ratios[this.options.ratio] :
+        _.isNumber(this.options.ratio) ? this.options.ratio :
         mapEl.getBoundingClientRect().height;
+
       mapEl.style.width = width + "px";
       mapEl.style.height = height + "px";
 
