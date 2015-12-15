@@ -35,7 +35,7 @@
     </div>
 
     <div class="locator-controls-wrapper">
-      <header>{{ options.title }}</header>
+      <header>{{{ options.title }}}</header>
 
       <div class="locator-input">
         <div class="config-option">
@@ -125,10 +125,10 @@
           <a href="" class="download-link">Download</a>
         </div>
       </div>
-    </div>
 
-    <footer>
-      <p>Made by WNYC</p>
-    </footer>
+      <footer>
+        {{{ options.footer }}}
+      </footer>
+    </div>
   </section>
 </div>

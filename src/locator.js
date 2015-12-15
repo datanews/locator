@@ -13,8 +13,9 @@
       // Template
       template: "REPLACE-DEFAULT-TEMPLATE",
 
-      // Title
+      // Text
       title: "Locator",
+      footer: "Made by the <a href=\"http://datanews.tumblr.com/\" target=\"_blank\">WNYC DataNews</a> team.  Locator only works in <a href=\"http://google.com/chrome\" target=\"_blank\">Chrome</a>.",
 
       // Main map
       tilesets: {

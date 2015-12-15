@@ -182,16 +182,12 @@
   text-transform: uppercase;
 }
 .locator .locator-controls footer {
-  position: absolute;
-  width: 100%;
-  text-align: right;
-  bottom: 0;
-  background-color: #212121;
-  color: #FFFFFF;
-  font-size: 0.85em;
-  padding: 0.25em 1em;
-  /* TODO: Make footer work */
-  display: none;
+  font-size: 0.5em;
+  color: #878787;
+  padding: 2em;
+}
+.locator .locator-controls footer a {
+  color: #343434;
 }
 .locator .locator-controls .locator-input {
   padding: 1em;
