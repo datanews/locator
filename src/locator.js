@@ -270,7 +270,7 @@
 
       height = _.size(this.options.ratios) ?
         width / this.options.ratios[this.options.ratio] :
-        _.isNumber(this.options.ratio) ? this.options.ratio :
+        _.isNumber(this.options.ratio) ? width / this.options.ratio :
         mapEl.getBoundingClientRect().height;
 
       mapEl.style.width = width + "px";
