@@ -119,6 +119,43 @@ gulp.task("styles", function() {
     .pipe(gulp.dest("dist"));
 });
 
+// Bundle with libs
+gulp.task("bundle", ["styles", "js-linting", "js"], function() {
+  var jsDeps = [
+    "bower_components/ractive/ractive.js",
+    "bower_components/ractive-events-tap/dist/ractive-events-tap.umd.js",
+    "bower_components/underscore/underscore.js",
+    "bower_components/leaflet/dist/leaflet.js",
+    "bower_components/leaflet-minimap/dist/Control.MiniMap.min.js"
+  ];
+  var cssDeps = [
+    "bower_components/leaflet/dist/leaflet.css",
+    "bower_components/leaflet-minimap/dist/Control.MiniMap.min.css"
+  ];
+
+  // CSS bundle
+  gulp.src(cssDeps.concat(["dist/locator.css"]))
+    .pipe(plumber(plumberHandler))
+    .pipe(concat("locator.bundled.css"))
+    .pipe(cssminify())
+    .pipe(header(banner, { pkg: pkg }))
+    .pipe(rename({
+      extname: ".min.css"
+    }))
+    .pipe(gulp.dest("dist"));
+
+  // JS bundle
+  return gulp.src(jsDeps.concat(["dist/locator.js"]))
+    .pipe(plumber(plumberHandler))
+    .pipe(concat("locator.bundled.js"))
+    .pipe(uglify())
+    .pipe(header(banner, { pkg: pkg }))
+    .pipe(rename({
+      extname: ".min.js"
+    }))
+    .pipe(gulp.dest("dist"));
+});
+
 // Watch for files that need to be processed
 gulp.task("watch", function() {
   gulp.watch(["gulpfile.js"], ["support-js"]);
@@ -147,7 +184,7 @@ gulp.task("webserver", function() {
 });
 
 // Default task is a basic build
-gulp.task("default", ["support-js", "js", "styles"]);
+gulp.task("default", ["support-js", "js", "styles", "bundle"]);
 
 // Combine webserver and watch tasks for a more complete server
 gulp.task("server", ["default", "watch", "webserver"]);

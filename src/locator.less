@@ -85,6 +85,27 @@
   	border-radius: 0;
   }
 
+  .locator-map-attribution {
+    position: absolute;
+    z-index: 99999;
+    bottom: 0;
+    left: 0;
+    max-width: 75%;
+    color: @medium-grey;
+    display: none;
+
+    a {
+      text-decoration: none;
+      color: @medium-grey;
+    }
+
+    &.enabled {
+      display: block;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 5px 10px;
+    }
+  }
+
   .locator-map-help {
     text-align: center;
     font-size: 0.85em;
@@ -215,17 +236,13 @@
     }
 
     footer {
-      position: absolute;
-      width: 100%;
-      text-align: right;
-      bottom: 0;
-      background-color: #212121;
-      color: #FFFFFF;
-      font-size: 0.85em;
-      padding: 0.25em 1em;
+      font-size: 0.5em;
+      color: @medium-grey;
+      padding: 2em;
 
-      /* TODO: Make footer work */
-      display: none;
+      a {
+        color: @dark-grey;
+      }
     }
 
     // Controls inputs
@@ -318,9 +335,33 @@
       }
     }
 
+    input[type=checkbox] {
+      display: none;
+
+      & + label {
+        vertical-align: middle;
+      }
+
+      & + label:before {
+        font-family: FontAwesome;
+        display: inline-block;
+        cursor: pointer;
+        vertical-align: middle;
+        content: "\f204";
+        letter-spacing: 10px;
+        color: @dark-grey;
+        font-size: 2em;
+      }
+
+      &:checked + label:before {
+        content: "\f205";
+        letter-spacing: 10px;
+      }
+    }
+
     .image-picker {
       width: 100%;
-      text-align: center;
+      text-align: left;
       margin-bottom: 0.5em;
       padding: 0 1em;
 

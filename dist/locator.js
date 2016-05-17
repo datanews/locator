@@ -2889,25 +2889,34 @@ _html2canvas.Renderer.Canvas = function(options) {
   var Locator = function(options) {
     this.options = _.extend({}, {
       // Template
-      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\"></div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map:  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   {{#options.markerToCenter}}  <button class=\"minor-button\" on-tap=\"marker-to-center\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"minor-button\" on-tap=\"center-to-marker\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{ options.title }}</header>   <div class=\"locator-input\">  <div class=\"config-option\">  <label>Marker label. Use <code>&lt;br&gt;</code> to make line breaks.</label>  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ options.markerText }}\" lazy>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   {{#(_.size(options.tilesets))}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : '' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#options.markerToCenter}}  <div class=\"config-option config-button\">  <button on-tap=\"marker-to-center\"><i class=\"fa fa-compass\"></i></button>  <label>Move marker to center of map</label>  </div>  {{/}}   {{#options.centerToMarker}}  <div class=\"config-option config-button\">  <button on-tap=\"center-to-marker\"><i class=\"fa fa-plus-square-o\"></i></button>  <label>Center map on marker</label>  </div>  {{/}}   {{#(_.size(options.widths))}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios))}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>   <div class=\"config-action\">  <button class=\"generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>  </div>   <footer>  <p>Made by WNYC</p>  </footer>  </section> </div> ",
+      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\">  <div class=\"locator-map-attribution {{#options.embedAttribution}}enabled{{/}}\">  {{#options.overrideAttribution}}  {{{ options.overrideAttribution }}}  {{/}}  {{^options.overrideAttribution}}  {{{ options.tilesets[options.tileset].attribution }}}  {{/}}  </div>  </div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map:  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   {{#options.markerToCenter}}  <button class=\"minor-button\" on-tap=\"marker-to-center\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"minor-button\" on-tap=\"center-to-marker\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{{ options.title }}}</header>   <div class=\"locator-input\">  <div class=\"config-option\">  <label>Marker label. Use <code>&lt;br&gt;</code> to make line breaks.</label>  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ options.markerText }}\" lazy>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   {{#(_.size(options.tilesets) > 1)}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : '' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#options.markerToCenter}}  <div class=\"config-option config-button\">  <button on-tap=\"marker-to-center\"><i class=\"fa fa-compass\"></i></button>  <label>Move marker to center of map</label>  </div>  {{/}}   {{#options.centerToMarker}}  <div class=\"config-option config-button\">  <button on-tap=\"center-to-marker\"><i class=\"fa fa-plus-square-o\"></i></button>  <label>Center map on marker</label>  </div>  {{/}}   {{#(_.size(options.widths) > 1)}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios) > 1)}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>    <div class=\"config-option\">  <input type=\"checkbox\" checked=\"{{ options.embedAttribution }}\" id=\"config-embed-attribution\" lazy>  <label for=\"config-embed-attribution\">Embed attribution</label>   <input type=\"text\" placeholder=\"Override attribution\" value=\"{{ options.overrideAttribution }}\" lazy>  </div>   <div class=\"config-action\">  <button class=\"generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  {{{ options.footer }}}  </footer>  </div>  </section> </div> ",
 
-      // Title
+      // Text
       title: "Locator",
+      footer: "Made by the <a href=\"http://datanews.tumblr.com/\" target=\"_blank\">WNYC DataNews</a> team.  Locator only works in <a href=\"http://google.com/chrome\" target=\"_blank\">Chrome</a>.",
 
       // Main map
       tilesets: {
         "CartoDB Positron": {
           url: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-          attribution: "&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>"
+          attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a target=\"_blank\" href=\"http://cartodb.com/attributions\">CartoDB</a>"
         },
         "Stamen Toner": {
           url: "http://tile.stamen.com/toner/{z}/{x}/{y}.png",
-          attribution: "Map tiles by <a href=\"http://stamen.com\">Stamen Design</a>, under <a href=\"http://creativecommons.org/licenses/by/3.0\">CC BY 3.0</a>. Data by <a href=\"http://openstreetmap.org\">OpenStreetMap</a>, under <a href=\"http://www.openstreetmap.org/copyright\">ODbL</a>"
+          attribution: "Map tiles by <a target=\"_blank\" href=\"http://stamen.com\">Stamen Design</a>, under <a  target=\"_blank\" href=\"http://creativecommons.org/licenses/by/3.0\">CC BY 3.0</a>. Data by <a  target=\"_blank\" href=\"http://openstreetmap.org\">OpenStreetMap</a>, under <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">ODbL</a>"
         },
-        "Mapbox Streets": {
+        "Mapbox Streets (via WNYC)": {
           url: "https://api.mapbox.com/v4/jkeefe.np44bm6o/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
-          attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
-        }
+          attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+        },
+        "Mapbox Satellite (via WNYC)": {
+          url: "https://api.mapbox.com/v4/jkeefe.oee0fah0/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
+          attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>; &copy; <a target='_blank' href='https://www.digitalglobe.com/'>DigitalGlobe</a>"
+        },
+        "Mapbox Run, Bike, Hike (via WNYC)": {
+          url: "https://api.mapbox.com/v4/jkeefe.oee1c53c/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
+          attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+        },
 
         // Example of just url
         //"Stamen Toner": "http://tile.stamen.com/toner/{z}/{x}/{y}.png"
@@ -2918,6 +2927,10 @@ _html2canvas.Renderer.Canvas = function(options) {
       lng: -73.98566,
       minZoom: 1,
       maxZoom: 18,
+
+      // Attribution (or source) that goes on top of map
+      embedAttribution: false,
+      overrideAttribution: undefined,
 
       // Mini map
       miniWidth: "15w",
@@ -2981,6 +2994,10 @@ _html2canvas.Renderer.Canvas = function(options) {
 
       // Basic defalt geocoder with Google
       geocoder: this.defaultGeocoder,
+
+      // Super class is just a top level class that goes in the markup
+      // that is helpful for dynamic options and preDraw and styling
+      superClass: undefined,
 
       // Use this hook to change options with each re-draw
       /*
@@ -3069,6 +3086,15 @@ _html2canvas.Renderer.Canvas = function(options) {
         }
       }, this), { init: false });
 
+      // If someone override attribution, then it should be on
+      // the map
+      this.interface.observe("options.overrideAttribution", function(attribution) {
+        var e = this.get("options.embedAttribution");
+        if (attribution && !e) {
+          this.set("options.embedAttribution", true);
+        }
+      }, { init: true });
+
       // General toggle event functions
       this.interface.on("toggle", function(e, property) {
         this.set(property, !this.get(property));
@@ -3138,13 +3164,18 @@ _html2canvas.Renderer.Canvas = function(options) {
         this.map.remove();
       }
 
-      // Determine size of map.  Use options if available.
+      // Determine size of map.  Use options if available, or check for
+      // number, or use size of container
       width = _.size(this.options.widths) ?
         this.options.widths[this.options.width] :
+        _.isNumber(this.options.width) ? this.options.width :
         mapEl.getBoundingClientRect().width;
+
       height = _.size(this.options.ratios) ?
         width / this.options.ratios[this.options.ratio] :
+        _.isNumber(this.options.ratio) ? width / this.options.ratio :
         mapEl.getBoundingClientRect().height;
+
       mapEl.style.width = width + "px";
       mapEl.style.height = height + "px";
 

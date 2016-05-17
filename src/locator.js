@@ -13,23 +13,32 @@
       // Template
       template: "REPLACE-DEFAULT-TEMPLATE",
 
-      // Title
+      // Text
       title: "Locator",
+      footer: "Made by the <a href=\"http://datanews.tumblr.com/\" target=\"_blank\">WNYC DataNews</a> team.  Locator only works in <a href=\"http://google.com/chrome\" target=\"_blank\">Chrome</a>.",
 
       // Main map
       tilesets: {
         "CartoDB Positron": {
           url: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-          attribution: "&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>"
+          attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a target=\"_blank\" href=\"http://cartodb.com/attributions\">CartoDB</a>"
         },
         "Stamen Toner": {
           url: "http://tile.stamen.com/toner/{z}/{x}/{y}.png",
-          attribution: "Map tiles by <a href=\"http://stamen.com\">Stamen Design</a>, under <a href=\"http://creativecommons.org/licenses/by/3.0\">CC BY 3.0</a>. Data by <a href=\"http://openstreetmap.org\">OpenStreetMap</a>, under <a href=\"http://www.openstreetmap.org/copyright\">ODbL</a>"
+          attribution: "Map tiles by <a target=\"_blank\" href=\"http://stamen.com\">Stamen Design</a>, under <a  target=\"_blank\" href=\"http://creativecommons.org/licenses/by/3.0\">CC BY 3.0</a>. Data by <a  target=\"_blank\" href=\"http://openstreetmap.org\">OpenStreetMap</a>, under <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">ODbL</a>"
         },
-        "Mapbox Streets": {
+        "Mapbox Streets (via WNYC)": {
           url: "https://api.mapbox.com/v4/jkeefe.np44bm6o/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
-          attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
-        }
+          attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+        },
+        "Mapbox Satellite (via WNYC)": {
+          url: "https://api.mapbox.com/v4/jkeefe.oee0fah0/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
+          attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>; &copy; <a target='_blank' href='https://www.digitalglobe.com/'>DigitalGlobe</a>"
+        },
+        "Mapbox Run, Bike, Hike (via WNYC)": {
+          url: "https://api.mapbox.com/v4/jkeefe.oee1c53c/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
+          attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+        },
 
         // Example of just url
         //"Stamen Toner": "http://tile.stamen.com/toner/{z}/{x}/{y}.png"
@@ -40,6 +49,10 @@
       lng: -73.98566,
       minZoom: 1,
       maxZoom: 18,
+
+      // Attribution (or source) that goes on top of map
+      embedAttribution: false,
+      overrideAttribution: undefined,
 
       // Mini map
       miniWidth: "15w",
@@ -103,6 +116,10 @@
 
       // Basic defalt geocoder with Google
       geocoder: this.defaultGeocoder,
+
+      // Super class is just a top level class that goes in the markup
+      // that is helpful for dynamic options and preDraw and styling
+      superClass: undefined,
 
       // Use this hook to change options with each re-draw
       /*
@@ -191,6 +208,15 @@
         }
       }, this), { init: false });
 
+      // If someone override attribution, then it should be on
+      // the map
+      this.interface.observe("options.overrideAttribution", function(attribution) {
+        var e = this.get("options.embedAttribution");
+        if (attribution && !e) {
+          this.set("options.embedAttribution", true);
+        }
+      }, { init: true });
+
       // General toggle event functions
       this.interface.on("toggle", function(e, property) {
         this.set(property, !this.get(property));
@@ -260,13 +286,18 @@
         this.map.remove();
       }
 
-      // Determine size of map.  Use options if available.
+      // Determine size of map.  Use options if available, or check for
+      // number, or use size of container
       width = _.size(this.options.widths) ?
         this.options.widths[this.options.width] :
+        _.isNumber(this.options.width) ? this.options.width :
         mapEl.getBoundingClientRect().width;
+
       height = _.size(this.options.ratios) ?
         width / this.options.ratios[this.options.ratio] :
+        _.isNumber(this.options.ratio) ? width / this.options.ratio :
         mapEl.getBoundingClientRect().height;
+
       mapEl.style.width = width + "px";
       mapEl.style.height = height + "px";
 

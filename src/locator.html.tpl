@@ -1,11 +1,20 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-<div class="locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }}">
+<div class="locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}">
   <section class="locator-display">
       <div class="locator-map-wrapper">
         <div class="locator-display-inner">
-          <div class="locator-map"></div>
+          <div class="locator-map">
+            <div class="locator-map-attribution {{#options.embedAttribution}}enabled{{/}}">
+              {{#options.overrideAttribution}}
+                {{{ options.overrideAttribution }}}
+              {{/}}
+              {{^options.overrideAttribution}}
+                {{{ options.tilesets[options.tileset].attribution }}}
+              {{/}}
+            </div>
+          </div>
 
           <div class="locator-map-help">
             Move the marker by dragging the base.
@@ -35,7 +44,7 @@
     </div>
 
     <div class="locator-controls-wrapper">
-      <header>{{ options.title }}</header>
+      <header>{{{ options.title }}}</header>
 
       <div class="locator-input">
         <div class="config-option">
@@ -59,7 +68,7 @@
           </div>
         {{/options.geocoder}}
 
-        {{#(_.size(options.tilesets))}}
+        {{#(_.size(options.tilesets) > 1)}}
           <div class="config-option">
             <label>Background map set</label>
 
@@ -85,7 +94,7 @@
           </div>
         {{/}}
 
-        {{#(_.size(options.widths))}}
+        {{#(_.size(options.widths) > 1)}}
           <div class="config-option config-select">
             <label>Map width</label>
 
@@ -97,7 +106,7 @@
           </div>
         {{/()}}
 
-        {{#(_.size(options.ratios))}}
+        {{#(_.size(options.ratios) > 1)}}
           <div class="config-option config-select">
             <label>Map aspect ratio</label>
 
@@ -115,6 +124,14 @@
           <input type="range" min="-10" max="1" value="{{ options.miniZoomOffset }}" title="Adjust zoom level for map">
         </div>
 
+
+        <div class="config-option">
+          <input type="checkbox" checked="{{ options.embedAttribution }}" id="config-embed-attribution" lazy>
+          <label for="config-embed-attribution">Embed attribution</label>
+
+          <input type="text" placeholder="Override attribution" value="{{ options.overrideAttribution }}" lazy>
+        </div>
+
         <div class="config-action">
           <button class="generate-image" on-tap="generate">Generate <i class="fa fa-download"></i></button>
         </div>
@@ -125,10 +142,10 @@
           <a href="" class="download-link">Download</a>
         </div>
       </div>
-    </div>
 
-    <footer>
-      <p>Made by WNYC</p>
-    </footer>
+      <footer>
+        {{{ options.footer }}}
+      </footer>
+    </div>
   </section>
 </div>
