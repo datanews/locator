@@ -68,6 +68,24 @@
   box-shadow: none;
   border-radius: 0;
 }
+.locator .locator-map-attribution {
+  position: absolute;
+  z-index: 99999;
+  bottom: 0;
+  left: 0;
+  max-width: 75%;
+  color: #878787;
+  display: none;
+}
+.locator .locator-map-attribution a {
+  text-decoration: none;
+  color: #878787;
+}
+.locator .locator-map-attribution.enabled {
+  display: block;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 5px 10px;
+}
 .locator .locator-map-help {
   text-align: center;
   font-size: 0.85em;
@@ -264,6 +282,26 @@
   height: 0.25em;
   cursor: pointer;
   background: #BDBDBD;
+}
+.locator .locator-controls input[type=checkbox] {
+  display: none;
+}
+.locator .locator-controls input[type=checkbox] + label {
+  vertical-align: middle;
+}
+.locator .locator-controls input[type=checkbox] + label:before {
+  font-family: FontAwesome;
+  display: inline-block;
+  cursor: pointer;
+  vertical-align: middle;
+  content: "\f204";
+  letter-spacing: 10px;
+  color: #343434;
+  font-size: 2em;
+}
+.locator .locator-controls input[type=checkbox]:checked + label:before {
+  content: "\f205";
+  letter-spacing: 10px;
 }
 .locator .locator-controls .image-picker {
   width: 100%;

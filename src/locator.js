@@ -50,6 +50,10 @@
       minZoom: 1,
       maxZoom: 18,
 
+      // Attribution (or source) that goes on top of map
+      embedAttribution: false,
+      overrideAttribution: undefined,
+
       // Mini map
       miniWidth: "15w",
       miniHeight: "15w",
@@ -199,6 +203,15 @@
           }, this));
         }
       }, this), { init: false });
+
+      // If someone override attribution, then it should be on
+      // the map
+      this.interface.observe("options.overrideAttribution", function(attribution) {
+        var e = this.get("options.embedAttribution");
+        if (attribution && !e) {
+          this.set("options.embedAttribution", true);
+        }
+      }, { init: true });
 
       // General toggle event functions
       this.interface.on("toggle", function(e, property) {

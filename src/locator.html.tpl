@@ -5,7 +5,16 @@
   <section class="locator-display">
       <div class="locator-map-wrapper">
         <div class="locator-display-inner">
-          <div class="locator-map"></div>
+          <div class="locator-map">
+            <div class="locator-map-attribution {{#options.embedAttribution}}enabled{{/}}">
+              {{#options.overrideAttribution}}
+                {{{ options.overrideAttribution }}}
+              {{/}}
+              {{^options.overrideAttribution}}
+                {{{ options.tilesets[options.tileset].attribution }}}
+              {{/}}
+            </div>
+          </div>
 
           <div class="locator-map-help">
             Move the marker by dragging the base.
@@ -113,6 +122,14 @@
           <label>Mini-map zoom</label>
 
           <input type="range" min="-10" max="1" value="{{ options.miniZoomOffset }}" title="Adjust zoom level for map">
+        </div>
+
+
+        <div class="config-option">
+          <input type="checkbox" checked="{{ options.embedAttribution }}" id="config-embed-attribution" lazy>
+          <label for="config-embed-attribution">Embed attribution</label>
+
+          <input type="text" placeholder="Override attribution" value="{{ options.overrideAttribution }}" lazy>
         </div>
 
         <div class="config-action">
