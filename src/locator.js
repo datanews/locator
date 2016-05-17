@@ -117,6 +117,10 @@
       // Basic defalt geocoder with Google
       geocoder: this.defaultGeocoder,
 
+      // Super class is just a top level class that goes in the markup
+      // that is helpful for dynamic options and preDraw and styling
+      superClass: undefined,
+
       // Use this hook to change options with each re-draw
       /*
       preDraw: function(options) {

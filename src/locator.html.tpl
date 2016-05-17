@@ -1,7 +1,7 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-<div class="locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }}">
+<div class="locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}">
   <section class="locator-display">
       <div class="locator-map-wrapper">
         <div class="locator-display-inner">
