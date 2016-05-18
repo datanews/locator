@@ -66,7 +66,7 @@
           {{#options.markers:mi}}
             <div class="marker" intro-outro="slide">
               <div class="config-option">
-                <input type="text" placeholder="Marker label" value="{{ ./text }}" lazy>
+                <input type="text" placeholder="Marker label" value="{{ this.text }}" lazy>
               </div>
 
               <div class="marker-actions">
@@ -76,6 +76,26 @@
 
                 {{#options.centerToMarker}}
                   <button class="action small" on-tap="center-to-marker:{{ mi }}" title="Center map on marker"><i class="fa fa-plus-square-o"></i></button>
+                {{/}}
+
+                {{#(_.size(options.markerBackgrounds) > 1)}}
+                  <div class="color-picker" title="Set marker background color">
+                    {{#options.markerBackgrounds:bi}}
+                      <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
+                        style="background-color: {{ this }}"
+                        on-tap="setObject:{{ options.markers[mi] }},'background',{{ this }}">
+                    {{/}}
+                  </div>
+                {{/}}
+
+                {{#(_.size(options.markerForegrounds) > 1)}}
+                  <div class="color-picker" title="Set marker foreground color">
+                    {{#options.markerForegrounds:bi}}
+                      <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
+                        style="background-color: {{ this }}"
+                        on-tap="setObject:{{ options.markers[mi] }},'foreground',{{ this }}">
+                    {{/}}
+                  </div>
                 {{/}}
 
                 <button class="destructive small" on-tap="remove-marker:{{ mi }}" title="Remove marker"><i class="fa fa-close"></i></button>

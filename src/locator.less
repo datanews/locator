@@ -412,39 +412,6 @@
       }
     }
 
-    .markers {
-      .add-marker {
-        float: right;
-      }
-
-      &.no-markers {
-        margin-bottom: 1em;
-
-        .help {
-          display: none;
-        }
-
-        .add-marker {
-          float: none;
-          display: block;
-          width: 100%;
-          padding: 0.5em;
-        }
-      }
-
-      .marker {
-        margin-bottom: 1em;
-      }
-
-      .config-option {
-        margin-bottom: 0.25em;
-      }
-
-      button {
-        display: inline-block;
-      }
-    }
-
     .image-picker {
       width: 100%;
       text-align: left;
@@ -479,6 +446,75 @@
         width: 44.9%;
         margin-right: 4%;
         height: 5em;
+      }
+    }
+
+    .color-picker {
+      line-height: 1em;
+      vertical-align: top;
+
+      .color-picker-item {
+        display: inline-block;
+        border: 1px solid @white;
+        outline: 1px solid @white;
+        width: 1em;
+        height: 1em;
+        vertical-align: top;
+        margin: 0;
+        cursor: pointer;
+        margin: 1px;
+
+        &.is-white {
+          border: 1px solid @light-grey;
+        }
+
+        &.active {
+          outline: 1px solid @dark-grey;
+        }
+      }
+    }
+
+    .markers {
+      .add-marker {
+        float: right;
+      }
+
+      &.no-markers {
+        margin-bottom: 1em;
+
+        .help {
+          display: none;
+        }
+
+        .add-marker {
+          float: none;
+          display: block;
+          width: 100%;
+          padding: 0.5em;
+        }
+      }
+
+      .marker {
+        margin-bottom: 1em;
+      }
+
+      .config-option {
+        margin-bottom: 0.25em;
+      }
+
+      button {
+        display: inline-block;
+      }
+
+      .color-picker {
+        display: inline-block;
+        max-width: 4.25em;
+        line-height: 0.8em;
+
+        .color-picker-item {
+          width: 0.7em;
+          height: 0.7em;
+        }
       }
     }
 

@@ -344,30 +344,6 @@
   content: "\f205";
   letter-spacing: 10px;
 }
-.locator .locator-controls .markers .add-marker {
-  float: right;
-}
-.locator .locator-controls .markers.no-markers {
-  margin-bottom: 1em;
-}
-.locator .locator-controls .markers.no-markers .help {
-  display: none;
-}
-.locator .locator-controls .markers.no-markers .add-marker {
-  float: none;
-  display: block;
-  width: 100%;
-  padding: 0.5em;
-}
-.locator .locator-controls .markers .marker {
-  margin-bottom: 1em;
-}
-.locator .locator-controls .markers .config-option {
-  margin-bottom: 0.25em;
-}
-.locator .locator-controls .markers button {
-  display: inline-block;
-}
 .locator .locator-controls .image-picker {
   width: 100%;
   text-align: left;
@@ -398,6 +374,60 @@
   width: 44.9%;
   margin-right: 4%;
   height: 5em;
+}
+.locator .locator-controls .color-picker {
+  line-height: 1em;
+  vertical-align: top;
+}
+.locator .locator-controls .color-picker .color-picker-item {
+  display: inline-block;
+  border: 1px solid #FFFFFF;
+  outline: 1px solid #FFFFFF;
+  width: 1em;
+  height: 1em;
+  vertical-align: top;
+  margin: 0;
+  cursor: pointer;
+  margin: 1px;
+}
+.locator .locator-controls .color-picker .color-picker-item.is-white {
+  border: 1px solid #BDBDBD;
+}
+.locator .locator-controls .color-picker .color-picker-item.active {
+  outline: 1px solid #343434;
+}
+.locator .locator-controls .markers .add-marker {
+  float: right;
+}
+.locator .locator-controls .markers.no-markers {
+  margin-bottom: 1em;
+}
+.locator .locator-controls .markers.no-markers .help {
+  display: none;
+}
+.locator .locator-controls .markers.no-markers .add-marker {
+  float: none;
+  display: block;
+  width: 100%;
+  padding: 0.5em;
+}
+.locator .locator-controls .markers .marker {
+  margin-bottom: 1em;
+}
+.locator .locator-controls .markers .config-option {
+  margin-bottom: 0.25em;
+}
+.locator .locator-controls .markers button {
+  display: inline-block;
+}
+.locator .locator-controls .markers .color-picker {
+  display: inline-block;
+  max-width: 4.25em;
+  line-height: 0.8em;
+}
+.locator .locator-controls .markers .color-picker .color-picker-item {
+  width: 0.7em;
+  height: 0.7em;
 }
 .locator .locator-controls .config-button {
   padding: 0 1em;

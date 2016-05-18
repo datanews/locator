@@ -95,6 +95,23 @@
         padding: 10
       },
 
+      // Marker option sets
+      markerBackgrounds: [
+        "rgba(0, 0, 0, 0.9)",
+        "rgba(255, 255, 255, 0.9)",
+        "rgba(88, 88, 88, 0.9)",
+        "rgba(200, 200, 200, 0.9)",
+        "rgba(51, 102, 255, 0.9)",
+        "rgba(255, 51, 204, 0.9)",
+        "rgba(0, 245, 61, 0.9)",
+        "rgba(245, 0, 61, 0.9)",
+        "rgba(184, 0, 245, 0.9)"
+      ],
+      markerForegrounds: [
+        "rgba(0, 0, 0, 0.9)",
+        "rgba(255, 255, 255, 0.9)"
+      ],
+
       // Draggable marker.  For URI, See src/images and generated at
       // http://dopiaza.org/tools/datauri/index.php
       draggableMarker: L.icon({
@@ -160,9 +177,6 @@
   _.extend(Locator.prototype, {
     // Make interface
     drawInterface: function() {
-      // Place holder to work around object reference changes
-      var oldReference = _.clone(this.options);
-
       // Certain properties should not re-generate map but may be updated.
       var noGenerate = {
         controlsOpen: this.options.controlsOpen
@@ -185,23 +199,15 @@
       this.interface.on("generate", _.bind(this.generate, this));
 
       // Throttle some functions
-      this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 1500);
+      this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 500);
       if (_.isFunction(this.options.geocoder)) {
-        this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 1500);
+        this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 500);
       }
 
       // Handle general config updates
-      this.interface.observe("options", _.bind(function(options) {
-        // TODO: Recenter should only happen if the lat, lng is outside
-        // the current map view.
-        var recenter = (options.lat !== oldReference.lat ||
-          options.lng !== oldReference.lng);
-
+      this.interface.observe("options", _.bind(function() {
         // The reference to options is maintained
-        this.throttledDrawMaps(recenter);
-
-        // Update past reference
-        oldReference = _.clone(options);
+        this.throttledDrawMaps();
       }, this), { init: false });
 
       // Handle geocoding
@@ -232,6 +238,14 @@
       // General set event functions
       this.interface.on("set", function(e, property, value) {
         this.set(property, value);
+      });
+
+      // General set event for objects
+      this.interface.on("setObject", function(e, data, property, value) {
+        if (_.isObject(data)) {
+          data[property] = value;
+          this.update();
+        }
       });
 
       // Move marker to center of map
@@ -722,11 +736,13 @@
       //this.getEl(".preview").style.display = "block";
     },
 
-    // Export/download.  TODO: use marker text for name
+    // Export/download.
     export: function(mapCtx) {
+      var name = (this.options.markers && this.options.markers[0]) ?
+        this.options.markers[0].text : "";
       var download = this.getEl(".download-link");
       download.href = mapCtx.canvas.toDataURL();
-      download.download = this.makeID(this.options.markerText) + ".png";
+      download.download = this.makeID(name) + ".png";
       download.click();
     },
 
@@ -820,7 +836,7 @@
 
     // Create a slug/id
     makeID: function(input) {
-      input = input.toString();
+      input = input ? input.toString() : "";
       input = input.toLowerCase().trim().replace(/\W+/g, "-");
       input = input ? input : "locator";
       return _.uniqueId(input + "-");
