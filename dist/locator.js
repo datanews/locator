@@ -2923,10 +2923,10 @@ _html2canvas.Renderer.Canvas = function(options) {
       },
       tileset: "CartoDB Positron",
       zoom: 17,
-      lat: 40.74844,
-      lng: -73.98566,
       minZoom: 1,
       maxZoom: 18,
+      lat: 40.74844,
+      lng: -73.98566,
 
       // Attribution (or source) that goes on top of map
       embedAttribution: false,
@@ -2953,16 +2953,25 @@ _html2canvas.Renderer.Canvas = function(options) {
         shadowOffsetY: 1
       },
 
-      // Marker
-      markerText: "Empire State Building",
-      markerBackground: "rgba(0, 0, 0, 0.9)",
-      markerForeground: "rgba(255, 255, 255, 0.9)",
-      markerRadius: 5,
-      markerFontSize: 16,
-      markerFont: "\"Open Sans\", Helvetica, Arial, sans-serif",
-      markerLabelDistance: 20,
-      markerLabelWidth: 3,
-      markerPadding: 10,
+      // Markers
+      markers: [{
+        text: "Empire State Building",
+        lat: 40.74844,
+        lng: -73.98566
+      }],
+
+      // Marker defaults
+      markerDefaults: {
+        text: "Empire State Building",
+        background: "rgba(0, 0, 0, 0.9)",
+        foreground: "rgba(255, 255, 255, 0.9)",
+        radius: 5,
+        fontSize: 16,
+        font: "\"Open Sans\", Helvetica, Arial, sans-serif",
+        labelDistance: 20,
+        labelWidth: 3,
+        padding: 10
+      },
 
       // Draggable marker.  For URI, See src/images and generated at
       // http://dopiaza.org/tools/datauri/index.php
@@ -3107,6 +3116,8 @@ _html2canvas.Renderer.Canvas = function(options) {
         this.set(property, value);
       });
 
+      // TODO: These two things need to work with multiple markers.  A button for each ??
+
       // Move marker to center of map
       this.interface.on("marker-to-center", _.bind(function() {
         var center = this.map.getCenter();
@@ -3128,7 +3139,7 @@ _html2canvas.Renderer.Canvas = function(options) {
     drawMaps: function(recenter) {
       this.alterOptions("preDraw");
       this.drawMap(recenter);
-      this.drawMarker();
+      this.drawMarkers();
       this.drawMinimap();
 
       // Some style fixes
@@ -3286,10 +3297,10 @@ _html2canvas.Renderer.Canvas = function(options) {
       return this.miniCanvasLayer;
     },
 
-    // Draw marker layer
-    drawMarker: function() {
+    // Set up marker canvase layer and draw all markers
+    drawMarkers: function() {
       // Remove existing layer if there
-      if (this.markerCanvas && this.map) {
+      if (this.markerCanvas && this.map && this.markerCanvas._map) {
         this.map.removeLayer(this.markerCanvas);
       }
 
@@ -3298,44 +3309,88 @@ _html2canvas.Renderer.Canvas = function(options) {
       this.markerCanvas.drawTile = _.bind(this.drawMarkerTile, this);
       this.markerCanvas.addTo(this.map);
 
-      // Make marker draggable via an invisble marker, remove first
-      if (this.draggableMarker && this.map) {
-        this.map.removeLayer(this.draggableMarker);
+      // Make draggable marker
+      _.each(this.options.markers, _.bind(function(m, mi) {
+        this.options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
+        this.draggableMarker(this.options.markers[mi], mi);
+      }, this));
+    },
+
+    // Make marker draggable via an invisble marker
+    draggableMarker: function(marker, markerIndex) {
+      this.draggableMarkers = this.draggableMarkers || {};
+      var draggable = this.draggableMarkers[markerIndex];
+
+      // Remove first
+      if (draggable && this.map && draggable._map) {
+        draggable.clearAllEventListeners();
+        this.map.removeLayer(draggable);
       }
 
-      this.draggableMarker = L.marker(L.latLng(this.options.lat, this.options.lng), {
+      // Create marker
+      this.draggableMarkers[markerIndex] = draggable = L.marker(L.latLng(marker.lat, marker.lng), {
         icon: this.options.draggableMarker,
         draggable: true,
         opacity: 0,
         title: "Drag marker here"
       }).addTo(this.map);
 
+      // Hover over
+      draggable.on("mouseover", function(e) {
+        if (!draggable.isDragging) {
+          e.target.setOpacity(0.3);
+        }
+      });
+
+      // Hover out
+      draggable.on("mouseout", function(e) {
+        if (!draggable.isDragging) {
+          e.target.setOpacity(0);
+        }
+      });
+
       // Start dragging
-      this.draggableMarker.on("dragstart", function(e) {
+      draggable.on("dragstart", function(e) {
+        draggable.isDragging = true;
         e.target.setOpacity(1);
       });
 
       // Start dragging
-      this.draggableMarker.on("dragend", _.bind(function(e) {
+      draggable.on("dragend", _.bind(function(e) {
+        draggable.isDragging = false;
         e.target.setOpacity(0);
 
         // Set lat, lng
         var l = e.target.getLatLng();
-        this.options.lat = l.lat;
-        this.options.lng = l.lng;
-        this.drawMarker();
+        marker.lat = l.lat;
+        marker.lng = l.lng;
+        this.drawMarkers();
+      }, this));
+    },
+
+    // Marker canvas layer tile draw function
+    drawMarkerTile: function(canvas, tilePoint, zoom) {
+      var ctx = canvas.getContext("2d");
+
+      // Clear out tile
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw each marker
+      _.each(this.options.markers, _.bind(function(m) {
+        m = _.extend(_.clone(this.options.markerDefaults), m);
+        this.drawMarker(m, canvas, tilePoint, zoom);
       }, this));
     },
 
     // Marker layer draw handler
-    drawMarkerTile: function(canvas, tilePoint, zoom) {
+    drawMarker: function(marker, canvas, tilePoint, zoom) {
       var ctx = canvas.getContext("2d");
       var placement;
       var textWidth;
       var labelWidth;
 
       // Handle line breaks in text
-      var text = this.options.markerText.split("<br>");
+      var text = marker.text.split("<br>");
       text = _.map(text, function(t) {
         return t.trim();
       });
@@ -3343,10 +3398,7 @@ _html2canvas.Renderer.Canvas = function(options) {
       // Determine lines values
       var lines = text.length;
       var lineHeight = 1.25;
-      var labelHeight = ((this.options.markerFontSize * lineHeight) * lines) + (this.options.markerPadding * 2);
-
-      // Clear out tile
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      var labelHeight = ((marker.fontSize * lineHeight) * lines) + (marker.padding * 2);
 
       // Get some dimensions
       var dim = {};
@@ -3357,7 +3409,7 @@ _html2canvas.Renderer.Canvas = function(options) {
       dim.bCoord = L.latLngBounds([[dim.nwCoord.lat, dim.seCoord.lng],
         [dim.seCoord.lat, dim.nwCoord.lng]]);
       dim.bPoint = [dim.nwPoint, dim.sePoint];
-      dim.locCoord = L.latLng(this.options.lat, this.options.lng);
+      dim.locCoord = L.latLng(marker.lat, marker.lng);
       dim.locPoint = this.map.project(dim.locCoord, zoom, true);
 
       // TODO: Use a buffer or some calculation so that we only draw into tiles
@@ -3372,31 +3424,31 @@ _html2canvas.Renderer.Canvas = function(options) {
 
         // Draw point on location
         ctx.beginPath();
-        ctx.translate(placement.x - this.options.markerRadius, placement.y - this.options.markerRadius);
-        ctx.fillStyle = this.options.markerBackground;
+        ctx.translate(placement.x - marker.radius, placement.y - marker.radius);
+        ctx.fillStyle = marker.background;
         ctx.fillRect(0, 0,
-          this.options.markerRadius * 2,
-          this.options.markerRadius * 2
+          marker.radius * 2,
+          marker.radius * 2
         );
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
         // Label connection line
         ctx.beginPath();
-        ctx.translate(placement.x - (this.options.markerLabelWidth / 2),
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance);
-        ctx.fillStyle = this.options.markerBackground;
+        ctx.translate(placement.x - (marker.labelWidth / 2),
+          placement.y - marker.radius - marker.labelDistance);
+        ctx.fillStyle = marker.background;
         ctx.fillRect(0, 0,
-          this.options.markerLabelWidth,
-          this.options.markerLabelDistance
+          marker.labelWidth,
+          marker.labelDistance
         );
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
         // Determine width of text
         ctx.beginPath();
-        ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
-        ctx.fillStyle = this.options.markerForeground;
+        ctx.font = marker.fontSize + "px " + marker.font;
+        ctx.fillStyle = marker.foreground;
         ctx.textAlign = "center";
 
         // Get the width of the longest text
@@ -3405,14 +3457,14 @@ _html2canvas.Renderer.Canvas = function(options) {
         });
 
         textWidth = ctx.measureText(textWidth).width;
-        labelWidth = textWidth + this.options.markerPadding * 2;
+        labelWidth = textWidth + marker.padding * 2;
         ctx.closePath();
 
         // Make label rectangle
         ctx.beginPath();
         ctx.translate(placement.x - (labelWidth / 2),
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance - labelHeight);
-        ctx.fillStyle = this.options.markerBackground;
+          placement.y - marker.radius - marker.labelDistance - labelHeight);
+        ctx.fillStyle = marker.background;
         ctx.fillRect(0, 0, labelWidth, labelHeight);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
@@ -3424,12 +3476,12 @@ _html2canvas.Renderer.Canvas = function(options) {
 
           ctx.beginPath();
           ctx.translate(placement.x,
-            placement.y - this.options.markerRadius - this.options.markerLabelDistance -
-            labelHeight + this.options.markerPadding + offset +
-            ((this.options.markerFontSize * lineHeight) * (ti)));
+            placement.y - marker.radius - marker.labelDistance -
+            labelHeight + marker.padding + offset +
+            ((marker.fontSize * lineHeight) * (ti)));
 
-          ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
-          ctx.fillStyle = this.options.markerForeground;
+          ctx.font = marker.fontSize + "px " + marker.font;
+          ctx.fillStyle = marker.foreground;
           ctx.textAlign = "center";
           ctx.textBaseline = "top";
           ctx.fillText(t, 0, 0);
