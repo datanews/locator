@@ -3021,6 +3021,8 @@ _html2canvas.Renderer.Canvas = function(options) {
 
     // Tilesets can be just a URL, or an object with a URL and
     // preview
+    // TODO: This could technically change while drawing and should
+    // be placed where it affects that.
     this.options.tilesets = this.parseTilesets(this.options.tilesets);
 
     // Build interface
