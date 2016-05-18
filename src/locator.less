@@ -12,6 +12,7 @@
 
 @blue: #3366FF;
 @orange: #F5B800;
+@red: #F5003D;
 
 @down-arrow: "\f107";
 
@@ -262,7 +263,12 @@
       font-size: 0.85em;
       color: @medium-grey;
       display: block;
-      margin-bottom: 0.25em;
+    }
+
+    .help {
+      font-size: 0.65em;
+      color: @medium-grey;
+      margin-bottom: 0.5em;
     }
 
     .config-option label {
@@ -279,6 +285,53 @@
       -moz-appearance: none;
       appearance: none;
       color: @dark-grey;
+    }
+
+    button {
+      border: none;
+      font-size: 1em;
+      color: @black;
+      background-color: @light-grey;
+
+      &.large {
+        font-size: 1.5em;
+      }
+
+      &.small {
+        font-size: 0.85em;
+        padding: 0.25em 0.5em;
+      }
+
+      &.inline {
+        display: inline-block;
+      }
+
+      &.additive {
+        background-color: @blue;
+        color: @white;
+
+        &:hover {
+          background-color: darken(@blue, 15);
+        }
+      }
+
+      &.action {
+        background-color: @orange;
+        color: @white;
+
+        &:hover {
+          background-color: darken(@orange, 15);
+        }
+      }
+
+      &.destructive {
+        background-color: @red;
+        color: @white;
+
+        &:hover {
+          background-color: darken(@red, 15);
+        }
+      }
     }
 
     input[type=text] {
@@ -359,6 +412,39 @@
       }
     }
 
+    .markers {
+      .add-marker {
+        float: right;
+      }
+
+      &.no-markers {
+        margin-bottom: 1em;
+
+        .help {
+          display: none;
+        }
+
+        .add-marker {
+          float: none;
+          display: block;
+          width: 100%;
+          padding: 0.5em;
+        }
+      }
+
+      .marker {
+        margin-bottom: 1em;
+      }
+
+      .config-option {
+        margin-bottom: 0.25em;
+      }
+
+      button {
+        display: inline-block;
+      }
+    }
+
     .image-picker {
       width: 100%;
       text-align: left;
@@ -407,24 +493,6 @@
 
       button {
         display: inline-block;
-        font-size: 1em;
-        padding: 0.25em 0.5em;
-        background-color: @orange;
-        color: @white;
-
-        &:hover {
-          background-color: darken(@orange, 15);
-        }
-      }
-    }
-
-    button {
-      border: 0;
-      background-color: @blue;
-      color: @white;
-
-      &:hover {
-        background-color: darken(@blue, 15);
       }
     }
 

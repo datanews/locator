@@ -220,7 +220,11 @@
   font-size: 0.85em;
   color: #878787;
   display: block;
-  margin-bottom: 0.25em;
+}
+.locator .locator-controls .help {
+  font-size: 0.65em;
+  color: #878787;
+  margin-bottom: 0.5em;
 }
 .locator .locator-controls .config-option label {
   padding-left: 1.15em;
@@ -235,6 +239,43 @@
   -moz-appearance: none;
   appearance: none;
   color: #343434;
+}
+.locator .locator-controls button {
+  border: none;
+  font-size: 1em;
+  color: #000000;
+  background-color: #BDBDBD;
+}
+.locator .locator-controls button.large {
+  font-size: 1.5em;
+}
+.locator .locator-controls button.small {
+  font-size: 0.85em;
+  padding: 0.25em 0.5em;
+}
+.locator .locator-controls button.inline {
+  display: inline-block;
+}
+.locator .locator-controls button.additive {
+  background-color: #3366FF;
+  color: #FFFFFF;
+}
+.locator .locator-controls button.additive:hover {
+  background-color: #0039e5;
+}
+.locator .locator-controls button.action {
+  background-color: #F5B800;
+  color: #FFFFFF;
+}
+.locator .locator-controls button.action:hover {
+  background-color: #a97f00;
+}
+.locator .locator-controls button.destructive {
+  background-color: #F5003D;
+  color: #FFFFFF;
+}
+.locator .locator-controls button.destructive:hover {
+  background-color: #a9002a;
 }
 .locator .locator-controls input[type=text] {
   width: 100%;
@@ -303,6 +344,30 @@
   content: "\f205";
   letter-spacing: 10px;
 }
+.locator .locator-controls .markers .add-marker {
+  float: right;
+}
+.locator .locator-controls .markers.no-markers {
+  margin-bottom: 1em;
+}
+.locator .locator-controls .markers.no-markers .help {
+  display: none;
+}
+.locator .locator-controls .markers.no-markers .add-marker {
+  float: none;
+  display: block;
+  width: 100%;
+  padding: 0.5em;
+}
+.locator .locator-controls .markers .marker {
+  margin-bottom: 1em;
+}
+.locator .locator-controls .markers .config-option {
+  margin-bottom: 0.25em;
+}
+.locator .locator-controls .markers button {
+  display: inline-block;
+}
 .locator .locator-controls .image-picker {
   width: 100%;
   text-align: left;
@@ -344,21 +409,6 @@
 }
 .locator .locator-controls .config-button button {
   display: inline-block;
-  font-size: 1em;
-  padding: 0.25em 0.5em;
-  background-color: #F5B800;
-  color: #FFFFFF;
-}
-.locator .locator-controls .config-button button:hover {
-  background-color: #a97f00;
-}
-.locator .locator-controls button {
-  border: 0;
-  background-color: #3366FF;
-  color: #FFFFFF;
-}
-.locator .locator-controls button:hover {
-  background-color: #0039e5;
 }
 .locator .locator-controls .preview {
   display: none;

@@ -2889,7 +2889,7 @@ _html2canvas.Renderer.Canvas = function(options) {
   var Locator = function(options) {
     this.options = _.extend({}, {
       // Template
-      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\">  <div class=\"locator-map-attribution {{#options.embedAttribution}}enabled{{/}}\">  {{#options.overrideAttribution}}  {{{ options.overrideAttribution }}}  {{/}}  {{^options.overrideAttribution}}  {{{ options.tilesets[options.tileset].attribution }}}  {{/}}  </div>  </div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map:  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   {{#options.markerToCenter}}  <button class=\"minor-button\" on-tap=\"marker-to-center\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"minor-button\" on-tap=\"center-to-marker\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{{ options.title }}}</header>   <div class=\"locator-input\">  <div class=\"config-option\">  <label>Marker label. Use <code>&lt;br&gt;</code> to make line breaks.</label>  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ options.markerText }}\" lazy>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   {{#(_.size(options.tilesets) > 1)}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : '' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#options.markerToCenter}}  <div class=\"config-option config-button\">  <button on-tap=\"marker-to-center\"><i class=\"fa fa-compass\"></i></button>  <label>Move marker to center of map</label>  </div>  {{/}}   {{#options.centerToMarker}}  <div class=\"config-option config-button\">  <button on-tap=\"center-to-marker\"><i class=\"fa fa-plus-square-o\"></i></button>  <label>Center map on marker</label>  </div>  {{/}}   {{#(_.size(options.widths) > 1)}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios) > 1)}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>    <div class=\"config-option\">  <input type=\"checkbox\" checked=\"{{ options.embedAttribution }}\" id=\"config-embed-attribution\" lazy>  <label for=\"config-embed-attribution\">Embed attribution</label>   <input type=\"text\" placeholder=\"Override attribution\" value=\"{{ options.overrideAttribution }}\" lazy>  </div>   <div class=\"config-action\">  <button class=\"generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  {{{ options.footer }}}  </footer>  </div>  </section> </div> ",
+      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\">  <div class=\"locator-map-attribution {{#options.embedAttribution}}enabled{{/}}\">  {{#options.overrideAttribution}}  {{{ options.overrideAttribution }}}  {{/}}  {{^options.overrideAttribution}}  {{{ options.tilesets[options.tileset].attribution }}}  {{/}}  </div>  </div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map:  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   {{#options.markerToCenter}}  <button class=\"minor-button\" on-tap=\"marker-to-center\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"minor-button\" on-tap=\"center-to-marker\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{{ options.title }}}</header>   <div class=\"locator-input\">   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   <div class=\"markers {{^options.markers}}no-markers{{/}}\">  <label>  Markers.  <button class=\"add-marker additive small inline\" on-tap=\"add-marker\" title=\"Add marker at center of map\"><i class=\"fa fa-plus\"></i></button>  </label>  <div class=\"help\">Use <code>&lt;br&gt;</code> to make line breaks.</div>   {{#options.markers:mi}}  <div class=\"marker\" intro-outro=\"slide\">  <div class=\"config-option\">  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ ./text }}\" lazy>  </div>   <div class=\"marker-actions\">  <button class=\"action small\" on-tap=\"marker-to-center:{{ mi }}\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  <button class=\"action small\" on-tap=\"center-to-marker:{{ mi }}\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>   <button class=\"destructive small\" on-tap=\"remove-marker:{{ mi }}\" title=\"Remove marker\"><i class=\"fa fa-close\"></i></button>  </div>  </div>  {{/}}  </div>   {{#(_.size(options.tilesets) > 1)}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : '' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#(_.size(options.widths) > 1)}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios) > 1)}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>    <div class=\"config-option\">  <input type=\"checkbox\" checked=\"{{ options.embedAttribution }}\" id=\"config-embed-attribution\" lazy>  <label for=\"config-embed-attribution\">Embed attribution</label>   <input type=\"text\" placeholder=\"Override attribution\" value=\"{{ options.overrideAttribution }}\" lazy>  </div>   <div class=\"config-action\">  <button class=\"large additive generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  {{{ options.footer }}}  </footer>  </div>  </section> </div> ",
 
       // Text
       title: "Locator",
@@ -2962,7 +2962,7 @@ _html2canvas.Renderer.Canvas = function(options) {
 
       // Marker defaults
       markerDefaults: {
-        text: "Empire State Building",
+        text: "",
         background: "rgba(0, 0, 0, 0.9)",
         foreground: "rgba(255, 255, 255, 0.9)",
         radius: 5,
@@ -3013,10 +3013,10 @@ _html2canvas.Renderer.Canvas = function(options) {
       preDraw: function(options) {
         // Update marker color on darker tileset
         if (options.tileset === "Stamen Toner") {
-          options.markerBackground = "rgba(51, 102, 255, 1)";
+          options.markerDefaults.background = "rgba(51, 102, 255, 1)";
         }
         else {
-          options.markerBackground = "rgba(0, 0, 0, 0.9)";
+          options.markerDefaults.background = "rgba(0, 0, 0, 0.9)";
         }
       }
       */
@@ -3028,13 +3028,9 @@ _html2canvas.Renderer.Canvas = function(options) {
     // Make some options that won't change more accessible
     this.el = this.options.el;
 
-    // Tilesets can be just a URL, or an object with a URL and
-    // preview
-    // TODO: This could technically change while drawing and should
-    // be placed where it affects that.
-    this.options.tilesets = this.parseTilesets(this.options.tilesets);
-
-    // Build interface
+    // Build base interface
+    this.updateOptions();
+    this.alterOptions("preDraw");
     this.drawInterface();
   };
 
@@ -3098,7 +3094,7 @@ _html2canvas.Renderer.Canvas = function(options) {
       }, this), { init: false });
 
       // If someone override attribution, then it should be on
-      // the map
+      // the map.
       this.interface.observe("options.overrideAttribution", function(attribution) {
         var e = this.get("options.embedAttribution");
         if (attribution && !e) {
@@ -3116,19 +3112,34 @@ _html2canvas.Renderer.Canvas = function(options) {
         this.set(property, value);
       });
 
-      // TODO: These two things need to work with multiple markers.  A button for each ??
-
       // Move marker to center of map
-      this.interface.on("marker-to-center", _.bind(function() {
+      this.interface.on("marker-to-center", _.bind(function(e, markerIndex) {
+        var marker = this.options.markers[markerIndex];
         var center = this.map.getCenter();
-        this.options.lat = center.lat;
-        this.options.lng = center.lng;
+        marker.lat = center.lat;
+        marker.lng = center.lng;
         this.interface.update();
       }, this));
 
       // Center map around marker
-      this.interface.on("center-to-marker", _.bind(function() {
-        this.map.setView([this.options.lat, this.options.lng]);
+      this.interface.on("center-to-marker", _.bind(function(e, markerIndex) {
+        var marker = this.options.markers[markerIndex];
+        this.map.setView([marker.lat, marker.lng]);
+      }, this));
+
+      // Remove marker
+      this.interface.on("remove-marker", _.bind(function(e, markerIndex) {
+        this.options.markers.splice(markerIndex, 1);
+      }, this));
+
+      // Add marker
+      this.interface.on("add-marker", _.bind(function() {
+        var center = this.map.getCenter();
+        var marker = {
+          lat: center.lat,
+          lng: center.lng
+        };
+        this.options.markers.push(marker);
       }, this));
 
       // Initialize map parts
@@ -3137,6 +3148,7 @@ _html2canvas.Renderer.Canvas = function(options) {
 
     // Draw map parts
     drawMaps: function(recenter) {
+      this.updateOptions();
       this.alterOptions("preDraw");
       this.drawMap(recenter);
       this.drawMarkers();
@@ -3144,6 +3156,20 @@ _html2canvas.Renderer.Canvas = function(options) {
 
       // Some style fixes
       this.fixMapVerticalAlign();
+    },
+
+    // Update options (fill in any blanks)
+    updateOptions: function() {
+      this.options.markers = this.options.markers || [];
+
+      // Update markers with defaults
+      _.each(this.options.markers, _.bind(function(m, mi) {
+        this.options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
+      }, this));
+
+      // Tilesets can be just a URL, or an object with a URL and
+      // preview
+      this.options.tilesets = this.parseTilesets(this.options.tilesets);
     },
 
     // Alter options with custom function
@@ -3311,7 +3337,6 @@ _html2canvas.Renderer.Canvas = function(options) {
 
       // Make draggable marker
       _.each(this.options.markers, _.bind(function(m, mi) {
-        this.options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
         this.draggableMarker(this.options.markers[mi], mi);
       }, this));
     },
@@ -3377,7 +3402,6 @@ _html2canvas.Renderer.Canvas = function(options) {
 
       // Draw each marker
       _.each(this.options.markers, _.bind(function(m) {
-        m = _.extend(_.clone(this.options.markerDefaults), m);
         this.drawMarker(m, canvas, tilePoint, zoom);
       }, this));
     },

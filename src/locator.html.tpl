@@ -64,17 +64,24 @@
           </div>
         {{/options.geocoder}}
 
-        <div class="markers">
-          <label>Markers.  Use <code>&lt;br&gt;</code> to make line breaks.</label>
+        <div class="markers {{^options.markers}}no-markers{{/}}">
+          <label>
+            Markers.
+            <button class="add-marker additive small inline" on-tap="add-marker" title="Add marker at center of map"><i class="fa fa-plus"></i></button>
+          </label>
+          <div class="help">Use <code>&lt;br&gt;</code> to make line breaks.</div>
 
           {{#options.markers:mi}}
-            <div class="marker">
+            <div class="marker" intro-outro="slide">
               <div class="config-option">
-                <input type="text" placeholder="Marker label" value="{{ text }}" lazy>
+                <input type="text" placeholder="Marker label" value="{{ ./text }}" lazy>
               </div>
 
               <div class="marker-actions">
-                <button on-tap="remove-marker:{{ mi }}" title="Remove marker"><i class="fa fa-compass"></i></button>
+                <button class="action small" on-tap="marker-to-center:{{ mi }}" title="Move marker to center of map"><i class="fa fa-compass"></i></button>
+                <button class="action small" on-tap="center-to-marker:{{ mi }}" title="Center map on marker"><i class="fa fa-plus-square-o"></i></button>
+
+                <button class="destructive small" on-tap="remove-marker:{{ mi }}" title="Remove marker"><i class="fa fa-close"></i></button>
               </div>
             </div>
           {{/}}
@@ -91,20 +98,6 @@
             </div>
           </div>
         {{/()}}
-
-        {{#options.markerToCenter}}
-          <div class="config-option config-button">
-            <button on-tap="marker-to-center"><i class="fa fa-compass"></i></button>
-            <label>Move marker to center of map</label>
-          </div>
-        {{/}}
-
-        {{#options.centerToMarker}}
-          <div class="config-option config-button">
-            <button on-tap="center-to-marker"><i class="fa fa-plus-square-o"></i></button>
-            <label>Center map on marker</label>
-          </div>
-        {{/}}
 
         {{#(_.size(options.widths) > 1)}}
           <div class="config-option config-select">
@@ -145,7 +138,7 @@
         </div>
 
         <div class="config-action">
-          <button class="generate-image" on-tap="generate">Generate <i class="fa fa-download"></i></button>
+          <button class="large additive generate-image" on-tap="generate">Generate <i class="fa fa-download"></i></button>
         </div>
 
         <div class="preview">

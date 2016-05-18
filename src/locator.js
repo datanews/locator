@@ -84,7 +84,7 @@
 
       // Marker defaults
       markerDefaults: {
-        text: "Empire State Building",
+        text: "",
         background: "rgba(0, 0, 0, 0.9)",
         foreground: "rgba(255, 255, 255, 0.9)",
         radius: 5,
@@ -135,10 +135,10 @@
       preDraw: function(options) {
         // Update marker color on darker tileset
         if (options.tileset === "Stamen Toner") {
-          options.markerBackground = "rgba(51, 102, 255, 1)";
+          options.markerDefaults.background = "rgba(51, 102, 255, 1)";
         }
         else {
-          options.markerBackground = "rgba(0, 0, 0, 0.9)";
+          options.markerDefaults.background = "rgba(0, 0, 0, 0.9)";
         }
       }
       */
@@ -216,7 +216,7 @@
       }, this), { init: false });
 
       // If someone override attribution, then it should be on
-      // the map
+      // the map.
       this.interface.observe("options.overrideAttribution", function(attribution) {
         var e = this.get("options.embedAttribution");
         if (attribution && !e) {
@@ -234,19 +234,34 @@
         this.set(property, value);
       });
 
-      // TODO: These two things need to work with multiple markers.  A button for each ??
-
       // Move marker to center of map
-      this.interface.on("marker-to-center", _.bind(function() {
+      this.interface.on("marker-to-center", _.bind(function(e, markerIndex) {
+        var marker = this.options.markers[markerIndex];
         var center = this.map.getCenter();
-        this.options.lat = center.lat;
-        this.options.lng = center.lng;
+        marker.lat = center.lat;
+        marker.lng = center.lng;
         this.interface.update();
       }, this));
 
       // Center map around marker
-      this.interface.on("center-to-marker", _.bind(function() {
-        this.map.setView([this.options.lat, this.options.lng]);
+      this.interface.on("center-to-marker", _.bind(function(e, markerIndex) {
+        var marker = this.options.markers[markerIndex];
+        this.map.setView([marker.lat, marker.lng]);
+      }, this));
+
+      // Remove marker
+      this.interface.on("remove-marker", _.bind(function(e, markerIndex) {
+        this.options.markers.splice(markerIndex, 1);
+      }, this));
+
+      // Add marker
+      this.interface.on("add-marker", _.bind(function() {
+        var center = this.map.getCenter();
+        var marker = {
+          lat: center.lat,
+          lng: center.lng
+        };
+        this.options.markers.push(marker);
       }, this));
 
       // Initialize map parts
@@ -267,6 +282,8 @@
 
     // Update options (fill in any blanks)
     updateOptions: function() {
+      this.options.markers = this.options.markers || [];
+
       // Update markers with defaults
       _.each(this.options.markers, _.bind(function(m, mi) {
         this.options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
