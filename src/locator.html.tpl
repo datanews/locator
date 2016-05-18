@@ -32,14 +32,6 @@
     <div class="minor-controls">
       <div class="toggle-controls" on-tap="toggle:'noGenerate.controlsOpen'"></div>
 
-      {{#options.markerToCenter}}
-        <button class="minor-button" on-tap="marker-to-center" title="Move marker to center of map"><i class="fa fa-compass"></i></button>
-      {{/}}
-
-      {{#options.centerToMarker}}
-        <button class="minor-button" on-tap="center-to-marker" title="Center map on marker"><i class="fa fa-plus-square-o"></i></button>
-      {{/}}
-
       <button class="minor-button minor-generate" on-tap="generate" title="Generate"><i class="fa fa-download"></i></button>
     </div>
 
