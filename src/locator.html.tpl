@@ -47,10 +47,6 @@
       <header>{{{ options.title }}}</header>
 
       <div class="locator-input">
-        <div class="config-option">
-          <label>Marker label.  Use <code>&lt;br&gt;</code> to make line breaks.</label>
-          <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
-        </div>
 
         {{^options.geocoder}}
           <div class="config-option">
@@ -67,6 +63,22 @@
             <input type="text" placeholder="Address or place" value="{{ geocodeInput }}" lazy disabled="{{ isGeocoding }}">
           </div>
         {{/options.geocoder}}
+
+        <div class="markers">
+          <label>Markers.  Use <code>&lt;br&gt;</code> to make line breaks.</label>
+
+          {{#options.markers:mi}}
+            <div class="marker">
+              <div class="config-option">
+                <input type="text" placeholder="Marker label" value="{{ text }}" lazy>
+              </div>
+
+              <div class="marker-actions">
+                <button on-tap="remove-marker:{{ mi }}" title="Remove marker"><i class="fa fa-compass"></i></button>
+              </div>
+            </div>
+          {{/}}
+        </div>
 
         {{#(_.size(options.tilesets) > 1)}}
           <div class="config-option">

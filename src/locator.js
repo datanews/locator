@@ -150,13 +150,9 @@
     // Make some options that won't change more accessible
     this.el = this.options.el;
 
-    // Tilesets can be just a URL, or an object with a URL and
-    // preview
-    // TODO: This could technically change while drawing and should
-    // be placed where it affects that.
-    this.options.tilesets = this.parseTilesets(this.options.tilesets);
-
-    // Build interface
+    // Build base interface
+    this.updateOptions();
+    this.alterOptions("preDraw");
     this.drawInterface();
   };
 
@@ -259,6 +255,7 @@
 
     // Draw map parts
     drawMaps: function(recenter) {
+      this.updateOptions();
       this.alterOptions("preDraw");
       this.drawMap(recenter);
       this.drawMarkers();
@@ -266,6 +263,18 @@
 
       // Some style fixes
       this.fixMapVerticalAlign();
+    },
+
+    // Update options (fill in any blanks)
+    updateOptions: function() {
+      // Update markers with defaults
+      _.each(this.options.markers, _.bind(function(m, mi) {
+        this.options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
+      }, this));
+
+      // Tilesets can be just a URL, or an object with a URL and
+      // preview
+      this.options.tilesets = this.parseTilesets(this.options.tilesets);
     },
 
     // Alter options with custom function
@@ -433,7 +442,6 @@
 
       // Make draggable marker
       _.each(this.options.markers, _.bind(function(m, mi) {
-        this.options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
         this.draggableMarker(this.options.markers[mi], mi);
       }, this));
     },
@@ -499,7 +507,6 @@
 
       // Draw each marker
       _.each(this.options.markers, _.bind(function(m) {
-        m = _.extend(_.clone(this.options.markerDefaults), m);
         this.drawMarker(m, canvas, tilePoint, zoom);
       }, this));
     },
