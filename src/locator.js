@@ -167,8 +167,13 @@
     // Make some options that won't change more accessible
     this.el = this.options.el;
 
-    // Build base interface
+    // Update the options initially
     this.options = this.updateOptions(this.options);
+
+    // Attempt to load saved options
+    this.options = this.load(this.options);
+
+    // Go
     this.drawInterface();
   };
 
@@ -207,6 +212,9 @@
       this.interface.observe("options", _.bind(function(options) {
         // Standardize and allow for any custom option changes
         options = this.options = this.updateOptions(options);
+
+        // Save
+        this.save();
 
         // The reference to options is maintained
         this.throttledDrawMaps();
@@ -263,6 +271,7 @@
       this.interface.on("center-to-marker", _.bind(function(e, markerIndex) {
         var marker = this.options.markers[markerIndex];
         this.map.setView([marker.lat, marker.lng]);
+        this.save();
       }, this));
 
       // Remove marker
@@ -533,6 +542,7 @@
         marker.lat = l.lat;
         marker.lng = l.lng;
         this.drawMarkers();
+        this.save();
       }, this));
     },
 
@@ -794,6 +804,34 @@
       }
 
       return context;
+    },
+
+    // Save
+    save: function() {
+      var options = this.clone(this.options);
+
+      // Remove some parts
+      delete options.draggableMarker;
+      delete options.template;
+      _.each(options, function(o, oi) {
+        if (_.isFunction(o)) {
+          delete options[oi];
+        }
+      });
+
+      window.localStorage.setItem("options", JSON.stringify(options));
+    },
+
+    // Load
+    load: function(options) {
+      var savedOptions = window.localStorage.getItem("options");
+      if (savedOptions) {
+        savedOptions = JSON.parse(savedOptions);
+        return this.extend(options, savedOptions);
+      }
+      else {
+        return options;
+      }
     },
 
     // A vrey crude geocoder that uses Google goeocoding
