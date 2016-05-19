@@ -510,8 +510,20 @@
         float: right;
       }
 
+      .no-markers-label {
+        display: none;
+      }
+
       &.no-markers {
         margin-bottom: 1em;
+
+        .no-markers-label {
+          display: block;
+        }
+
+        .markers-label {
+          display: none;
+        }
 
         .help {
           display: none;

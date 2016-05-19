@@ -431,8 +431,17 @@
 .locator .locator-controls .markers .add-marker {
   float: right;
 }
+.locator .locator-controls .markers .no-markers-label {
+  display: none;
+}
 .locator .locator-controls .markers.no-markers {
   margin-bottom: 1em;
+}
+.locator .locator-controls .markers.no-markers .no-markers-label {
+  display: block;
+}
+.locator .locator-controls .markers.no-markers .markers-label {
+  display: none;
 }
 .locator .locator-controls .markers.no-markers .help {
   display: none;
