@@ -1,0 +1,13 @@
+{
+  "name": "ractive-transitions-slide",
+  "_cacheHeaders": {
+    "Last-Modified": "Wed, 09 Jul 2014 13:35:42 GMT",
+    "Content-Length": "1185",
+    "Content-Type": "application/javascript; charset=utf-8"
+  },
+  "main": "index.js",
+  "_source": "http://ractivejs.github.io/ractive-transitions-slide/ractive-transitions-slide.js",
+  "_target": "*",
+  "_originalSource": "http://ractivejs.github.io/ractive-transitions-slide/ractive-transitions-slide.js",
+  "_direct": true
+}
