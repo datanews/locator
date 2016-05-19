@@ -352,6 +352,14 @@
           background-color: darken(@red, 15);
         }
       }
+
+      &[disabled] {
+        background-color: @light-grey;
+
+        &:hover {
+          background-color: @light-grey;
+        }
+      }
     }
 
     input[type=text] {

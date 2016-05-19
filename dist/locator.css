@@ -293,6 +293,12 @@
 .locator .locator-controls button.destructive:hover {
   background-color: #a9002a;
 }
+.locator .locator-controls button[disabled] {
+  background-color: #BDBDBD;
+}
+.locator .locator-controls button[disabled]:hover {
+  background-color: #BDBDBD;
+}
 .locator .locator-controls input[type=text] {
   width: 100%;
   border-left: none;

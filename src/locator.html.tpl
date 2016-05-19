@@ -40,8 +40,8 @@
 
       <div class="locator-input">
         <div class="locator-history">
-          <button class="small inline action undo" title="Undo" on-tap="undo"><i class="fa fa-rotate-left"></i></button>
-          <button class="small inline action redo" title="Redo" on-tap="redo"><i class="fa fa-rotate-right"></i></button>
+          <button class="small inline action undo" disabled="{{ !canUndo }}" title="Undo" on-tap="undo"><i class="fa fa-rotate-left"></i></button>
+          <button class="small inline action redo" disabled="{{ !canRedo }}" title="Redo" on-tap="redo"><i class="fa fa-rotate-right"></i></button>
           <button class="small inline destructive reset" title="Reset all options" on-tap="resetOptions"><i class="fa fa-refresh"></i></button>
         </div>
 

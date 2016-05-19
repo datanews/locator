@@ -2889,7 +2889,7 @@ _html2canvas.Renderer.Canvas = function(options) {
   var Locator = function(options) {
     this.options = this.extend({
       // Template
-      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\">  <div class=\"locator-map-attribution {{#options.embedAttribution}}enabled{{/}}\">  {{#options.overrideAttribution}}  {{{ options.overrideAttribution }}}  {{/}}  {{^options.overrideAttribution}}  {{{ options.tilesets[options.tileset].attribution }}}  {{/}}  </div>  </div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map: <br>  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{{ options.title }}}</header>   <div class=\"locator-input\">  <div class=\"locator-history\">  <button class=\"small inline action undo\" title=\"Undo\" on-tap=\"undo\"><i class=\"fa fa-rotate-left\"></i></button>  <button class=\"small inline action redo\" title=\"Redo\" on-tap=\"redo\"><i class=\"fa fa-rotate-right\"></i></button>  <button class=\"small inline destructive reset\" title=\"Reset all options\" on-tap=\"resetOptions\"><i class=\"fa fa-refresh\"></i></button>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   <div class=\"markers {{^options.markers}}no-markers{{/}}\">  <button class=\"add-marker action small inline\" on-tap=\"add-marker\" title=\"Add marker at center of map\"><i class=\"fa fa-plus\"></i></button>   <label>  Markers.  </label>  <div class=\"help\">Use <code>&lt;br&gt;</code> to make line breaks.</div>   {{#options.markers:mi}}  <div class=\"marker\" intro-outro=\"slide\">  <div class=\"config-option\">  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ this.text }}\" lazy>  </div>   <div class=\"marker-actions\">  {{#options.markerToCenter}}  <button class=\"action small\" on-tap=\"marker-to-center:{{ mi }}\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"action small\" on-tap=\"center-to-marker:{{ mi }}\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   {{#(_.size(options.markerBackgrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker background color\">  {{#options.markerBackgrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'background',{{ this }}\">  {{/}}  </div>  {{/}}   {{#(_.size(options.markerForegrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker foreground color\">  {{#options.markerForegrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'foreground',{{ this }}\">  {{/}}  </div>  {{/}}   <button class=\"destructive small\" on-tap=\"remove-marker:{{ mi }}\" title=\"Remove marker\"><i class=\"fa fa-close\"></i></button>  </div>  </div>  {{/}}  </div>   {{#(_.size(options.tilesets) > 1)}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : 'inactive' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#(_.size(options.widths) > 1)}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios) > 1)}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>    <div class=\"config-option\">  <input type=\"checkbox\" checked=\"{{ options.embedAttribution }}\" id=\"config-embed-attribution\" lazy>  <label for=\"config-embed-attribution\">Embed attribution</label>   <input type=\"text\" placeholder=\"Override attribution\" value=\"{{ options.overrideAttribution }}\" lazy>  </div>   <div class=\"config-action\">  <button class=\"large additive generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  {{{ options.footer }}}  </footer>  </div>  </section> </div> ",
+      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\">  <div class=\"locator-map-attribution {{#options.embedAttribution}}enabled{{/}}\">  {{#options.overrideAttribution}}  {{{ options.overrideAttribution }}}  {{/}}  {{^options.overrideAttribution}}  {{{ options.tilesets[options.tileset].attribution }}}  {{/}}  </div>  </div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map: <br>  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{{ options.title }}}</header>   <div class=\"locator-input\">  <div class=\"locator-history\">  <button class=\"small inline action undo\" disabled=\"{{ !canUndo }}\" title=\"Undo\" on-tap=\"undo\"><i class=\"fa fa-rotate-left\"></i></button>  <button class=\"small inline action redo\" disabled=\"{{ !canRedo }}\" title=\"Redo\" on-tap=\"redo\"><i class=\"fa fa-rotate-right\"></i></button>  <button class=\"small inline destructive reset\" title=\"Reset all options\" on-tap=\"resetOptions\"><i class=\"fa fa-refresh\"></i></button>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   <div class=\"markers {{^options.markers}}no-markers{{/}}\">  <button class=\"add-marker action small inline\" on-tap=\"add-marker\" title=\"Add marker at center of map\"><i class=\"fa fa-plus\"></i></button>   <label>  Markers.  </label>  <div class=\"help\">Use <code>&lt;br&gt;</code> to make line breaks.</div>   {{#options.markers:mi}}  <div class=\"marker\" intro-outro=\"slide\">  <div class=\"config-option\">  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ this.text }}\" lazy>  </div>   <div class=\"marker-actions\">  {{#options.markerToCenter}}  <button class=\"action small\" on-tap=\"marker-to-center:{{ mi }}\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"action small\" on-tap=\"center-to-marker:{{ mi }}\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   {{#(_.size(options.markerBackgrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker background color\">  {{#options.markerBackgrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'background',{{ this }}\">  {{/}}  </div>  {{/}}   {{#(_.size(options.markerForegrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker foreground color\">  {{#options.markerForegrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'foreground',{{ this }}\">  {{/}}  </div>  {{/}}   <button class=\"destructive small\" on-tap=\"remove-marker:{{ mi }}\" title=\"Remove marker\"><i class=\"fa fa-close\"></i></button>  </div>  </div>  {{/}}  </div>   {{#(_.size(options.tilesets) > 1)}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : 'inactive' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#(_.size(options.widths) > 1)}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios) > 1)}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>    <div class=\"config-option\">  <input type=\"checkbox\" checked=\"{{ options.embedAttribution }}\" id=\"config-embed-attribution\" lazy>  <label for=\"config-embed-attribution\">Embed attribution</label>   <input type=\"text\" placeholder=\"Override attribution\" value=\"{{ options.overrideAttribution }}\" lazy>  </div>   <div class=\"config-action\">  <button class=\"large additive generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  {{{ options.footer }}}  </footer>  </div>  </section> </div> ",
 
       // Text
       title: "Locator",
@@ -3057,7 +3057,7 @@ _html2canvas.Renderer.Canvas = function(options) {
     // Set up history and set intial state
     this.history = [];
     this.historyIndex = 0;
-    this.save();
+    this.save(true);
 
     // Throttle some functions
     this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 500);
@@ -3103,8 +3103,9 @@ _html2canvas.Renderer.Canvas = function(options) {
         // Maybe some options changed a long the way
         this.interface.update();
 
-        // Save
-        this.save();
+        // Save.  Ignore history in cases of undo/redo actions
+        this.save(!this.ignoreHistory);
+        this.ignoreHistory = false;
 
         // Then redraw
         this.throttledDrawMaps();
@@ -3122,12 +3123,14 @@ _html2canvas.Renderer.Canvas = function(options) {
 
       // Undo options
       this.interface.on("undo", _.bind(function() {
+        this.ignoreHistory = true;
         this.undo();
         this.set("options", this.options);
       }, this));
 
       // Redo options
       this.interface.on("redo", _.bind(function() {
+        this.ignoreHistory = true;
         this.redo();
         this.set("options", this.options);
       }, this));
@@ -3742,7 +3745,7 @@ _html2canvas.Renderer.Canvas = function(options) {
     },
 
     // Save
-    save: function() {
+    save: function(history) {
       var options = this.clone(this.options);
 
       // Remove some parts
@@ -3754,16 +3757,19 @@ _html2canvas.Renderer.Canvas = function(options) {
         }
       });
 
-      // Save to history
-      if (this.historyIndex && this.historyIndex < this.history.length - 1) {
-        this.history.splice(0, this.historyIndex + 1);
-      }
-
-      this.history.push(this.clone(options));
-      this.historyIndex = this.history.length - 1;
-
       // Save to browser in case of refresh
       window.localStorage.setItem("options", JSON.stringify(options));
+
+      // Save to history
+      if (history) {
+        if (this.historyIndex >= 0 && this.historyIndex < this.history.length - 1) {
+          this.history = this.history.slice(0, this.historyIndex + 1);
+        }
+
+        this.history.push(this.clone(options));
+        this.historyIndex = this.history.length - 1;
+        this.canDo();
+      }
     },
 
     // Load
@@ -3780,7 +3786,7 @@ _html2canvas.Renderer.Canvas = function(options) {
 
     // Reset all options
     reset: function() {
-      this.options = this.clone(this.originalOptions);
+      this.options = this.extend(this.options, this.clone(this.originalOptions));
     },
 
     // Undo
@@ -3789,14 +3795,26 @@ _html2canvas.Renderer.Canvas = function(options) {
         this.historyIndex = this.historyIndex - 1;
         this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
       }
+
+      this.canDo();
     },
 
     // Redo
     redo: function() {
       if (this.historyIndex < this.history.length - 1) {
         this.historyIndex = this.historyIndex + 1;
-        this.options = this.clone(this.history[this.historyIndex]);
+        this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
       }
+
+      this.canDo();
+    },
+
+    // Determine if can undo/redo
+    canDo: function() {
+      this.set({
+        canUndo: this.historyIndex > 0,
+        canRedo: (this.historyIndex < this.history.length - 1)
+      });
     },
 
     // A vrey crude geocoder that uses Google goeocoding
@@ -3903,8 +3921,67 @@ _html2canvas.Renderer.Canvas = function(options) {
     },
 
     // Deep clone
-    clone: function(source) {
-      return this.extend({}, source);
+    // http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
+    clone: function clone(item) {
+      if (!item) {
+        return item;
+      }
+
+      var types = [Number, String, Boolean];
+      var result;
+      var _this = this;
+
+      // normalizing primitives if someone did new String('aaa'), or new Number('444');
+      types.forEach(function(type) {
+        if (item instanceof type) {
+          result = type(item);
+        }
+      });
+
+      if (typeof result === "undefined") {
+        // Check array
+        if (Object.prototype.toString.call(item) === "[object Array]") {
+          result = [];
+          item.forEach(function(child, index) {
+            result[index] = _this.clone(child);
+          });
+        }
+
+        // Object
+        else if (typeof item === "object") {
+          // testing that this is DOM
+          if (item.nodeType && typeof item.cloneNode === "function") {
+            result = item.cloneNode(true);
+          }
+
+          // Literal possible
+          else if (!item.prototype) {
+            // Date
+            if (item instanceof Date) {
+              result = new Date(item);
+            }
+            else {
+              // it is an object literal
+              result = {};
+              _.each(item, function(v, i) {
+                result[i] = _this.clone(item[i]);
+              });
+            }
+          }
+
+          // Other object
+          else {
+            result = item;
+          }
+        }
+
+        // Something way different
+        else {
+          result = item;
+        }
+      }
+
+      return result;
     }
   });
 

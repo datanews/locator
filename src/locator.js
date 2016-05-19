@@ -179,7 +179,7 @@
     // Set up history and set intial state
     this.history = [];
     this.historyIndex = 0;
-    this.save();
+    this.save(true);
 
     // Throttle some functions
     this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 500);
@@ -225,8 +225,9 @@
         // Maybe some options changed a long the way
         this.interface.update();
 
-        // Save
-        this.save();
+        // Save.  Ignore history in cases of undo/redo actions
+        this.save(!this.ignoreHistory);
+        this.ignoreHistory = false;
 
         // Then redraw
         this.throttledDrawMaps();
@@ -244,12 +245,14 @@
 
       // Undo options
       this.interface.on("undo", _.bind(function() {
+        this.ignoreHistory = true;
         this.undo();
         this.set("options", this.options);
       }, this));
 
       // Redo options
       this.interface.on("redo", _.bind(function() {
+        this.ignoreHistory = true;
         this.redo();
         this.set("options", this.options);
       }, this));
@@ -864,7 +867,7 @@
     },
 
     // Save
-    save: function() {
+    save: function(history) {
       var options = this.clone(this.options);
 
       // Remove some parts
@@ -876,16 +879,19 @@
         }
       });
 
-      // Save to history
-      if (this.historyIndex && this.historyIndex < this.history.length - 1) {
-        this.history.splice(0, this.historyIndex + 1);
-      }
-
-      this.history.push(this.clone(options));
-      this.historyIndex = this.history.length - 1;
-
       // Save to browser in case of refresh
       window.localStorage.setItem("options", JSON.stringify(options));
+
+      // Save to history
+      if (history) {
+        if (this.historyIndex >= 0 && this.historyIndex < this.history.length - 1) {
+          this.history = this.history.slice(0, this.historyIndex + 1);
+        }
+
+        this.history.push(this.clone(options));
+        this.historyIndex = this.history.length - 1;
+        this.canDo();
+      }
     },
 
     // Load
@@ -902,7 +908,7 @@
 
     // Reset all options
     reset: function() {
-      this.options = this.clone(this.originalOptions);
+      this.options = this.extend(this.options, this.clone(this.originalOptions));
     },
 
     // Undo
@@ -911,14 +917,26 @@
         this.historyIndex = this.historyIndex - 1;
         this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
       }
+
+      this.canDo();
     },
 
     // Redo
     redo: function() {
       if (this.historyIndex < this.history.length - 1) {
         this.historyIndex = this.historyIndex + 1;
-        this.options = this.clone(this.history[this.historyIndex]);
+        this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
       }
+
+      this.canDo();
+    },
+
+    // Determine if can undo/redo
+    canDo: function() {
+      this.set({
+        canUndo: this.historyIndex > 0,
+        canRedo: (this.historyIndex < this.history.length - 1)
+      });
     },
 
     // A vrey crude geocoder that uses Google goeocoding
@@ -1025,8 +1043,67 @@
     },
 
     // Deep clone
-    clone: function(source) {
-      return this.extend({}, source);
+    // http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
+    clone: function clone(item) {
+      if (!item) {
+        return item;
+      }
+
+      var types = [Number, String, Boolean];
+      var result;
+      var _this = this;
+
+      // normalizing primitives if someone did new String('aaa'), or new Number('444');
+      types.forEach(function(type) {
+        if (item instanceof type) {
+          result = type(item);
+        }
+      });
+
+      if (typeof result === "undefined") {
+        // Check array
+        if (Object.prototype.toString.call(item) === "[object Array]") {
+          result = [];
+          item.forEach(function(child, index) {
+            result[index] = _this.clone(child);
+          });
+        }
+
+        // Object
+        else if (typeof item === "object") {
+          // testing that this is DOM
+          if (item.nodeType && typeof item.cloneNode === "function") {
+            result = item.cloneNode(true);
+          }
+
+          // Literal possible
+          else if (!item.prototype) {
+            // Date
+            if (item instanceof Date) {
+              result = new Date(item);
+            }
+            else {
+              // it is an object literal
+              result = {};
+              _.each(item, function(v, i) {
+                result[i] = _this.clone(item[i]);
+              });
+            }
+          }
+
+          // Other object
+          else {
+            result = item;
+          }
+        }
+
+        // Something way different
+        else {
+          result = item;
+        }
+      }
+
+      return result;
     }
   });
 
