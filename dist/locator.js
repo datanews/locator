@@ -2889,7 +2889,7 @@ _html2canvas.Renderer.Canvas = function(options) {
   var Locator = function(options) {
     this.options = this.extend({
       // Template
-      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\">  <div class=\"locator-map-attribution {{#options.embedAttribution}}enabled{{/}}\">  {{#options.overrideAttribution}}  {{{ options.overrideAttribution }}}  {{/}}  {{^options.overrideAttribution}}  {{{ options.tilesets[options.tileset].attribution }}}  {{/}}  </div>  </div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map: <br>  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{{ options.title }}}</header>   <div class=\"locator-input\">  <div class=\"locator-history\">  <button class=\"small inline destructive reset\" title=\"Reset all options\" on-tap=\"resetOptions\"><i class=\"fa fa-refresh\"></i></button>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   <div class=\"markers {{^options.markers}}no-markers{{/}}\">  <label>  Markers.  <button class=\"add-marker additive small inline\" on-tap=\"add-marker\" title=\"Add marker at center of map\"><i class=\"fa fa-plus\"></i></button>  </label>  <div class=\"help\">Use <code>&lt;br&gt;</code> to make line breaks.</div>   {{#options.markers:mi}}  <div class=\"marker\" intro-outro=\"slide\">  <div class=\"config-option\">  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ this.text }}\" lazy>  </div>   <div class=\"marker-actions\">  {{#options.markerToCenter}}  <button class=\"action small\" on-tap=\"marker-to-center:{{ mi }}\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"action small\" on-tap=\"center-to-marker:{{ mi }}\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   {{#(_.size(options.markerBackgrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker background color\">  {{#options.markerBackgrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'background',{{ this }}\">  {{/}}  </div>  {{/}}   {{#(_.size(options.markerForegrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker foreground color\">  {{#options.markerForegrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'foreground',{{ this }}\">  {{/}}  </div>  {{/}}   <button class=\"destructive small\" on-tap=\"remove-marker:{{ mi }}\" title=\"Remove marker\"><i class=\"fa fa-close\"></i></button>  </div>  </div>  {{/}}  </div>   {{#(_.size(options.tilesets) > 1)}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : 'inactive' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#(_.size(options.widths) > 1)}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios) > 1)}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>    <div class=\"config-option\">  <input type=\"checkbox\" checked=\"{{ options.embedAttribution }}\" id=\"config-embed-attribution\" lazy>  <label for=\"config-embed-attribution\">Embed attribution</label>   <input type=\"text\" placeholder=\"Override attribution\" value=\"{{ options.overrideAttribution }}\" lazy>  </div>   <div class=\"config-action\">  <button class=\"large additive generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  {{{ options.footer }}}  </footer>  </div>  </section> </div> ",
+      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\">  <div class=\"locator-map-attribution {{#options.embedAttribution}}enabled{{/}}\">  {{#options.overrideAttribution}}  {{{ options.overrideAttribution }}}  {{/}}  {{^options.overrideAttribution}}  {{{ options.tilesets[options.tileset].attribution }}}  {{/}}  </div>  </div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map: <br>  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{{ options.title }}}</header>   <div class=\"locator-input\">  <div class=\"locator-history\">  <button class=\"small inline action undo\" title=\"Undo\" on-tap=\"undo\"><i class=\"fa fa-rotate-left\"></i></button>  <button class=\"small inline action redo\" title=\"Redo\" on-tap=\"redo\"><i class=\"fa fa-rotate-right\"></i></button>  <button class=\"small inline destructive reset\" title=\"Reset all options\" on-tap=\"resetOptions\"><i class=\"fa fa-refresh\"></i></button>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   <div class=\"markers {{^options.markers}}no-markers{{/}}\">  <button class=\"add-marker action small inline\" on-tap=\"add-marker\" title=\"Add marker at center of map\"><i class=\"fa fa-plus\"></i></button>   <label>  Markers.  </label>  <div class=\"help\">Use <code>&lt;br&gt;</code> to make line breaks.</div>   {{#options.markers:mi}}  <div class=\"marker\" intro-outro=\"slide\">  <div class=\"config-option\">  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ this.text }}\" lazy>  </div>   <div class=\"marker-actions\">  {{#options.markerToCenter}}  <button class=\"action small\" on-tap=\"marker-to-center:{{ mi }}\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"action small\" on-tap=\"center-to-marker:{{ mi }}\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   {{#(_.size(options.markerBackgrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker background color\">  {{#options.markerBackgrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'background',{{ this }}\">  {{/}}  </div>  {{/}}   {{#(_.size(options.markerForegrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker foreground color\">  {{#options.markerForegrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'foreground',{{ this }}\">  {{/}}  </div>  {{/}}   <button class=\"destructive small\" on-tap=\"remove-marker:{{ mi }}\" title=\"Remove marker\"><i class=\"fa fa-close\"></i></button>  </div>  </div>  {{/}}  </div>   {{#(_.size(options.tilesets) > 1)}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : 'inactive' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#(_.size(options.widths) > 1)}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios) > 1)}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>    <div class=\"config-option\">  <input type=\"checkbox\" checked=\"{{ options.embedAttribution }}\" id=\"config-embed-attribution\" lazy>  <label for=\"config-embed-attribution\">Embed attribution</label>   <input type=\"text\" placeholder=\"Override attribution\" value=\"{{ options.overrideAttribution }}\" lazy>  </div>   <div class=\"config-action\">  <button class=\"large additive generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  {{{ options.footer }}}  </footer>  </div>  </section> </div> ",
 
       // Text
       title: "Locator",
@@ -3045,14 +3045,25 @@ _html2canvas.Renderer.Canvas = function(options) {
     // Make some options that won't change more accessible
     this.el = this.options.el;
 
+    // Update the options initially
+    this.updateOptions();
+
     // We may want to reset
     this.originalOptions = this.clone(this.options);
 
-    // Update the options initially
-    this.options = this.updateOptions(this.options);
-
     // Attempt to load saved options
     this.options = this.load(this.options);
+
+    // Set up history and set intial state
+    this.history = [];
+    this.historyIndex = 0;
+    this.save();
+
+    // Throttle some functions
+    this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 500);
+    if (_.isFunction(this.options.geocoder)) {
+      this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 500);
+    }
 
     // Go
     this.drawInterface();
@@ -3080,24 +3091,22 @@ _html2canvas.Renderer.Canvas = function(options) {
         }
       });
 
-      // Match up events
-      this.interface.on("generate", _.bind(this.generate, this));
-
-      // Throttle some functions
-      this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 750);
-      if (_.isFunction(this.options.geocoder)) {
-        this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 750);
-      }
-
       // Handle general config updates
-      this.interface.observe("options", _.bind(function(options) {
-        // Standardize and allow for any custom option changes
-        options = this.options = this.updateOptions(options);
+      this.interface.observe("options", _.bind(function() {
+        if (this.ignoreObservers) {
+          return;
+        }
+
+        // Alter options
+        this.updateOptions();
+
+        // Maybe some options changed a long the way
+        this.interface.update();
 
         // Save
         this.save();
 
-        // The reference to options is maintained
+        // Then redraw
         this.throttledDrawMaps();
       }, this), { init: false });
 
@@ -3105,60 +3114,69 @@ _html2canvas.Renderer.Canvas = function(options) {
       this.interface.observe("geocodeInput", _.bind(function(input) {
         if (_.isFunction(this.throttledGeocoder)) {
           this.throttledGeocoder(input, _.bind(function(lat, lng) {
-            this.options.lat = lat;
-            this.options.lng = lng;
-            this.throttledDrawMaps(true);
+            this.set("options.lat", lat);
+            this.set("options.lng", lng);
           }, this));
         }
       }, this), { init: false });
 
-      // If someone override attribution, then it should be on
-      // the map.
-      this.interface.observe("options.overrideAttribution", function(attribution) {
-        var e = this.get("options.embedAttribution");
-        if (attribution && !e) {
-          this.set("options.embedAttribution", true);
-        }
-      }, { init: true });
+      // Undo options
+      this.interface.on("undo", _.bind(function() {
+        this.undo();
+        this.set("options", this.options);
+      }, this));
+
+      // Redo options
+      this.interface.on("redo", _.bind(function() {
+        this.redo();
+        this.set("options", this.options);
+      }, this));
+
+      // Generate image
+      this.interface.on("generate", _.bind(this.generate, this));
 
       // Reset options
       this.interface.on("resetOptions", _.bind(function() {
         this.reset();
-        this.interface.set("options", this.options);
+        this.set("options", this.options);
       }, this));
 
       // General toggle event functions
-      this.interface.on("toggle", function(e, property) {
+      this.interface.on("toggle", _.bind(function(e, property) {
         this.set(property, !this.get(property));
-      });
+      }, this));
 
       // General set event functions
-      this.interface.on("set", function(e, property, value) {
+      this.interface.on("set", _.bind(function(e, property, value) {
         this.set(property, value);
-      });
+      }, this));
 
       // Update marker property
       this.interface.on("setMarker", _.bind(function(e, markerIndex, property, value) {
-        if (this.options.markers[markerIndex]) {
-          this.options.markers[markerIndex][property] = value;
-          this.interface.update();
+        var marker = this.get("options.markers." + markerIndex);
+        if (marker) {
+          this.set("options.markers." + markerIndex + "." + property, value);
         }
       }, this));
 
       // Move marker to center of map
       this.interface.on("marker-to-center", _.bind(function(e, markerIndex) {
-        var marker = this.options.markers[markerIndex];
         var center = this.map.getCenter();
-        marker.lat = center.lat;
-        marker.lng = center.lng;
-        this.interface.update();
+        var change = {};
+        change["options.markers." + markerIndex + ".lat"] = center.lat;
+        change["options.markers." + markerIndex + ".lng"] = center.lng;
+        this.set(change);
       }, this));
 
       // Center map around marker
       this.interface.on("center-to-marker", _.bind(function(e, markerIndex) {
-        var marker = this.options.markers[markerIndex];
-        this.map.setView([marker.lat, marker.lng]);
-        this.save();
+        var marker = this.get("options.markers." + markerIndex);
+        if (marker) {
+          this.set({
+            "options.lat": marker.lat,
+            "options.lng": marker.lng
+          });
+        }
       }, this));
 
       // Remove marker
@@ -3173,16 +3191,32 @@ _html2canvas.Renderer.Canvas = function(options) {
           lat: center.lat,
           lng: center.lng
         };
-        this.options.markers.push(marker);
+        this.get("options.markers").push(this.updateMarker(marker));
       }, this));
 
       // Initialize map parts
       this.drawMaps();
     },
 
+    // Wrappers to ractive set
+    set: function(key, value) {
+      if (this.interface) {
+        this.interface.set(key, value);
+      }
+    },
+
+    // Wrappers to ractive get
+    get: function(key) {
+      if (this.interface) {
+        return this.interface.get(key);
+      }
+
+      return undefined;
+    },
+
     // Draw map parts
-    drawMaps: function(recenter) {
-      this.drawMap(recenter);
+    drawMaps: function() {
+      this.drawMap();
       this.drawMarkers();
       this.drawMinimap();
 
@@ -3190,21 +3224,21 @@ _html2canvas.Renderer.Canvas = function(options) {
       this.fixMapVerticalAlign();
     },
 
-    // Update options (fill in any blanks)
-    updateOptions: function(options) {
-      options.markers = options.markers || [];
+    // Update options
+    updateOptions: function() {
+      var options = this.options;
+
+      // Allow for any custom changes
+      options = this.alterOptions("preDraw", this.options);
 
       // Update markers with defaults
       _.each(options.markers, _.bind(function(m, mi) {
-        options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
+        options.markers[mi] = this.updateMarker(options.markers[mi]);
       }, this));
 
       // Tilesets can be just a URL, or an object with a URL and
       // preview
       options.tilesets = this.parseTilesets(options.tilesets);
-
-      // Allow for any custom changes
-      options = this.alterOptions("preDraw", options);
 
       return options;
     },
@@ -3220,7 +3254,7 @@ _html2canvas.Renderer.Canvas = function(options) {
 
     // Make main map
     drawMap: function(recenter) {
-      recenter = recenter || false;
+      recenter = _.isUndefined(recenter) ? true : recenter;
       var mapEl = this.getEl(".locator-map");
       var width;
       var height;
@@ -3268,6 +3302,16 @@ _html2canvas.Renderer.Canvas = function(options) {
       // Tile layer
       this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
       this.map.addLayer(this.mapLayer);
+
+      // React to map view change
+      this.map.on("moveend", _.bind(function() {
+        var center = this.map.getCenter();
+        this.set({
+          "options.lat": center.lat,
+          "options.lng": center.lng,
+          "options.zoom": this.map.getZoom()
+        });
+      }, this));
     },
 
     // Draw minimap
@@ -3362,6 +3406,11 @@ _html2canvas.Renderer.Canvas = function(options) {
       return this.miniCanvasLayer;
     },
 
+    // Update marker with default values
+    updateMarker: function(marker) {
+      return _.extend(_.clone(this.options.markerDefaults), marker);
+    },
+
     // Set up marker canvase layer and draw all markers
     drawMarkers: function() {
       // Remove existing layer if there
@@ -3428,8 +3477,7 @@ _html2canvas.Renderer.Canvas = function(options) {
         var l = e.target.getLatLng();
         marker.lat = l.lat;
         marker.lng = l.lng;
-        this.drawMarkers();
-        this.save();
+        this.interface.update("options.markers");
       }, this));
     },
 
@@ -3706,6 +3754,15 @@ _html2canvas.Renderer.Canvas = function(options) {
         }
       });
 
+      // Save to history
+      if (this.historyIndex && this.historyIndex < this.history.length - 1) {
+        this.history.splice(0, this.historyIndex + 1);
+      }
+
+      this.history.push(this.clone(options));
+      this.historyIndex = this.history.length - 1;
+
+      // Save to browser in case of refresh
       window.localStorage.setItem("options", JSON.stringify(options));
     },
 
@@ -3724,6 +3781,22 @@ _html2canvas.Renderer.Canvas = function(options) {
     // Reset all options
     reset: function() {
       this.options = this.clone(this.originalOptions);
+    },
+
+    // Undo
+    undo: function() {
+      if (this.historyIndex > 0) {
+        this.historyIndex = this.historyIndex - 1;
+        this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
+      }
+    },
+
+    // Redo
+    redo: function() {
+      if (this.historyIndex < this.history.length - 1) {
+        this.historyIndex = this.historyIndex + 1;
+        this.options = this.clone(this.history[this.historyIndex]);
+      }
     },
 
     // A vrey crude geocoder that uses Google goeocoding

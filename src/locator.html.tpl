@@ -40,6 +40,8 @@
 
       <div class="locator-input">
         <div class="locator-history">
+          <button class="small inline action undo" title="Undo" on-tap="undo"><i class="fa fa-rotate-left"></i></button>
+          <button class="small inline action redo" title="Redo" on-tap="redo"><i class="fa fa-rotate-right"></i></button>
           <button class="small inline destructive reset" title="Reset all options" on-tap="resetOptions"><i class="fa fa-refresh"></i></button>
         </div>
 
@@ -60,9 +62,10 @@
         {{/options.geocoder}}
 
         <div class="markers {{^options.markers}}no-markers{{/}}">
+          <button class="add-marker action small inline" on-tap="add-marker" title="Add marker at center of map"><i class="fa fa-plus"></i></button>
+
           <label>
             Markers.
-            <button class="add-marker additive small inline" on-tap="add-marker" title="Add marker at center of map"><i class="fa fa-plus"></i></button>
           </label>
           <div class="help">Use <code>&lt;br&gt;</code> to make line breaks.</div>
 

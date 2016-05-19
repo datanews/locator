@@ -167,14 +167,25 @@
     // Make some options that won't change more accessible
     this.el = this.options.el;
 
+    // Update the options initially
+    this.updateOptions();
+
     // We may want to reset
     this.originalOptions = this.clone(this.options);
 
-    // Update the options initially
-    this.options = this.updateOptions(this.options);
-
     // Attempt to load saved options
     this.options = this.load(this.options);
+
+    // Set up history and set intial state
+    this.history = [];
+    this.historyIndex = 0;
+    this.save();
+
+    // Throttle some functions
+    this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 500);
+    if (_.isFunction(this.options.geocoder)) {
+      this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 500);
+    }
 
     // Go
     this.drawInterface();
@@ -202,24 +213,22 @@
         }
       });
 
-      // Match up events
-      this.interface.on("generate", _.bind(this.generate, this));
-
-      // Throttle some functions
-      this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 750);
-      if (_.isFunction(this.options.geocoder)) {
-        this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 750);
-      }
-
       // Handle general config updates
-      this.interface.observe("options", _.bind(function(options) {
-        // Standardize and allow for any custom option changes
-        options = this.options = this.updateOptions(options);
+      this.interface.observe("options", _.bind(function() {
+        if (this.ignoreObservers) {
+          return;
+        }
+
+        // Alter options
+        this.updateOptions();
+
+        // Maybe some options changed a long the way
+        this.interface.update();
 
         // Save
         this.save();
 
-        // The reference to options is maintained
+        // Then redraw
         this.throttledDrawMaps();
       }, this), { init: false });
 
@@ -227,60 +236,69 @@
       this.interface.observe("geocodeInput", _.bind(function(input) {
         if (_.isFunction(this.throttledGeocoder)) {
           this.throttledGeocoder(input, _.bind(function(lat, lng) {
-            this.options.lat = lat;
-            this.options.lng = lng;
-            this.throttledDrawMaps(true);
+            this.set("options.lat", lat);
+            this.set("options.lng", lng);
           }, this));
         }
       }, this), { init: false });
 
-      // If someone override attribution, then it should be on
-      // the map.
-      this.interface.observe("options.overrideAttribution", function(attribution) {
-        var e = this.get("options.embedAttribution");
-        if (attribution && !e) {
-          this.set("options.embedAttribution", true);
-        }
-      }, { init: true });
+      // Undo options
+      this.interface.on("undo", _.bind(function() {
+        this.undo();
+        this.set("options", this.options);
+      }, this));
+
+      // Redo options
+      this.interface.on("redo", _.bind(function() {
+        this.redo();
+        this.set("options", this.options);
+      }, this));
+
+      // Generate image
+      this.interface.on("generate", _.bind(this.generate, this));
 
       // Reset options
       this.interface.on("resetOptions", _.bind(function() {
         this.reset();
-        this.interface.set("options", this.options);
+        this.set("options", this.options);
       }, this));
 
       // General toggle event functions
-      this.interface.on("toggle", function(e, property) {
+      this.interface.on("toggle", _.bind(function(e, property) {
         this.set(property, !this.get(property));
-      });
+      }, this));
 
       // General set event functions
-      this.interface.on("set", function(e, property, value) {
+      this.interface.on("set", _.bind(function(e, property, value) {
         this.set(property, value);
-      });
+      }, this));
 
       // Update marker property
       this.interface.on("setMarker", _.bind(function(e, markerIndex, property, value) {
-        if (this.options.markers[markerIndex]) {
-          this.options.markers[markerIndex][property] = value;
-          this.interface.update();
+        var marker = this.get("options.markers." + markerIndex);
+        if (marker) {
+          this.set("options.markers." + markerIndex + "." + property, value);
         }
       }, this));
 
       // Move marker to center of map
       this.interface.on("marker-to-center", _.bind(function(e, markerIndex) {
-        var marker = this.options.markers[markerIndex];
         var center = this.map.getCenter();
-        marker.lat = center.lat;
-        marker.lng = center.lng;
-        this.interface.update();
+        var change = {};
+        change["options.markers." + markerIndex + ".lat"] = center.lat;
+        change["options.markers." + markerIndex + ".lng"] = center.lng;
+        this.set(change);
       }, this));
 
       // Center map around marker
       this.interface.on("center-to-marker", _.bind(function(e, markerIndex) {
-        var marker = this.options.markers[markerIndex];
-        this.map.setView([marker.lat, marker.lng]);
-        this.save();
+        var marker = this.get("options.markers." + markerIndex);
+        if (marker) {
+          this.set({
+            "options.lat": marker.lat,
+            "options.lng": marker.lng
+          });
+        }
       }, this));
 
       // Remove marker
@@ -295,16 +313,32 @@
           lat: center.lat,
           lng: center.lng
         };
-        this.options.markers.push(marker);
+        this.get("options.markers").push(this.updateMarker(marker));
       }, this));
 
       // Initialize map parts
       this.drawMaps();
     },
 
+    // Wrappers to ractive set
+    set: function(key, value) {
+      if (this.interface) {
+        this.interface.set(key, value);
+      }
+    },
+
+    // Wrappers to ractive get
+    get: function(key) {
+      if (this.interface) {
+        return this.interface.get(key);
+      }
+
+      return undefined;
+    },
+
     // Draw map parts
-    drawMaps: function(recenter) {
-      this.drawMap(recenter);
+    drawMaps: function() {
+      this.drawMap();
       this.drawMarkers();
       this.drawMinimap();
 
@@ -312,21 +346,21 @@
       this.fixMapVerticalAlign();
     },
 
-    // Update options (fill in any blanks)
-    updateOptions: function(options) {
-      options.markers = options.markers || [];
+    // Update options
+    updateOptions: function() {
+      var options = this.options;
+
+      // Allow for any custom changes
+      options = this.alterOptions("preDraw", this.options);
 
       // Update markers with defaults
       _.each(options.markers, _.bind(function(m, mi) {
-        options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
+        options.markers[mi] = this.updateMarker(options.markers[mi]);
       }, this));
 
       // Tilesets can be just a URL, or an object with a URL and
       // preview
       options.tilesets = this.parseTilesets(options.tilesets);
-
-      // Allow for any custom changes
-      options = this.alterOptions("preDraw", options);
 
       return options;
     },
@@ -342,7 +376,7 @@
 
     // Make main map
     drawMap: function(recenter) {
-      recenter = recenter || false;
+      recenter = _.isUndefined(recenter) ? true : recenter;
       var mapEl = this.getEl(".locator-map");
       var width;
       var height;
@@ -390,6 +424,16 @@
       // Tile layer
       this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
       this.map.addLayer(this.mapLayer);
+
+      // React to map view change
+      this.map.on("moveend", _.bind(function() {
+        var center = this.map.getCenter();
+        this.set({
+          "options.lat": center.lat,
+          "options.lng": center.lng,
+          "options.zoom": this.map.getZoom()
+        });
+      }, this));
     },
 
     // Draw minimap
@@ -484,6 +528,11 @@
       return this.miniCanvasLayer;
     },
 
+    // Update marker with default values
+    updateMarker: function(marker) {
+      return _.extend(_.clone(this.options.markerDefaults), marker);
+    },
+
     // Set up marker canvase layer and draw all markers
     drawMarkers: function() {
       // Remove existing layer if there
@@ -550,8 +599,7 @@
         var l = e.target.getLatLng();
         marker.lat = l.lat;
         marker.lng = l.lng;
-        this.drawMarkers();
-        this.save();
+        this.interface.update("options.markers");
       }, this));
     },
 
@@ -828,6 +876,15 @@
         }
       });
 
+      // Save to history
+      if (this.historyIndex && this.historyIndex < this.history.length - 1) {
+        this.history.splice(0, this.historyIndex + 1);
+      }
+
+      this.history.push(this.clone(options));
+      this.historyIndex = this.history.length - 1;
+
+      // Save to browser in case of refresh
       window.localStorage.setItem("options", JSON.stringify(options));
     },
 
@@ -846,6 +903,22 @@
     // Reset all options
     reset: function() {
       this.options = this.clone(this.originalOptions);
+    },
+
+    // Undo
+    undo: function() {
+      if (this.historyIndex > 0) {
+        this.historyIndex = this.historyIndex - 1;
+        this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
+      }
+    },
+
+    // Redo
+    redo: function() {
+      if (this.historyIndex < this.history.length - 1) {
+        this.historyIndex = this.historyIndex + 1;
+        this.options = this.clone(this.history[this.historyIndex]);
+      }
     },
 
     // A vrey crude geocoder that uses Google goeocoding
