@@ -124,6 +124,7 @@ gulp.task("bundle", ["styles", "js-linting", "js"], function() {
   var jsDeps = [
     "bower_components/ractive/ractive.js",
     "bower_components/ractive-events-tap/dist/ractive-events-tap.umd.js",
+    "bower_components/ractive-transitions-slide/index.js",
     "bower_components/underscore/underscore.js",
     "bower_components/leaflet/dist/leaflet.js",
     "bower_components/leaflet-minimap/dist/Control.MiniMap.min.js"

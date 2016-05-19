@@ -19,7 +19,7 @@
           <div class="locator-map-help">
             Move the marker by dragging the base.
             {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}
-              Required attribution for this map:
+              Required attribution for this map: <br>
               <span class="attribution">{{{ options.tilesets[options.tileset].attribution }}}</span>
             {{/()}}
           </div>
@@ -32,14 +32,6 @@
     <div class="minor-controls">
       <div class="toggle-controls" on-tap="toggle:'noGenerate.controlsOpen'"></div>
 
-      {{#options.markerToCenter}}
-        <button class="minor-button" on-tap="marker-to-center" title="Move marker to center of map"><i class="fa fa-compass"></i></button>
-      {{/}}
-
-      {{#options.centerToMarker}}
-        <button class="minor-button" on-tap="center-to-marker" title="Center map on marker"><i class="fa fa-plus-square-o"></i></button>
-      {{/}}
-
       <button class="minor-button minor-generate" on-tap="generate" title="Generate"><i class="fa fa-download"></i></button>
     </div>
 
@@ -47,9 +39,10 @@
       <header>{{{ options.title }}}</header>
 
       <div class="locator-input">
-        <div class="config-option">
-          <label>Marker label.  Use <code>&lt;br&gt;</code> to make line breaks.</label>
-          <input type="text" placeholder="Marker label" value="{{ options.markerText }}" lazy>
+        <div class="locator-history">
+          <button class="small inline action undo" disabled="{{ !canUndo }}" title="Undo" on-tap="undo"><i class="fa fa-rotate-left"></i></button>
+          <button class="small inline action redo" disabled="{{ !canRedo }}" title="Redo" on-tap="redo"><i class="fa fa-rotate-right"></i></button>
+          <button class="small inline destructive reset" title="Reset all options" on-tap="resetOptions"><i class="fa fa-refresh"></i></button>
         </div>
 
         {{^options.geocoder}}
@@ -68,31 +61,65 @@
           </div>
         {{/options.geocoder}}
 
+        <div class="markers {{^options.markers}}no-markers{{/}}">
+          <label class="no-markers-label">Markers.</label>
+          <button class="add-marker action small inline" on-tap="add-marker" title="Add marker at center of map"><i class="fa fa-plus"></i></button>
+
+          <label class="markers-label">Markers.</label>
+          <div class="help">Use <code>&lt;br&gt;</code> to make line breaks.</div>
+
+          {{#options.markers:mi}}
+            <div class="marker" intro-outro="slide">
+              <div class="config-option">
+                <input type="text" placeholder="Marker label" value="{{ this.text }}" lazy>
+              </div>
+
+              <div class="marker-actions">
+                {{#options.markerToCenter}}
+                  <button class="action small" on-tap="marker-to-center:{{ mi }}" title="Move marker to center of map"><i class="fa fa-compass"></i></button>
+                {{/}}
+
+                {{#options.centerToMarker}}
+                  <button class="action small" on-tap="center-to-marker:{{ mi }}" title="Center map on marker"><i class="fa fa-plus-square-o"></i></button>
+                {{/}}
+
+                {{#(_.size(options.markerBackgrounds) > 1)}}
+                  <div class="color-picker" title="Set marker background color">
+                    {{#options.markerBackgrounds:bi}}
+                      <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
+                        style="background-color: {{ this }}"
+                        on-tap="setMarker:{{ mi }},'background',{{ this }}">
+                    {{/}}
+                  </div>
+                {{/}}
+
+                {{#(_.size(options.markerForegrounds) > 1)}}
+                  <div class="color-picker" title="Set marker foreground color">
+                    {{#options.markerForegrounds:bi}}
+                      <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
+                        style="background-color: {{ this }}"
+                        on-tap="setMarker:{{ mi }},'foreground',{{ this }}">
+                    {{/}}
+                  </div>
+                {{/}}
+
+                <button class="destructive small" on-tap="remove-marker:{{ mi }}" title="Remove marker"><i class="fa fa-close"></i></button>
+              </div>
+            </div>
+          {{/}}
+        </div>
+
         {{#(_.size(options.tilesets) > 1)}}
           <div class="config-option">
             <label>Background map set</label>
 
             <div class="image-picker images-{{ _.size(options.tilesets) }}">
               {{#options.tilesets:i}}
-                <div class="image-picker-item {{ (options.tileset === i) ? 'active' : '' }}" style="background-image: url({{= preview }});" title="{{ i }}" on-tap="set:'options.tileset',{{ i }}"></div>
+                <div class="image-picker-item {{ (options.tileset === i) ? 'active' : 'inactive' }}" style="background-image: url({{= preview }});" title="{{ i }}" on-tap="set:'options.tileset',{{ i }}"></div>
               {{/options.tilesets}}
             </div>
           </div>
         {{/()}}
-
-        {{#options.markerToCenter}}
-          <div class="config-option config-button">
-            <button on-tap="marker-to-center"><i class="fa fa-compass"></i></button>
-            <label>Move marker to center of map</label>
-          </div>
-        {{/}}
-
-        {{#options.centerToMarker}}
-          <div class="config-option config-button">
-            <button on-tap="center-to-marker"><i class="fa fa-plus-square-o"></i></button>
-            <label>Center map on marker</label>
-          </div>
-        {{/}}
 
         {{#(_.size(options.widths) > 1)}}
           <div class="config-option config-select">
@@ -133,7 +160,7 @@
         </div>
 
         <div class="config-action">
-          <button class="generate-image" on-tap="generate">Generate <i class="fa fa-download"></i></button>
+          <button class="large additive generate-image" on-tap="generate">Generate <i class="fa fa-download"></i></button>
         </div>
 
         <div class="preview">

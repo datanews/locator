@@ -30,6 +30,19 @@
   padding: 0;
   margin: 0 0 1em 0;
 }
+.locator .grayscale {
+  -moz-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+  -o-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+  -webkit-filter: grayscale(100%);
+  filter: gray;
+  filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+}
+.locator .not-grayscale {
+  -moz-filter: none;
+  -o-filter: none;
+  -webkit-filter: grayscale(0);
+  filter: none;
+}
 .locator .locator-display {
   position: relative;
   width: 66.6665666%;
@@ -208,7 +221,10 @@
   color: #343434;
 }
 .locator .locator-controls .locator-input {
-  padding: 1em;
+  padding: 0 1em 1em 1em;
+}
+.locator .locator-controls .locator-history {
+  text-align: right;
 }
 .locator .locator-controls .config-option {
   margin: 0 -1em 1em -1em;
@@ -220,7 +236,11 @@
   font-size: 0.85em;
   color: #878787;
   display: block;
-  margin-bottom: 0.25em;
+}
+.locator .locator-controls .help {
+  font-size: 0.65em;
+  color: #878787;
+  margin-bottom: 0.5em;
 }
 .locator .locator-controls .config-option label {
   padding-left: 1.15em;
@@ -235,6 +255,49 @@
   -moz-appearance: none;
   appearance: none;
   color: #343434;
+}
+.locator .locator-controls button {
+  border: none;
+  font-size: 1em;
+  color: #000000;
+  background-color: #BDBDBD;
+}
+.locator .locator-controls button.large {
+  font-size: 1.25em;
+}
+.locator .locator-controls button.small {
+  font-size: 0.85em;
+  padding: 0.25em 0.5em;
+}
+.locator .locator-controls button.inline {
+  display: inline-block;
+}
+.locator .locator-controls button.additive {
+  background-color: #3366FF;
+  color: #FFFFFF;
+}
+.locator .locator-controls button.additive:hover {
+  background-color: #0039e5;
+}
+.locator .locator-controls button.action {
+  background-color: #F5B800;
+  color: #FFFFFF;
+}
+.locator .locator-controls button.action:hover {
+  background-color: #a97f00;
+}
+.locator .locator-controls button.destructive {
+  background-color: #F5003D;
+  color: #FFFFFF;
+}
+.locator .locator-controls button.destructive:hover {
+  background-color: #a9002a;
+}
+.locator .locator-controls button[disabled] {
+  background-color: #BDBDBD;
+}
+.locator .locator-controls button[disabled]:hover {
+  background-color: #BDBDBD;
 }
 .locator .locator-controls input[type=text] {
   width: 100%;
@@ -288,6 +351,7 @@
 }
 .locator .locator-controls input[type=checkbox] + label {
   vertical-align: middle;
+  margin-bottom: 0.25em;
 }
 .locator .locator-controls input[type=checkbox] + label:before {
   font-family: FontAwesome;
@@ -296,7 +360,7 @@
   vertical-align: middle;
   content: "\f204";
   letter-spacing: 10px;
-  color: #343434;
+  color: #F5B800;
   font-size: 2em;
 }
 .locator .locator-controls input[type=checkbox]:checked + label:before {
@@ -321,18 +385,103 @@
   background-repeat: no-repeat;
   background-position: center center;
 }
-.locator .locator-controls .image-picker .image-picker-item:hover {
-  opacity: 1;
+.locator .locator-controls .image-picker .image-picker-item.inactive {
+  -moz-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+  -o-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+  -webkit-filter: grayscale(100%);
+  filter: gray;
+  filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
 }
 .locator .locator-controls .image-picker .image-picker-item.active {
-  opacity: 1;
   outline: 1px solid #343434;
   border: 5px solid #F1F1F1;
+}
+.locator .locator-controls .image-picker:hover .image-picker-item {
+  -moz-filter: none;
+  -o-filter: none;
+  -webkit-filter: grayscale(0);
+  filter: none;
 }
 .locator .locator-controls .image-picker.images-2 .image-picker-item {
   width: 44.9%;
   margin-right: 4%;
   height: 5em;
+}
+.locator .locator-controls .color-picker {
+  line-height: 1em;
+  vertical-align: top;
+}
+.locator .locator-controls .color-picker .color-picker-item {
+  display: inline-block;
+  border: 1px solid #FFFFFF;
+  outline: 1px solid #FFFFFF;
+  width: 1em;
+  height: 1em;
+  vertical-align: top;
+  margin: 0;
+  cursor: pointer;
+  margin: 1px;
+}
+.locator .locator-controls .color-picker .color-picker-item.is-white {
+  border: 1px solid #BDBDBD;
+}
+.locator .locator-controls .color-picker .color-picker-item.active {
+  outline: 1px solid #343434;
+}
+.locator .locator-controls .markers .add-marker {
+  float: right;
+}
+.locator .locator-controls .markers .no-markers-label {
+  display: none;
+}
+.locator .locator-controls .markers.no-markers {
+  margin-bottom: 1em;
+}
+.locator .locator-controls .markers.no-markers .no-markers-label {
+  display: block;
+}
+.locator .locator-controls .markers.no-markers .markers-label {
+  display: none;
+}
+.locator .locator-controls .markers.no-markers .help {
+  display: none;
+}
+.locator .locator-controls .markers.no-markers .add-marker {
+  float: none;
+  display: block;
+  width: 100%;
+  padding: 0.5em;
+}
+.locator .locator-controls .markers .marker {
+  margin-bottom: 1em;
+}
+.locator .locator-controls .markers .config-option {
+  margin-bottom: 0.25em;
+}
+.locator .locator-controls .markers button {
+  display: inline-block;
+}
+.locator .locator-controls .markers .color-picker {
+  display: inline-block;
+  max-width: 4.25em;
+  line-height: 0.8em;
+}
+.locator .locator-controls .markers .color-picker .color-picker-item {
+  width: 0.7em;
+  height: 0.7em;
+}
+.locator .locator-controls .markers .color-picker .color-picker-item.inactive {
+  -moz-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+  -o-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+  -webkit-filter: grayscale(100%);
+  filter: gray;
+  filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+}
+.locator .locator-controls .markers .color-picker:hover .color-picker-item {
+  -moz-filter: none;
+  -o-filter: none;
+  -webkit-filter: grayscale(0);
+  filter: none;
 }
 .locator .locator-controls .config-button {
   padding: 0 1em;
@@ -344,21 +493,6 @@
 }
 .locator .locator-controls .config-button button {
   display: inline-block;
-  font-size: 1em;
-  padding: 0.25em 0.5em;
-  background-color: #F5B800;
-  color: #FFFFFF;
-}
-.locator .locator-controls .config-button button:hover {
-  background-color: #a97f00;
-}
-.locator .locator-controls button {
-  border: 0;
-  background-color: #3366FF;
-  color: #FFFFFF;
-}
-.locator .locator-controls button:hover {
-  background-color: #0039e5;
 }
 .locator .locator-controls .preview {
   display: none;

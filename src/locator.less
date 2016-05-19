@@ -12,6 +12,7 @@
 
 @blue: #3366FF;
 @orange: #F5B800;
+@red: #F5003D;
 
 @down-arrow: "\f107";
 
@@ -40,6 +41,22 @@
     font-size: 1em;
     padding: 0;
     margin: 0 0 1em 0;
+  }
+
+  // Mixins
+  .grayscale {
+    -moz-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+    -o-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+    -webkit-filter: grayscale(100%);
+    filter: gray;
+    filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+  }
+
+  .not-grayscale {
+     -moz-filter: none;
+     -o-filter: none;
+     -webkit-filter: grayscale(0);
+     filter: none;
   }
 
   // Main interactive map display (preview)
@@ -247,7 +264,11 @@
 
     // Controls inputs
     .locator-input {
-      padding: 1em;
+      padding: 0 1em 1em 1em;
+    }
+
+    .locator-history {
+      text-align: right;
     }
 
     .config-option {
@@ -262,7 +283,12 @@
       font-size: 0.85em;
       color: @medium-grey;
       display: block;
-      margin-bottom: 0.25em;
+    }
+
+    .help {
+      font-size: 0.65em;
+      color: @medium-grey;
+      margin-bottom: 0.5em;
     }
 
     .config-option label {
@@ -279,6 +305,61 @@
       -moz-appearance: none;
       appearance: none;
       color: @dark-grey;
+    }
+
+    button {
+      border: none;
+      font-size: 1em;
+      color: @black;
+      background-color: @light-grey;
+
+      &.large {
+        font-size: 1.25em;
+      }
+
+      &.small {
+        font-size: 0.85em;
+        padding: 0.25em 0.5em;
+      }
+
+      &.inline {
+        display: inline-block;
+      }
+
+      &.additive {
+        background-color: @blue;
+        color: @white;
+
+        &:hover {
+          background-color: darken(@blue, 15);
+        }
+      }
+
+      &.action {
+        background-color: @orange;
+        color: @white;
+
+        &:hover {
+          background-color: darken(@orange, 15);
+        }
+      }
+
+      &.destructive {
+        background-color: @red;
+        color: @white;
+
+        &:hover {
+          background-color: darken(@red, 15);
+        }
+      }
+
+      &[disabled] {
+        background-color: @light-grey;
+
+        &:hover {
+          background-color: @light-grey;
+        }
+      }
     }
 
     input[type=text] {
@@ -340,6 +421,7 @@
 
       & + label {
         vertical-align: middle;
+        margin-bottom: 0.25em;
       }
 
       & + label:before {
@@ -349,7 +431,7 @@
         vertical-align: middle;
         content: "\f204";
         letter-spacing: 10px;
-        color: @dark-grey;
+        color: @orange;
         font-size: 2em;
       }
 
@@ -377,22 +459,113 @@
         background-repeat: no-repeat;
         background-position: center center;
 
-        &:hover {
-          opacity: 1;
+        &.inactive {
+          .grayscale;
         }
 
         &.active {
-          opacity: 1;
-
           outline: 1px solid @dark-grey;
           border: 5px solid @lighter-grey;
         }
+      }
+
+      &:hover .image-picker-item {
+        .not-grayscale;
       }
 
       &.images-2 .image-picker-item {
         width: 44.9%;
         margin-right: 4%;
         height: 5em;
+      }
+    }
+
+    .color-picker {
+      line-height: 1em;
+      vertical-align: top;
+
+      .color-picker-item {
+        display: inline-block;
+        border: 1px solid @white;
+        outline: 1px solid @white;
+        width: 1em;
+        height: 1em;
+        vertical-align: top;
+        margin: 0;
+        cursor: pointer;
+        margin: 1px;
+
+        &.is-white {
+          border: 1px solid @light-grey;
+        }
+
+        &.active {
+          outline: 1px solid @dark-grey;
+        }
+      }
+    }
+
+    .markers {
+      .add-marker {
+        float: right;
+      }
+
+      .no-markers-label {
+        display: none;
+      }
+
+      &.no-markers {
+        margin-bottom: 1em;
+
+        .no-markers-label {
+          display: block;
+        }
+
+        .markers-label {
+          display: none;
+        }
+
+        .help {
+          display: none;
+        }
+
+        .add-marker {
+          float: none;
+          display: block;
+          width: 100%;
+          padding: 0.5em;
+        }
+      }
+
+      .marker {
+        margin-bottom: 1em;
+      }
+
+      .config-option {
+        margin-bottom: 0.25em;
+      }
+
+      button {
+        display: inline-block;
+      }
+
+      .color-picker {
+        display: inline-block;
+        max-width: 4.25em;
+        line-height: 0.8em;
+
+        .color-picker-item {
+          width: 0.7em;
+          height: 0.7em;
+
+          &.inactive {
+            .grayscale;
+          }
+        }
+
+        &:hover .color-picker-item {
+          .not-grayscale;
+        }
       }
     }
 
@@ -407,24 +580,6 @@
 
       button {
         display: inline-block;
-        font-size: 1em;
-        padding: 0.25em 0.5em;
-        background-color: @orange;
-        color: @white;
-
-        &:hover {
-          background-color: darken(@orange, 15);
-        }
-      }
-    }
-
-    button {
-      border: 0;
-      background-color: @blue;
-      color: @white;
-
-      &:hover {
-        background-color: darken(@blue, 15);
       }
     }
 

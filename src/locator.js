@@ -9,7 +9,7 @@
 
   // Main contructor
   var Locator = function(options) {
-    this.options = _.extend({}, {
+    this.options = this.extend({
       // Template
       template: "REPLACE-DEFAULT-TEMPLATE",
 
@@ -45,10 +45,10 @@
       },
       tileset: "CartoDB Positron",
       zoom: 17,
-      lat: 40.74844,
-      lng: -73.98566,
       minZoom: 1,
       maxZoom: 18,
+      lat: 40.74844,
+      lng: -73.98566,
 
       // Attribution (or source) that goes on top of map
       embedAttribution: false,
@@ -75,16 +75,42 @@
         shadowOffsetY: 1
       },
 
-      // Marker
-      markerText: "Empire State Building",
-      markerBackground: "rgba(0, 0, 0, 0.9)",
-      markerForeground: "rgba(255, 255, 255, 0.9)",
-      markerRadius: 5,
-      markerFontSize: 16,
-      markerFont: "\"Open Sans\", Helvetica, Arial, sans-serif",
-      markerLabelDistance: 20,
-      markerLabelWidth: 3,
-      markerPadding: 10,
+      // Markers
+      markers: [{
+        text: "Empire State Building",
+        lat: 40.74844,
+        lng: -73.98566
+      }],
+
+      // Marker defaults
+      markerDefaults: {
+        text: "",
+        background: "rgba(0, 0, 0, 0.9)",
+        foreground: "rgba(255, 255, 255, 0.9)",
+        radius: 5,
+        fontSize: 16,
+        font: "\"Open Sans\", Helvetica, Arial, sans-serif",
+        labelDistance: 20,
+        labelWidth: 3,
+        padding: 10
+      },
+
+      // Marker option sets
+      markerBackgrounds: [
+        "rgba(0, 0, 0, 0.9)",
+        "rgba(255, 255, 255, 0.9)",
+        "rgba(88, 88, 88, 0.9)",
+        "rgba(200, 200, 200, 0.9)",
+        "rgba(51, 102, 255, 0.9)",
+        "rgba(255, 51, 204, 0.9)",
+        "rgba(0, 245, 61, 0.9)",
+        "rgba(245, 0, 61, 0.9)",
+        "rgba(184, 0, 245, 0.9)"
+      ],
+      markerForegrounds: [
+        "rgba(0, 0, 0, 0.9)",
+        "rgba(255, 255, 255, 0.9)"
+      ],
 
       // Draggable marker.  For URI, See src/images and generated at
       // http://dopiaza.org/tools/datauri/index.php
@@ -126,10 +152,10 @@
       preDraw: function(options) {
         // Update marker color on darker tileset
         if (options.tileset === "Stamen Toner") {
-          options.markerBackground = "rgba(51, 102, 255, 1)";
+          options.markerDefaults.background = "rgba(51, 102, 255, 1)";
         }
         else {
-          options.markerBackground = "rgba(0, 0, 0, 0.9)";
+          options.markerDefaults.background = "rgba(0, 0, 0, 0.9)";
         }
       }
       */
@@ -141,11 +167,27 @@
     // Make some options that won't change more accessible
     this.el = this.options.el;
 
-    // Tilesets can be just a URL, or an object with a URL and
-    // preview
-    this.options.tilesets = this.parseTilesets(this.options.tilesets);
+    // Update the options initially
+    this.updateOptions();
 
-    // Build interface
+    // We may want to reset
+    this.originalOptions = this.clone(this.options);
+
+    // Attempt to load saved options
+    this.options = this.load(this.options);
+
+    // Set up history and set intial state
+    this.history = [];
+    this.historyIndex = 0;
+    this.save(true);
+
+    // Throttle some functions
+    this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 500);
+    if (_.isFunction(this.options.geocoder)) {
+      this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 500);
+    }
+
+    // Go
     this.drawInterface();
   };
 
@@ -153,9 +195,6 @@
   _.extend(Locator.prototype, {
     // Make interface
     drawInterface: function() {
-      // Place holder to work around object reference changes
-      var oldReference = _.clone(this.options);
-
       // Certain properties should not re-generate map but may be updated.
       var noGenerate = {
         controlsOpen: this.options.controlsOpen
@@ -174,97 +213,173 @@
         }
       });
 
-      // Match up events
-      this.interface.on("generate", _.bind(this.generate, this));
-
-      // Throttle some functions
-      this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 1500);
-      if (_.isFunction(this.options.geocoder)) {
-        this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 1500);
-      }
-
       // Handle general config updates
-      this.interface.observe("options", _.bind(function(options) {
-        // TODO: Recenter should only happen if the lat, lng is outside
-        // the current map view.
-        var recenter = (options.lat !== oldReference.lat ||
-          options.lng !== oldReference.lng);
+      this.interface.observe("options", _.bind(function() {
+        if (this.ignoreObservers) {
+          return;
+        }
 
-        // The reference to options is maintained
-        this.throttledDrawMaps(recenter);
+        // Alter options
+        this.updateOptions();
 
-        // Update past reference
-        oldReference = _.clone(options);
+        // Maybe some options changed a long the way
+        this.interface.update();
+
+        // Save.  Ignore history in cases of undo/redo actions
+        this.save(!this.ignoreHistory);
+        this.ignoreHistory = false;
+
+        // Then redraw
+        this.throttledDrawMaps();
       }, this), { init: false });
 
       // Handle geocoding
       this.interface.observe("geocodeInput", _.bind(function(input) {
         if (_.isFunction(this.throttledGeocoder)) {
           this.throttledGeocoder(input, _.bind(function(lat, lng) {
-            this.options.lat = lat;
-            this.options.lng = lng;
-            this.throttledDrawMaps(true);
+            this.set("options.lat", lat);
+            this.set("options.lng", lng);
           }, this));
         }
       }, this), { init: false });
 
-      // If someone override attribution, then it should be on
-      // the map
-      this.interface.observe("options.overrideAttribution", function(attribution) {
-        var e = this.get("options.embedAttribution");
-        if (attribution && !e) {
-          this.set("options.embedAttribution", true);
-        }
-      }, { init: true });
+      // Undo options
+      this.interface.on("undo", _.bind(function() {
+        this.ignoreHistory = true;
+        this.undo();
+        this.set("options", this.options);
+      }, this));
+
+      // Redo options
+      this.interface.on("redo", _.bind(function() {
+        this.ignoreHistory = true;
+        this.redo();
+        this.set("options", this.options);
+      }, this));
+
+      // Generate image
+      this.interface.on("generate", _.bind(this.generate, this));
+
+      // Reset options
+      this.interface.on("resetOptions", _.bind(function() {
+        this.reset();
+        this.set("options", this.options);
+      }, this));
 
       // General toggle event functions
-      this.interface.on("toggle", function(e, property) {
+      this.interface.on("toggle", _.bind(function(e, property) {
         this.set(property, !this.get(property));
-      });
+      }, this));
 
       // General set event functions
-      this.interface.on("set", function(e, property, value) {
+      this.interface.on("set", _.bind(function(e, property, value) {
         this.set(property, value);
-      });
+      }, this));
+
+      // Update marker property
+      this.interface.on("setMarker", _.bind(function(e, markerIndex, property, value) {
+        var marker = this.get("options.markers." + markerIndex);
+        if (marker) {
+          this.set("options.markers." + markerIndex + "." + property, value);
+        }
+      }, this));
 
       // Move marker to center of map
-      this.interface.on("marker-to-center", _.bind(function() {
+      this.interface.on("marker-to-center", _.bind(function(e, markerIndex) {
         var center = this.map.getCenter();
-        this.options.lat = center.lat;
-        this.options.lng = center.lng;
-        this.interface.update();
+        var change = {};
+        change["options.markers." + markerIndex + ".lat"] = center.lat;
+        change["options.markers." + markerIndex + ".lng"] = center.lng;
+        this.set(change);
       }, this));
 
       // Center map around marker
-      this.interface.on("center-to-marker", _.bind(function() {
-        this.map.setView([this.options.lat, this.options.lng]);
+      this.interface.on("center-to-marker", _.bind(function(e, markerIndex) {
+        var marker = this.get("options.markers." + markerIndex);
+        if (marker) {
+          this.set({
+            "options.lat": marker.lat,
+            "options.lng": marker.lng
+          });
+        }
+      }, this));
+
+      // Remove marker
+      this.interface.on("remove-marker", _.bind(function(e, markerIndex) {
+        this.options.markers.splice(markerIndex, 1);
+      }, this));
+
+      // Add marker
+      this.interface.on("add-marker", _.bind(function() {
+        var center = this.map.getCenter();
+        var marker = {
+          lat: center.lat,
+          lng: center.lng
+        };
+        this.get("options.markers").push(this.updateMarker(marker));
       }, this));
 
       // Initialize map parts
       this.drawMaps();
     },
 
+    // Wrappers to ractive set
+    set: function(key, value) {
+      if (this.interface) {
+        this.interface.set(key, value);
+      }
+    },
+
+    // Wrappers to ractive get
+    get: function(key) {
+      if (this.interface) {
+        return this.interface.get(key);
+      }
+
+      return undefined;
+    },
+
     // Draw map parts
-    drawMaps: function(recenter) {
-      this.alterOptions("preDraw");
-      this.drawMap(recenter);
-      this.drawMarker();
+    drawMaps: function() {
+      this.drawMap();
+      this.drawMarkers();
       this.drawMinimap();
 
       // Some style fixes
       this.fixMapVerticalAlign();
     },
 
+    // Update options
+    updateOptions: function() {
+      var options = this.options;
+
+      // Allow for any custom changes
+      options = this.alterOptions("preDraw", this.options);
+
+      // Update markers with defaults
+      _.each(options.markers, _.bind(function(m, mi) {
+        options.markers[mi] = this.updateMarker(options.markers[mi]);
+      }, this));
+
+      // Tilesets can be just a URL, or an object with a URL and
+      // preview
+      options.tilesets = this.parseTilesets(options.tilesets);
+
+      return options;
+    },
+
     // Alter options with custom function
-    alterOptions: function(property) {
+    alterOptions: function(property, options) {
       if (_.isFunction(this.options[property])) {
-        _.bind(this.options[property], this)(this.options);
+        return _.bind(this.options[property], this)(options);
       }
+
+      return options;
     },
 
     // Make main map
     drawMap: function(recenter) {
-      recenter = recenter || false;
+      recenter = _.isUndefined(recenter) ? true : recenter;
       var mapEl = this.getEl(".locator-map");
       var width;
       var height;
@@ -312,6 +427,16 @@
       // Tile layer
       this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
       this.map.addLayer(this.mapLayer);
+
+      // React to map view change
+      this.map.on("moveend", _.bind(function() {
+        var center = this.map.getCenter();
+        this.set({
+          "options.lat": center.lat,
+          "options.lng": center.lng,
+          "options.zoom": this.map.getZoom()
+        });
+      }, this));
     },
 
     // Draw minimap
@@ -406,10 +531,15 @@
       return this.miniCanvasLayer;
     },
 
-    // Draw marker layer
-    drawMarker: function() {
+    // Update marker with default values
+    updateMarker: function(marker) {
+      return _.extend(_.clone(this.options.markerDefaults), marker);
+    },
+
+    // Set up marker canvase layer and draw all markers
+    drawMarkers: function() {
       // Remove existing layer if there
-      if (this.markerCanvas && this.map) {
+      if (this.markerCanvas && this.map && this.markerCanvas._map) {
         this.map.removeLayer(this.markerCanvas);
       }
 
@@ -418,44 +548,86 @@
       this.markerCanvas.drawTile = _.bind(this.drawMarkerTile, this);
       this.markerCanvas.addTo(this.map);
 
-      // Make marker draggable via an invisble marker, remove first
-      if (this.draggableMarker && this.map) {
-        this.map.removeLayer(this.draggableMarker);
+      // Make draggable marker
+      _.each(this.options.markers, _.bind(function(m, mi) {
+        this.draggableMarker(this.options.markers[mi], mi);
+      }, this));
+    },
+
+    // Make marker draggable via an invisble marker
+    draggableMarker: function(marker, markerIndex) {
+      this.draggableMarkers = this.draggableMarkers || {};
+      var draggable = this.draggableMarkers[markerIndex];
+
+      // Remove first
+      if (draggable && this.map && draggable._map) {
+        draggable.clearAllEventListeners();
+        this.map.removeLayer(draggable);
       }
 
-      this.draggableMarker = L.marker(L.latLng(this.options.lat, this.options.lng), {
+      // Create marker
+      this.draggableMarkers[markerIndex] = draggable = L.marker(L.latLng(marker.lat, marker.lng), {
         icon: this.options.draggableMarker,
         draggable: true,
         opacity: 0,
         title: "Drag marker here"
       }).addTo(this.map);
 
+      // Hover over
+      draggable.on("mouseover", function(e) {
+        if (!draggable.isDragging) {
+          e.target.setOpacity(0.3);
+        }
+      });
+
+      // Hover out
+      draggable.on("mouseout", function(e) {
+        if (!draggable.isDragging) {
+          e.target.setOpacity(0);
+        }
+      });
+
       // Start dragging
-      this.draggableMarker.on("dragstart", function(e) {
+      draggable.on("dragstart", function(e) {
+        draggable.isDragging = true;
         e.target.setOpacity(1);
       });
 
       // Start dragging
-      this.draggableMarker.on("dragend", _.bind(function(e) {
+      draggable.on("dragend", _.bind(function(e) {
+        draggable.isDragging = false;
         e.target.setOpacity(0);
 
         // Set lat, lng
         var l = e.target.getLatLng();
-        this.options.lat = l.lat;
-        this.options.lng = l.lng;
-        this.drawMarker();
+        marker.lat = l.lat;
+        marker.lng = l.lng;
+        this.interface.update("options.markers");
+      }, this));
+    },
+
+    // Marker canvas layer tile draw function
+    drawMarkerTile: function(canvas, tilePoint, zoom) {
+      var ctx = canvas.getContext("2d");
+
+      // Clear out tile
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw each marker
+      _.each(this.options.markers, _.bind(function(m) {
+        this.drawMarker(m, canvas, tilePoint, zoom);
       }, this));
     },
 
     // Marker layer draw handler
-    drawMarkerTile: function(canvas, tilePoint, zoom) {
+    drawMarker: function(marker, canvas, tilePoint, zoom) {
       var ctx = canvas.getContext("2d");
       var placement;
       var textWidth;
       var labelWidth;
 
       // Handle line breaks in text
-      var text = this.options.markerText.split("<br>");
+      var text = marker.text.split("<br>");
       text = _.map(text, function(t) {
         return t.trim();
       });
@@ -463,10 +635,7 @@
       // Determine lines values
       var lines = text.length;
       var lineHeight = 1.25;
-      var labelHeight = ((this.options.markerFontSize * lineHeight) * lines) + (this.options.markerPadding * 2);
-
-      // Clear out tile
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      var labelHeight = ((marker.fontSize * lineHeight) * lines) + (marker.padding * 2);
 
       // Get some dimensions
       var dim = {};
@@ -477,7 +646,7 @@
       dim.bCoord = L.latLngBounds([[dim.nwCoord.lat, dim.seCoord.lng],
         [dim.seCoord.lat, dim.nwCoord.lng]]);
       dim.bPoint = [dim.nwPoint, dim.sePoint];
-      dim.locCoord = L.latLng(this.options.lat, this.options.lng);
+      dim.locCoord = L.latLng(marker.lat, marker.lng);
       dim.locPoint = this.map.project(dim.locCoord, zoom, true);
 
       // TODO: Use a buffer or some calculation so that we only draw into tiles
@@ -492,31 +661,31 @@
 
         // Draw point on location
         ctx.beginPath();
-        ctx.translate(placement.x - this.options.markerRadius, placement.y - this.options.markerRadius);
-        ctx.fillStyle = this.options.markerBackground;
+        ctx.translate(placement.x - marker.radius, placement.y - marker.radius);
+        ctx.fillStyle = marker.background;
         ctx.fillRect(0, 0,
-          this.options.markerRadius * 2,
-          this.options.markerRadius * 2
+          marker.radius * 2,
+          marker.radius * 2
         );
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
         // Label connection line
         ctx.beginPath();
-        ctx.translate(placement.x - (this.options.markerLabelWidth / 2),
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance);
-        ctx.fillStyle = this.options.markerBackground;
+        ctx.translate(placement.x - (marker.labelWidth / 2),
+          placement.y - marker.radius - marker.labelDistance);
+        ctx.fillStyle = marker.background;
         ctx.fillRect(0, 0,
-          this.options.markerLabelWidth,
-          this.options.markerLabelDistance
+          marker.labelWidth,
+          marker.labelDistance
         );
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
 
         // Determine width of text
         ctx.beginPath();
-        ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
-        ctx.fillStyle = this.options.markerForeground;
+        ctx.font = marker.fontSize + "px " + marker.font;
+        ctx.fillStyle = marker.foreground;
         ctx.textAlign = "center";
 
         // Get the width of the longest text
@@ -525,14 +694,14 @@
         });
 
         textWidth = ctx.measureText(textWidth).width;
-        labelWidth = textWidth + this.options.markerPadding * 2;
+        labelWidth = textWidth + marker.padding * 2;
         ctx.closePath();
 
         // Make label rectangle
         ctx.beginPath();
         ctx.translate(placement.x - (labelWidth / 2),
-          placement.y - this.options.markerRadius - this.options.markerLabelDistance - labelHeight);
-        ctx.fillStyle = this.options.markerBackground;
+          placement.y - marker.radius - marker.labelDistance - labelHeight);
+        ctx.fillStyle = marker.background;
         ctx.fillRect(0, 0, labelWidth, labelHeight);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.closePath();
@@ -544,12 +713,12 @@
 
           ctx.beginPath();
           ctx.translate(placement.x,
-            placement.y - this.options.markerRadius - this.options.markerLabelDistance -
-            labelHeight + this.options.markerPadding + offset +
-            ((this.options.markerFontSize * lineHeight) * (ti)));
+            placement.y - marker.radius - marker.labelDistance -
+            labelHeight + marker.padding + offset +
+            ((marker.fontSize * lineHeight) * (ti)));
 
-          ctx.font = this.options.markerFontSize + "px " + this.options.markerFont;
-          ctx.fillStyle = this.options.markerForeground;
+          ctx.font = marker.fontSize + "px " + marker.font;
+          ctx.fillStyle = marker.foreground;
           ctx.textAlign = "center";
           ctx.textBaseline = "top";
           ctx.fillText(t, 0, 0);
@@ -644,11 +813,13 @@
       //this.getEl(".preview").style.display = "block";
     },
 
-    // Export/download.  TODO: use marker text for name
+    // Export/download.
     export: function(mapCtx) {
+      var name = (this.options.markers && this.options.markers[0]) ?
+        this.options.markers[0].text : "";
       var download = this.getEl(".download-link");
       download.href = mapCtx.canvas.toDataURL();
-      download.download = this.makeID(this.options.markerText) + ".png";
+      download.download = this.makeID(name) + ".png";
       download.click();
     },
 
@@ -693,6 +864,79 @@
       }
 
       return context;
+    },
+
+    // Save
+    save: function(history) {
+      var options = this.clone(this.options);
+
+      // Remove some parts
+      delete options.draggableMarker;
+      delete options.template;
+      _.each(options, function(o, oi) {
+        if (_.isFunction(o)) {
+          delete options[oi];
+        }
+      });
+
+      // Save to browser in case of refresh
+      window.localStorage.setItem("options", JSON.stringify(options));
+
+      // Save to history
+      if (history) {
+        if (this.historyIndex >= 0 && this.historyIndex < this.history.length - 1) {
+          this.history = this.history.slice(0, this.historyIndex + 1);
+        }
+
+        this.history.push(this.clone(options));
+        this.historyIndex = this.history.length - 1;
+        this.canDo();
+      }
+    },
+
+    // Load
+    load: function(options) {
+      var savedOptions = window.localStorage.getItem("options");
+      if (savedOptions) {
+        savedOptions = JSON.parse(savedOptions);
+        return this.extend(options, savedOptions);
+      }
+      else {
+        return options;
+      }
+    },
+
+    // Reset all options
+    reset: function() {
+      this.options = this.extend(this.options, this.clone(this.originalOptions));
+    },
+
+    // Undo
+    undo: function() {
+      if (this.historyIndex > 0) {
+        this.historyIndex = this.historyIndex - 1;
+        this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
+      }
+
+      this.canDo();
+    },
+
+    // Redo
+    redo: function() {
+      if (this.historyIndex < this.history.length - 1) {
+        this.historyIndex = this.historyIndex + 1;
+        this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
+      }
+
+      this.canDo();
+    },
+
+    // Determine if can undo/redo
+    canDo: function() {
+      this.set({
+        canUndo: this.historyIndex > 0,
+        canRedo: (this.historyIndex < this.history.length - 1)
+      });
     },
 
     // A vrey crude geocoder that uses Google goeocoding
@@ -742,7 +986,7 @@
 
     // Create a slug/id
     makeID: function(input) {
-      input = input.toString();
+      input = input ? input.toString() : "";
       input = input.toLowerCase().trim().replace(/\W+/g, "-");
       input = input ? input : "locator";
       return _.uniqueId(input + "-");
@@ -766,6 +1010,100 @@
       else {
         display.classList.remove("overflowed-y");
       }
+    },
+
+    // Extend deep version (simple)
+    // http://andrewdupont.net/2009/08/28/deep-extending-objects-in-javascript/
+    extend: function(destination, source) {
+      if (!_.isObject(destination) && !_.isObject(source)) {
+        return (destination) ? destination : source;
+      }
+
+      _.each(source, _.bind(function(s, property) {
+        // Basic object
+        if (source[property] && source[property].constructor &&
+         source[property].constructor === Object) {
+          destination[property] = destination[property] || {};
+          this.extend(destination[property], source[property]);
+        }
+
+        // Array
+        else if (_.isArray(source[property])) {
+          destination[property] = [];
+          _.each(source[property], _.bind(function(v, i) {
+            destination[property][i] = this.extend(source[property][i]);
+          }, this));
+        }
+        else {
+          destination[property] = source[property];
+        }
+      }, this));
+
+      return destination;
+    },
+
+    // Deep clone
+    // http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
+    clone: function clone(item) {
+      if (!item) {
+        return item;
+      }
+
+      var types = [Number, String, Boolean];
+      var result;
+      var _this = this;
+
+      // normalizing primitives if someone did new String('aaa'), or new Number('444');
+      types.forEach(function(type) {
+        if (item instanceof type) {
+          result = type(item);
+        }
+      });
+
+      if (typeof result === "undefined") {
+        // Check array
+        if (Object.prototype.toString.call(item) === "[object Array]") {
+          result = [];
+          item.forEach(function(child, index) {
+            result[index] = _this.clone(child);
+          });
+        }
+
+        // Object
+        else if (typeof item === "object") {
+          // testing that this is DOM
+          if (item.nodeType && typeof item.cloneNode === "function") {
+            result = item.cloneNode(true);
+          }
+
+          // Literal possible
+          else if (!item.prototype) {
+            // Date
+            if (item instanceof Date) {
+              result = new Date(item);
+            }
+            else {
+              // it is an object literal
+              result = {};
+              _.each(item, function(v, i) {
+                result[i] = _this.clone(item[i]);
+              });
+            }
+          }
+
+          // Other object
+          else {
+            result = item;
+          }
+        }
+
+        // Something way different
+        else {
+          result = item;
+        }
+      }
+
+      return result;
     }
   });
 
