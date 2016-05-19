@@ -9,7 +9,7 @@
 
   // Main contructor
   var Locator = function(options) {
-    this.options = _.extend({}, {
+    this.options = this.extend({
       // Template
       template: "REPLACE-DEFAULT-TEMPLATE",
 
@@ -168,8 +168,7 @@
     this.el = this.options.el;
 
     // Build base interface
-    this.updateOptions();
-    this.alterOptions("preDraw");
+    this.options = this.updateOptions(this.options);
     this.drawInterface();
   };
 
@@ -199,13 +198,16 @@
       this.interface.on("generate", _.bind(this.generate, this));
 
       // Throttle some functions
-      this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 500);
+      this.throttledDrawMaps = _.throttle(_.bind(this.drawMaps, this), 750);
       if (_.isFunction(this.options.geocoder)) {
-        this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 500);
+        this.throttledGeocoder = _.throttle(_.bind(this.options.geocoder, this), 750);
       }
 
       // Handle general config updates
-      this.interface.observe("options", _.bind(function() {
+      this.interface.observe("options", _.bind(function(options) {
+        // Standardize and allow for any custom option changes
+        options = this.options = this.updateOptions(options);
+
         // The reference to options is maintained
         this.throttledDrawMaps();
       }, this), { init: false });
@@ -240,13 +242,13 @@
         this.set(property, value);
       });
 
-      // General set event for objects
-      this.interface.on("setObject", function(e, data, property, value) {
-        if (_.isObject(data)) {
-          data[property] = value;
-          this.update();
+      // Update marker property
+      this.interface.on("setMarker", _.bind(function(e, markerIndex, property, value) {
+        if (this.options.markers[markerIndex]) {
+          this.options.markers[markerIndex][property] = value;
+          this.interface.update();
         }
-      });
+      }, this));
 
       // Move marker to center of map
       this.interface.on("marker-to-center", _.bind(function(e, markerIndex) {
@@ -284,8 +286,6 @@
 
     // Draw map parts
     drawMaps: function(recenter) {
-      this.updateOptions();
-      this.alterOptions("preDraw");
       this.drawMap(recenter);
       this.drawMarkers();
       this.drawMinimap();
@@ -295,24 +295,31 @@
     },
 
     // Update options (fill in any blanks)
-    updateOptions: function() {
-      this.options.markers = this.options.markers || [];
+    updateOptions: function(options) {
+      options.markers = options.markers || [];
 
       // Update markers with defaults
-      _.each(this.options.markers, _.bind(function(m, mi) {
-        this.options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
+      _.each(options.markers, _.bind(function(m, mi) {
+        options.markers[mi] = _.extend(_.clone(this.options.markerDefaults), m);
       }, this));
 
       // Tilesets can be just a URL, or an object with a URL and
       // preview
-      this.options.tilesets = this.parseTilesets(this.options.tilesets);
+      options.tilesets = this.parseTilesets(options.tilesets);
+
+      // Allow for any custom changes
+      options = this.alterOptions("preDraw", options);
+
+      return options;
     },
 
     // Alter options with custom function
-    alterOptions: function(property) {
+    alterOptions: function(property, options) {
       if (_.isFunction(this.options[property])) {
-        _.bind(this.options[property], this)(this.options);
+        return _.bind(this.options[property], this)(options);
       }
+
+      return options;
     },
 
     // Make main map
@@ -860,6 +867,32 @@
       else {
         display.classList.remove("overflowed-y");
       }
+    },
+
+    // Extend deep version (simple)
+    // http://andrewdupont.net/2009/08/28/deep-extending-objects-in-javascript/
+    extend: function(destination, source) {
+      if (!_.isObject(destination) && !_.isObject(source)) {
+        return destination;
+      }
+
+      for (var property in source) {
+        if (source[property] && source[property].constructor &&
+         source[property].constructor === Object) {
+          destination[property] = destination[property] || {};
+          this.extend(destination[property], source[property]);
+        }
+        else {
+          destination[property] = source[property];
+        }
+      }
+
+      return destination;
+    },
+
+    // Deep clone
+    clone: function(source) {
+      return this.extend({}, source);
     }
   });
 

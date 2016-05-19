@@ -19,7 +19,7 @@
           <div class="locator-map-help">
             Move the marker by dragging the base.
             {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}
-              Required attribution for this map:
+              Required attribution for this map: <br>
               <span class="attribution">{{{ options.tilesets[options.tileset].attribution }}}</span>
             {{/()}}
           </div>
@@ -81,9 +81,9 @@
                 {{#(_.size(options.markerBackgrounds) > 1)}}
                   <div class="color-picker" title="Set marker background color">
                     {{#options.markerBackgrounds:bi}}
-                      <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
+                      <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
                         style="background-color: {{ this }}"
-                        on-tap="setObject:{{ options.markers[mi] }},'background',{{ this }}">
+                        on-tap="setMarker:{{ mi }},'background',{{ this }}">
                     {{/}}
                   </div>
                 {{/}}
@@ -91,9 +91,9 @@
                 {{#(_.size(options.markerForegrounds) > 1)}}
                   <div class="color-picker" title="Set marker foreground color">
                     {{#options.markerForegrounds:bi}}
-                      <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
+                      <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
                         style="background-color: {{ this }}"
-                        on-tap="setObject:{{ options.markers[mi] }},'foreground',{{ this }}">
+                        on-tap="setMarker:{{ mi }},'foreground',{{ this }}">
                     {{/}}
                   </div>
                 {{/}}
@@ -110,7 +110,7 @@
 
             <div class="image-picker images-{{ _.size(options.tilesets) }}">
               {{#options.tilesets:i}}
-                <div class="image-picker-item {{ (options.tileset === i) ? 'active' : '' }}" style="background-image: url({{= preview }});" title="{{ i }}" on-tap="set:'options.tileset',{{ i }}"></div>
+                <div class="image-picker-item {{ (options.tileset === i) ? 'active' : 'inactive' }}" style="background-image: url({{= preview }});" title="{{ i }}" on-tap="set:'options.tileset',{{ i }}"></div>
               {{/options.tilesets}}
             </div>
           </div>
