@@ -39,6 +39,9 @@
       <header>{{{ options.title }}}</header>
 
       <div class="locator-input">
+        <div class="locator-history">
+          <button class="small inline destructive reset" title="Reset all options" on-tap="resetOptions"><i class="fa fa-refresh"></i></button>
+        </div>
 
         {{^options.geocoder}}
           <div class="config-option">

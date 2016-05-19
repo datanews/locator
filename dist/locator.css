@@ -221,7 +221,10 @@
   color: #343434;
 }
 .locator .locator-controls .locator-input {
-  padding: 1em;
+  padding: 0 1em 1em 1em;
+}
+.locator .locator-controls .locator-history {
+  text-align: right;
 }
 .locator .locator-controls .config-option {
   margin: 0 -1em 1em -1em;

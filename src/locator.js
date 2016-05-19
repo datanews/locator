@@ -167,6 +167,9 @@
     // Make some options that won't change more accessible
     this.el = this.options.el;
 
+    // We may want to reset
+    this.originalOptions = this.clone(this.options);
+
     // Update the options initially
     this.options = this.updateOptions(this.options);
 
@@ -239,6 +242,12 @@
           this.set("options.embedAttribution", true);
         }
       }, { init: true });
+
+      // Reset options
+      this.interface.on("resetOptions", _.bind(function() {
+        this.reset();
+        this.interface.set("options", this.options);
+      }, this));
 
       // General toggle event functions
       this.interface.on("toggle", function(e, property) {
@@ -834,6 +843,11 @@
       }
     },
 
+    // Reset all options
+    reset: function() {
+      this.options = this.clone(this.originalOptions);
+    },
+
     // A vrey crude geocoder that uses Google goeocoding
     defaultGeocoder: function(address, done) {
       var httpRequest = new XMLHttpRequest();
@@ -911,19 +925,28 @@
     // http://andrewdupont.net/2009/08/28/deep-extending-objects-in-javascript/
     extend: function(destination, source) {
       if (!_.isObject(destination) && !_.isObject(source)) {
-        return destination;
+        return (destination) ? destination : source;
       }
 
-      for (var property in source) {
+      _.each(source, _.bind(function(s, property) {
+        // Basic object
         if (source[property] && source[property].constructor &&
          source[property].constructor === Object) {
           destination[property] = destination[property] || {};
           this.extend(destination[property], source[property]);
         }
+
+        // Array
+        else if (_.isArray(source[property])) {
+          destination[property] = [];
+          _.each(source[property], _.bind(function(v, i) {
+            destination[property][i] = this.extend(source[property][i]);
+          }, this));
+        }
         else {
           destination[property] = source[property];
         }
-      }
+      }, this));
 
       return destination;
     },
