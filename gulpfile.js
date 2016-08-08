@@ -127,10 +127,12 @@ gulp.task("bundle", ["styles", "js-linting", "js"], function() {
     "bower_components/ractive-transitions-slide/index.js",
     "bower_components/underscore/underscore.js",
     "bower_components/leaflet/dist/leaflet.js",
+    "bower_components/leaflet-draw/dist/leaflet.draw.js",
     "bower_components/leaflet-minimap/dist/Control.MiniMap.min.js"
   ];
   var cssDeps = [
     "bower_components/leaflet/dist/leaflet.css",
+    "bower_components/leaflet-draw/dist/leaflet.draw.css",
     "bower_components/leaflet-minimap/dist/Control.MiniMap.min.css"
   ];
 

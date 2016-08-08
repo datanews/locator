@@ -3306,6 +3306,28 @@ _html2canvas.Renderer.Canvas = function(options) {
       this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
       this.map.addLayer(this.mapLayer);
 
+      // Edit layer
+      this.drawLayer = new L.FeatureGroup();
+      this.map.addLayer(this.editLayer);
+
+      // Initialise the draw control
+      this.mapDraw = new L.Control.Draw({
+        draw: {
+          marker: false,
+          polyline: { metric: (navigator.language !== "en-us" && navigator.language !== "en-US") },
+          polygon: { metric: (navigator.language !== "en-us" && navigator.language !== "en-US") }
+        },
+        edit: {
+          featureGroup: this.drawLayer
+        }
+      });
+      this.map.addControl(this.mapDraw);
+
+      // Apparenlty we have to hook this up ourselves
+      this.map.on("draw:created", _.bind(function(e) {
+        this.drawLayer.addLayer(e.layer);
+      }, this));
+
       // React to map view change
       this.map.on("moveend", _.bind(function() {
         var center = this.map.getCenter();
@@ -3636,7 +3658,7 @@ _html2canvas.Renderer.Canvas = function(options) {
       });
     },
 
-    // Draw minimap
+    // Draw minimap as canvas
     drawCanvasMiniMap: function(mapCanvas, miniCanvas) {
       // Create context
       var mapCtx = mapCanvas.getContext("2d");

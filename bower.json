@@ -24,6 +24,7 @@
     "ractive": "~0.7.3",
     "underscore": "~1.8.3",
     "ractive-events-tap": "~0.3.0",
-    "ractive-transitions-slide": "http://ractivejs.github.io/ractive-transitions-slide/ractive-transitions-slide.js"
+    "ractive-transitions-slide": "http://ractivejs.github.io/ractive-transitions-slide/ractive-transitions-slide.js",
+    "leaflet-draw": "^0.3.0"
   }
 }
