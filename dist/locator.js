@@ -3190,9 +3190,7 @@ _html2canvas.Renderer.Canvas = function(options) {
 
       // Update drawing styles
       this.interface.on("setDrawing", _.bind(function(e, property, value) {
-        console.log(property, value);
         this.set("options.drawingStyles." + property, value);
-        console.log(this.get("options.drawingStyles"));
       }, this));
 
       // Move marker to center of map
