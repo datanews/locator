@@ -128,9 +128,24 @@
         stroke: true,
         color: "#00B8F5",
         opacity: 0.9,
-        weight: 5
+        weight: 5,
+        fillOpacity: 0.3
       },
       geojson: false,
+      drawingStrokes: [
+        "#00B8F5",
+        "#F5003D",
+        "#F500B8",
+        "#F5B800",
+        "#00F53D"
+      ],
+      drawingFills: [
+        "#00B8F5",
+        "#F5003D",
+        "#F500B8",
+        "#F5B800",
+        "#00F53D"
+      ],
 
       // Dimensions
       widths: {
@@ -293,6 +308,13 @@
         if (marker) {
           this.set("options.markers." + markerIndex + "." + property, value);
         }
+      }, this));
+
+      // Update drawing styles
+      this.interface.on("setDrawing", _.bind(function(e, property, value) {
+        console.log(property, value);
+        this.set("options.drawingStyles." + property, value);
+        console.log(this.get("options.drawingStyles"));
       }, this));
 
       // Move marker to center of map

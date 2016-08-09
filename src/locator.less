@@ -583,6 +583,40 @@
       }
     }
 
+    .drawing {
+      margin-bottom: 1em;
+
+      .drawing-section {
+        font-size: 0.75;
+        line-height: 1em;
+        margin-bottom: 0.25em;
+
+        .drawing-option, label, .color-picker {
+          display: inline-block;
+        }
+
+        label {
+          font-size: 0.85em;
+        }
+
+        .drawing-option {
+          width: 40%;
+        }
+
+        .color-picker {
+          max-width: 60%;
+        }
+
+        .color-picker-item.inactive {
+          .grayscale;
+        }
+
+        &:hover .color-picker-item {
+          .not-grayscale;
+        }
+      }
+    }
+
     .config-button {
       padding: 0 1em;
 
