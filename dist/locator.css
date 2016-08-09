@@ -114,6 +114,15 @@
 .locator .locator-map-help .attribution {
   font-style: italic;
 }
+.locator .locator-map .leaflet-top.leaflet-left {
+  opacity: 1;
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+}
+.locator.controls-closed .locator-map .leaflet-top.leaflet-left,
+.locator.controls-closed .locator-map-help {
+  opacity: 0;
+}
 .locator .minor-controls {
   z-index: 9999;
   position: absolute;

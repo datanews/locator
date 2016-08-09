@@ -141,6 +141,20 @@
     }
   }
 
+  // Hide in-map controls and help in preview
+  .locator-map .leaflet-top.leaflet-left {
+    opacity: 1;
+    transition: 0.5s ease-in-out;
+  }
+
+  &.controls-closed {
+
+    .locator-map .leaflet-top.leaflet-left,
+    .locator-map-help {
+      opacity: 0;
+    }
+  }
+
   // Minor controls (control toggler)
   .minor-controls {
     z-index: 9999;
