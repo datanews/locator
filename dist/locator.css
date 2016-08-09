@@ -114,6 +114,15 @@
 .locator .locator-map-help .attribution {
   font-style: italic;
 }
+.locator .locator-map .leaflet-top.leaflet-left {
+  opacity: 1;
+  -webkit-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+}
+.locator.controls-closed .locator-map .leaflet-top.leaflet-left,
+.locator.controls-closed .locator-map-help {
+  opacity: 0;
+}
 .locator .minor-controls {
   z-index: 9999;
   position: absolute;
@@ -478,6 +487,41 @@
   filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
 }
 .locator .locator-controls .markers .color-picker:hover .color-picker-item {
+  -moz-filter: none;
+  -o-filter: none;
+  -webkit-filter: grayscale(0);
+  filter: none;
+}
+.locator .locator-controls .drawing {
+  margin-bottom: 1em;
+}
+.locator .locator-controls .drawing .drawing-section {
+  font-size: 0.75;
+  line-height: 1em;
+  margin-bottom: 0.25em;
+}
+.locator .locator-controls .drawing .drawing-section .drawing-option,
+.locator .locator-controls .drawing .drawing-section label,
+.locator .locator-controls .drawing .drawing-section .color-picker {
+  display: inline-block;
+}
+.locator .locator-controls .drawing .drawing-section label {
+  font-size: 0.85em;
+}
+.locator .locator-controls .drawing .drawing-section .drawing-option {
+  width: 40%;
+}
+.locator .locator-controls .drawing .drawing-section .color-picker {
+  max-width: 60%;
+}
+.locator .locator-controls .drawing .drawing-section .color-picker-item.inactive {
+  -moz-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+  -o-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+  -webkit-filter: grayscale(100%);
+  filter: gray;
+  filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+}
+.locator .locator-controls .drawing .drawing-section:hover .color-picker-item {
   -moz-filter: none;
   -o-filter: none;
   -webkit-filter: grayscale(0);

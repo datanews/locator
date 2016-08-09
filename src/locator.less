@@ -141,6 +141,20 @@
     }
   }
 
+  // Hide in-map controls and help in preview
+  .locator-map .leaflet-top.leaflet-left {
+    opacity: 1;
+    transition: 0.5s ease-in-out;
+  }
+
+  &.controls-closed {
+
+    .locator-map .leaflet-top.leaflet-left,
+    .locator-map-help {
+      opacity: 0;
+    }
+  }
+
   // Minor controls (control toggler)
   .minor-controls {
     z-index: 9999;
@@ -561,6 +575,40 @@
           &.inactive {
             .grayscale;
           }
+        }
+
+        &:hover .color-picker-item {
+          .not-grayscale;
+        }
+      }
+    }
+
+    .drawing {
+      margin-bottom: 1em;
+
+      .drawing-section {
+        font-size: 0.75;
+        line-height: 1em;
+        margin-bottom: 0.25em;
+
+        .drawing-option, label, .color-picker {
+          display: inline-block;
+        }
+
+        label {
+          font-size: 0.85em;
+        }
+
+        .drawing-option {
+          width: 40%;
+        }
+
+        .color-picker {
+          max-width: 60%;
+        }
+
+        .color-picker-item.inactive {
+          .grayscale;
         }
 
         &:hover .color-picker-item {

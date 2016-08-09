@@ -18,6 +18,11 @@
 
           <div class="locator-map-help">
             Move the marker by dragging the base.
+
+            {{#options.drawing}}
+              Use the buttons to draw shapes on the map.
+            {{/drawing}}
+
             {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}
               Required attribution for this map: <br>
               <span class="attribution">{{{ options.tilesets[options.tileset].attribution }}}</span>
@@ -62,7 +67,7 @@
         {{/options.geocoder}}
 
         <div class="markers {{^options.markers}}no-markers{{/}}">
-          <label class="no-markers-label">Markers.</label>
+          <label class="no-markers-label">Markers</label>
           <button class="add-marker action small inline" on-tap="add-marker" title="Add marker at center of map"><i class="fa fa-plus"></i></button>
 
           <label class="markers-label">Markers.</label>
@@ -109,6 +114,47 @@
           {{/}}
         </div>
 
+        {{#options.drawing}}
+          <div class="drawing">
+            <label class="markers-label">Drawing</label>
+            <div class="help">Use the buttons on the map to draw shapes.</div>
+
+            <div class="drawing-section">
+              <div class="drawing-option">
+                <input type="checkbox" checked="{{ options.drawingStyles.stroke }}" id="drawing-styles-stroke" lazy>
+                <label for="drawing-styles-stroke">Stroke</label>
+              </div>
+
+              {{#(_.size(options.drawingStrokes) > 1 && options.drawingStyles.stroke)}}
+                <div class="color-picker" title="Set drawing stroke color">
+                  {{#options.drawingStrokes:di}}
+                    <div class="color-picker-item {{#(options.drawingStyles.color === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
+                      style="background-color: {{ this }}"
+                      on-tap="setDrawing:'color',{{ this }}">
+                  {{/}}
+                </div>
+              {{/}}
+            </div>
+
+            <div class="drawing-section">
+              <div class="drawing-option">
+                <input type="checkbox" checked="{{ options.drawingStyles.fill }}" id="drawing-styles-fill" lazy>
+                <label for="drawing-styles-fill">Fill</label>
+              </div>
+
+              {{#(_.size(options.drawingStrokes) > 1 && options.drawingStyles.fill)}}
+                <div class="color-picker" title="Set drawing fill color">
+                  {{#options.drawingFills:di}}
+                    <div class="color-picker-item {{#(options.drawingStyles.fillColor === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
+                      style="background-color: {{ this }}"
+                      on-tap="setDrawing:'fillColor',{{ this }}">
+                  {{/}}
+                </div>
+              {{/}}
+            </div>
+          </div>
+        {{/options.drawing}}
+
         {{#(_.size(options.tilesets) > 1)}}
           <div class="config-option">
             <label>Background map set</label>
@@ -150,7 +196,6 @@
 
           <input type="range" min="-10" max="1" value="{{ options.miniZoomOffset }}" title="Adjust zoom level for map">
         </div>
-
 
         <div class="config-option">
           <input type="checkbox" checked="{{ options.embedAttribution }}" id="config-embed-attribution" lazy>

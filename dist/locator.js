@@ -2889,7 +2889,7 @@ _html2canvas.Renderer.Canvas = function(options) {
   var Locator = function(options) {
     this.options = this.extend({
       // Template
-      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\">  <div class=\"locator-map-attribution {{#options.embedAttribution}}enabled{{/}}\">  {{#options.overrideAttribution}}  {{{ options.overrideAttribution }}}  {{/}}  {{^options.overrideAttribution}}  {{{ options.tilesets[options.tileset].attribution }}}  {{/}}  </div>  </div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.  {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map: <br>  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{{ options.title }}}</header>   <div class=\"locator-input\">  <div class=\"locator-history\">  <button class=\"small inline action undo\" disabled=\"{{ !canUndo }}\" title=\"Undo\" on-tap=\"undo\"><i class=\"fa fa-rotate-left\"></i></button>  <button class=\"small inline action redo\" disabled=\"{{ !canRedo }}\" title=\"Redo\" on-tap=\"redo\"><i class=\"fa fa-rotate-right\"></i></button>  <button class=\"small inline destructive reset\" title=\"Reset all options\" on-tap=\"resetOptions\"><i class=\"fa fa-refresh\"></i></button>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   <div class=\"markers {{^options.markers}}no-markers{{/}}\">  <label class=\"no-markers-label\">Markers.</label>  <button class=\"add-marker action small inline\" on-tap=\"add-marker\" title=\"Add marker at center of map\"><i class=\"fa fa-plus\"></i></button>   <label class=\"markers-label\">Markers.</label>  <div class=\"help\">Use <code>&lt;br&gt;</code> to make line breaks.</div>   {{#options.markers:mi}}  <div class=\"marker\" intro-outro=\"slide\">  <div class=\"config-option\">  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ this.text }}\" lazy>  </div>   <div class=\"marker-actions\">  {{#options.markerToCenter}}  <button class=\"action small\" on-tap=\"marker-to-center:{{ mi }}\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"action small\" on-tap=\"center-to-marker:{{ mi }}\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   {{#(_.size(options.markerBackgrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker background color\">  {{#options.markerBackgrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'background',{{ this }}\">  {{/}}  </div>  {{/}}   {{#(_.size(options.markerForegrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker foreground color\">  {{#options.markerForegrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'foreground',{{ this }}\">  {{/}}  </div>  {{/}}   <button class=\"destructive small\" on-tap=\"remove-marker:{{ mi }}\" title=\"Remove marker\"><i class=\"fa fa-close\"></i></button>  </div>  </div>  {{/}}  </div>   {{#(_.size(options.tilesets) > 1)}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : 'inactive' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#(_.size(options.widths) > 1)}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios) > 1)}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>    <div class=\"config-option\">  <input type=\"checkbox\" checked=\"{{ options.embedAttribution }}\" id=\"config-embed-attribution\" lazy>  <label for=\"config-embed-attribution\">Embed attribution</label>   <input type=\"text\" placeholder=\"Override attribution\" value=\"{{ options.overrideAttribution }}\" lazy>  </div>   <div class=\"config-action\">  <button class=\"large additive generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  {{{ options.footer }}}  </footer>  </div>  </section> </div> ",
+      template: " <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css\">  <div class=\"locator {{ (noGenerate.controlsOpen) ? 'controls-open' : 'controls-closed' }} {{ options.superClass }}\">  <section class=\"locator-display\">  <div class=\"locator-map-wrapper\">  <div class=\"locator-display-inner\">  <div class=\"locator-map\">  <div class=\"locator-map-attribution {{#options.embedAttribution}}enabled{{/}}\">  {{#options.overrideAttribution}}  {{{ options.overrideAttribution }}}  {{/}}  {{^options.overrideAttribution}}  {{{ options.tilesets[options.tileset].attribution }}}  {{/}}  </div>  </div>   <div class=\"locator-map-help\">  Move the marker by dragging the base.   {{#options.drawing}}  Use the buttons to draw shapes on the map.  {{/drawing}}   {{#(options.tilesets[options.tileset] && options.tilesets[options.tileset].attribution)}}  Required attribution for this map: <br>  <span class=\"attribution\">{{{ options.tilesets[options.tileset].attribution }}}</span>  {{/()}}  </div>  </div>  </div>  </section>    <section class=\"locator-controls\">  <div class=\"minor-controls\">  <div class=\"toggle-controls\" on-tap=\"toggle:'noGenerate.controlsOpen'\"></div>   <button class=\"minor-button minor-generate\" on-tap=\"generate\" title=\"Generate\"><i class=\"fa fa-download\"></i></button>  </div>   <div class=\"locator-controls-wrapper\">  <header>{{{ options.title }}}</header>   <div class=\"locator-input\">  <div class=\"locator-history\">  <button class=\"small inline action undo\" disabled=\"{{ !canUndo }}\" title=\"Undo\" on-tap=\"undo\"><i class=\"fa fa-rotate-left\"></i></button>  <button class=\"small inline action redo\" disabled=\"{{ !canRedo }}\" title=\"Redo\" on-tap=\"redo\"><i class=\"fa fa-rotate-right\"></i></button>  <button class=\"small inline destructive reset\" title=\"Reset all options\" on-tap=\"resetOptions\"><i class=\"fa fa-refresh\"></i></button>  </div>   {{^options.geocoder}}  <div class=\"config-option\">  <label>Latitude and longitude location</label>   <br><input type=\"number\" placeholder=\"Latitude\" value=\"{{ options.lat }}\" lazy>  <br><input type=\"number\" placeholder=\"Longitude\" value=\"{{ options.lng }}\" lazy>  </div>  {{/options.geocoder}}   {{#options.geocoder}}  <div class=\"config-option\">  <label>Search location by address</label>  <input type=\"text\" placeholder=\"Address or place\" value=\"{{ geocodeInput }}\" lazy disabled=\"{{ isGeocoding }}\">  </div>  {{/options.geocoder}}   <div class=\"markers {{^options.markers}}no-markers{{/}}\">  <label class=\"no-markers-label\">Markers</label>  <button class=\"add-marker action small inline\" on-tap=\"add-marker\" title=\"Add marker at center of map\"><i class=\"fa fa-plus\"></i></button>   <label class=\"markers-label\">Markers.</label>  <div class=\"help\">Use <code>&lt;br&gt;</code> to make line breaks.</div>   {{#options.markers:mi}}  <div class=\"marker\" intro-outro=\"slide\">  <div class=\"config-option\">  <input type=\"text\" placeholder=\"Marker label\" value=\"{{ this.text }}\" lazy>  </div>   <div class=\"marker-actions\">  {{#options.markerToCenter}}  <button class=\"action small\" on-tap=\"marker-to-center:{{ mi }}\" title=\"Move marker to center of map\"><i class=\"fa fa-compass\"></i></button>  {{/}}   {{#options.centerToMarker}}  <button class=\"action small\" on-tap=\"center-to-marker:{{ mi }}\" title=\"Center map on marker\"><i class=\"fa fa-plus-square-o\"></i></button>  {{/}}   {{#(_.size(options.markerBackgrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker background color\">  {{#options.markerBackgrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'background',{{ this }}\">  {{/}}  </div>  {{/}}   {{#(_.size(options.markerForegrounds) > 1)}}  <div class=\"color-picker\" title=\"Set marker foreground color\">  {{#options.markerForegrounds:bi}}  <div class=\"color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setMarker:{{ mi }},'foreground',{{ this }}\">  {{/}}  </div>  {{/}}   <button class=\"destructive small\" on-tap=\"remove-marker:{{ mi }}\" title=\"Remove marker\"><i class=\"fa fa-close\"></i></button>  </div>  </div>  {{/}}  </div>   {{#options.drawing}}  <div class=\"drawing\">  <label class=\"markers-label\">Drawing</label>  <div class=\"help\">Use the buttons on the map to draw shapes.</div>   <div class=\"drawing-section\">  <div class=\"drawing-option\">  <input type=\"checkbox\" checked=\"{{ options.drawingStyles.stroke }}\" id=\"drawing-styles-stroke\" lazy>  <label for=\"drawing-styles-stroke\">Stroke</label>  </div>   {{#(_.size(options.drawingStrokes) > 1 && options.drawingStyles.stroke)}}  <div class=\"color-picker\" title=\"Set drawing stroke color\">  {{#options.drawingStrokes:di}}  <div class=\"color-picker-item {{#(options.drawingStyles.color === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setDrawing:'color',{{ this }}\">  {{/}}  </div>  {{/}}  </div>   <div class=\"drawing-section\">  <div class=\"drawing-option\">  <input type=\"checkbox\" checked=\"{{ options.drawingStyles.fill }}\" id=\"drawing-styles-fill\" lazy>  <label for=\"drawing-styles-fill\">Fill</label>  </div>   {{#(_.size(options.drawingStrokes) > 1 && options.drawingStyles.fill)}}  <div class=\"color-picker\" title=\"Set drawing fill color\">  {{#options.drawingFills:di}}  <div class=\"color-picker-item {{#(options.drawingStyles.fillColor === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}\"  style=\"background-color: {{ this }}\"  on-tap=\"setDrawing:'fillColor',{{ this }}\">  {{/}}  </div>  {{/}}  </div>  </div>  {{/options.drawing}}   {{#(_.size(options.tilesets) > 1)}}  <div class=\"config-option\">  <label>Background map set</label>   <div class=\"image-picker images-{{ _.size(options.tilesets) }}\">  {{#options.tilesets:i}}  <div class=\"image-picker-item {{ (options.tileset === i) ? 'active' : 'inactive' }}\" style=\"background-image: url({{= preview }});\" title=\"{{ i }}\" on-tap=\"set:'options.tileset',{{ i }}\"></div>  {{/options.tilesets}}  </div>  </div>  {{/()}}   {{#(_.size(options.widths) > 1)}}  <div class=\"config-option config-select\">  <label>Map width</label>   <select value=\"{{ options.width }}\">  {{#options.widths:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.widths}}  </select>  </div>  {{/()}}   {{#(_.size(options.ratios) > 1)}}  <div class=\"config-option config-select\">  <label>Map aspect ratio</label>   <select value=\"{{ options.ratio }}\">  {{#options.ratios:i}}  <option value=\"{{ i }}\">{{ i }}</option>  {{/options.ratios}}  </select>  </div>  {{/()}}   <div class=\"config-option\">  <label>Mini-map zoom</label>   <input type=\"range\" min=\"-10\" max=\"1\" value=\"{{ options.miniZoomOffset }}\" title=\"Adjust zoom level for map\">  </div>   <div class=\"config-option\">  <input type=\"checkbox\" checked=\"{{ options.embedAttribution }}\" id=\"config-embed-attribution\" lazy>  <label for=\"config-embed-attribution\">Embed attribution</label>   <input type=\"text\" placeholder=\"Override attribution\" value=\"{{ options.overrideAttribution }}\" lazy>  </div>   <div class=\"config-action\">  <button class=\"large additive generate-image\" on-tap=\"generate\">Generate <i class=\"fa fa-download\"></i></button>  </div>   <div class=\"preview\">  <h1>Preview</h1>  <img src=\"\" /><br>  <a href=\"\" class=\"download-link\">Download</a>  </div>  </div>   <footer>  {{{ options.footer }}}  </footer>  </div>  </section> </div> ",
 
       // Text
       title: "Locator",
@@ -2941,7 +2941,7 @@ _html2canvas.Renderer.Canvas = function(options) {
         stroke: true,
         color: "#000000",
         opacity: 0.9,
-        weight: 4
+        weight: 1.5
       },
       miniStyles: {
         backgroundColor: "#FFFFFF",
@@ -2998,6 +2998,32 @@ _html2canvas.Renderer.Canvas = function(options) {
         iconAnchor:   [40, 55],
         popupAnchor:  [-75, 0]
       }),
+
+      // Drawing
+      drawing: true,
+      drawingStyles: {
+        fill: false,
+        stroke: true,
+        color: "#00B8F5",
+        opacity: 0.9,
+        weight: 5,
+        fillOpacity: 0.3
+      },
+      geojson: false,
+      drawingStrokes: [
+        "#00B8F5",
+        "#F5003D",
+        "#F500B8",
+        "#F5B800",
+        "#00F53D"
+      ],
+      drawingFills: [
+        "#00B8F5",
+        "#F5003D",
+        "#F500B8",
+        "#F5B800",
+        "#00F53D"
+      ],
 
       // Dimensions
       widths: {
@@ -3162,6 +3188,13 @@ _html2canvas.Renderer.Canvas = function(options) {
         }
       }, this));
 
+      // Update drawing styles
+      this.interface.on("setDrawing", _.bind(function(e, property, value) {
+        console.log(property, value);
+        this.set("options.drawingStyles." + property, value);
+        console.log(this.get("options.drawingStyles"));
+      }, this));
+
       // Move marker to center of map
       this.interface.on("marker-to-center", _.bind(function(e, markerIndex) {
         var center = this.map.getCenter();
@@ -3220,8 +3253,10 @@ _html2canvas.Renderer.Canvas = function(options) {
     // Draw map parts
     drawMaps: function() {
       this.drawMap();
+      this.drawGeoJSON();
       this.drawMarkers();
       this.drawMinimap();
+      this.drawDrawingLayer();
 
       // Some style fixes
       this.fixMapVerticalAlign();
@@ -3242,6 +3277,12 @@ _html2canvas.Renderer.Canvas = function(options) {
       // Tilesets can be just a URL, or an object with a URL and
       // preview
       options.tilesets = this.parseTilesets(options.tilesets);
+
+      // Create an "invisible" drawing style since we render
+      // it separately
+      options.drawingStylesInvisible = _.clone(options.drawingStyles);
+      options.drawingStylesInvisible.opacity = 0;
+      options.drawingStylesInvisible.fillOpacity = 0;
 
       return options;
     },
@@ -3303,7 +3344,9 @@ _html2canvas.Renderer.Canvas = function(options) {
       this.map.setView([view[0], view[1]], view[2]);
 
       // Tile layer
-      this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
+      this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url, {
+        zIndex: -100
+      });
       this.map.addLayer(this.mapLayer);
 
       // React to map view change
@@ -3315,6 +3358,109 @@ _html2canvas.Renderer.Canvas = function(options) {
           "options.zoom": this.map.getZoom()
         });
       }, this));
+    },
+
+    // Get geojson from draw layer
+    getGeoJSON: function() {
+      var features = [];
+      this.drawLayer.eachLayer(function(l) {
+        if (l && l.toGeoJSON) {
+          features.push(l.toGeoJSON());
+        }
+      });
+
+      this.options.geojson = {
+        type: "FeatureCollection",
+        features: features
+      };
+
+      // Redraw
+      if (this.geojsonCanvasLayer) {
+        this.interface.update();
+      }
+
+      return this.options.geojson;
+    },
+
+    // Set geojson to draw layer
+    setGeoJSON: function() {
+      if (this.drawLayer && this.options.geojson) {
+        this.drawLayer.clearLayers();
+
+        // Add geojson layers then add to editing layer group
+        L.geoJson(this.options.geojson, {
+          style: _.clone(this.options.drawingStylesInvisible)
+        }).eachLayer(_.bind(function(l) {
+          l.addTo(this.drawLayer);
+        }, this));
+      }
+    },
+
+    // Draw editing layer
+    drawDrawingLayer: function() {
+      // Draw layer
+      if (this.options.drawing) {
+        this.drawLayer = new L.FeatureGroup();
+        this.map.addLayer(this.drawLayer);
+
+        // Initialise the draw control
+        this.mapDraw = new L.Control.Draw({
+          draw: {
+            marker: false,
+
+            // Not sure how to render a circle yet
+            circle: false,
+
+            polyline: {
+              metric: (navigator.language !== "en-us" && navigator.language !== "en-US"),
+              shapeOptions: _.clone(this.options.drawingStyles)
+            },
+            polygon: {
+              metric: (navigator.language !== "en-us" && navigator.language !== "en-US"),
+              shapeOptions: _.clone(this.options.drawingStyles)
+            },
+            rectangle: {
+              metric: (navigator.language !== "en-us" && navigator.language !== "en-US"),
+              shapeOptions: _.clone(this.options.drawingStyles)
+            }
+          },
+          edit: {
+            featureGroup: this.drawLayer,
+            edit: {
+              selectedPathOptions: _.clone(this.options.drawingStyles)
+            }
+          }
+        });
+        this.map.addControl(this.mapDraw);
+
+        // Add any existing geojson
+        this.setGeoJSON();
+
+        // Hook up draw events
+        this.map.on("draw:created", _.bind(function(e) {
+          e.layer.setStyle(_.clone(this.options.drawingStylesInvisible));
+          this.drawLayer.addLayer(e.layer);
+          this.getGeoJSON();
+        }, this));
+
+        this.map.on("draw:edited", _.bind(this.getGeoJSON, this));
+        this.map.on("draw:deleted", _.bind(this.getGeoJSON, this));
+
+        // TODO: When deleting, the canvas rendering is there even after you
+        // delete it, and doesn't show until you hit save.
+      }
+    },
+
+    // Draw geojson layer.  Take geojson created from draw layer and render it as
+    // canvas layer
+    drawGeoJSON: function() {
+      this.geojsonCanvasLayer = L.tileLayer.canvas();
+      if (!this.options.geojson) {
+        return this.geojsonCanvasLayer;
+      }
+
+      this.geojsonCanvasLayer.drawTile = _.bind(this.drawGeoJSONTile, this);
+      this.map.addLayer(this.geojsonCanvasLayer);
     },
 
     // Draw minimap
@@ -3607,36 +3753,117 @@ _html2canvas.Renderer.Canvas = function(options) {
       }
     },
 
+    drawGeoJSONTile: function(canvas, tilePoint, zoom) {
+      var ctx = canvas.getContext("2d");
+
+      // Clear out tile
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Get some dimensions
+      var dim = {};
+      dim.nwPoint = tilePoint.multiplyBy(256);
+      dim.sePoint = dim.nwPoint.add(new L.Point(256, 256));
+      dim.nwCoord = this.map.unproject(dim.nwPoint, zoom, true);
+      dim.seCoord = this.map.unproject(dim.sePoint, zoom, true);
+      dim.bCoord = L.latLngBounds([[dim.nwCoord.lat, dim.seCoord.lng],
+        [dim.seCoord.lat, dim.nwCoord.lng]]);
+      dim.bPoint = [dim.nwPoint, dim.sePoint];
+
+      // TODO: Use a buffer or some calculation so that we only draw into tiles
+      // that the marker spills into.
+      // bCoord.contains(bCoord)
+      if (true) {
+        // Draw features
+        _.each(this.options.geojson.features, _.bind(function(f) {
+          var styles = _.clone(this.options.drawingStyles);
+
+          // Determine type
+          if (f.geometry.type === "Polygon") {
+            // Go through each part.  Not sure if this is best way, and if
+            // canvas polygon could handle inner ring stuff
+            ctx.beginPath();
+
+            _.each(f.geometry.coordinates, _.bind(function(a) {
+              // Go through each point
+              _.each(a, _.bind(function(b, bi) {
+                var p = this.map.project([b[1], b[0]], zoom, true);
+
+                if (bi === 0) {
+                  ctx.moveTo(p.x - dim.nwPoint.x, p.y - dim.nwPoint.y);
+                }
+                else {
+                  ctx.lineTo(p.x - dim.nwPoint.x, p.y - dim.nwPoint.y);
+                }
+              }, this));
+
+              // Close and style
+              ctx.closePath();
+              ctx = this.leafletStylesToCanvas(styles, ctx);
+            }, this));
+          }
+          else if (f.geometry.type === "LineString") {
+            styles.fill = false;
+            ctx.beginPath();
+
+            _.each(f.geometry.coordinates, _.bind(function(a, ai) {
+              var p = this.map.project([a[1], a[0]], zoom, true);
+
+              if (ai === 0) {
+                ctx.moveTo(p.x - dim.nwPoint.x, p.y - dim.nwPoint.y);
+              }
+              else {
+                ctx.lineTo(p.x - dim.nwPoint.x, p.y - dim.nwPoint.y);
+              }
+
+              // Style
+              ctx = this.leafletStylesToCanvas(styles, ctx);
+            }, this));
+          }
+        }, this));
+      }
+    },
+
     // Generate image
     generate: function() {
       // Hide parts not to render
       this.getEl(".locator-map .leaflet-control-zoom").style.display = "none";
       this.getEl(".locator-map .leaflet-control-minimap").style.display = "none";
 
+      // Draw geojson
+      if (this.options.drawing) {
+        this.getEl(".locator-map .leaflet-draw").style.display = "none";
+      }
+
       // Turn main map into canvas
-      html2canvas(this.getEl(".locator-map"), {
-        useCORS: true,
-        onrendered: _.bind(function(mapCanvas) {
-          // Re-display parts
-          this.getEl(".locator-map .leaflet-control-zoom").style.display = "block";
-          this.getEl(".locator-map .leaflet-control-minimap").style.display = "block";
+      _.delay(_.bind(function() {
+        html2canvas(this.getEl(".locator-map"), {
+          useCORS: true,
+          onrendered: _.bind(function(mapCanvas) {
+            // Re-display parts
+            this.getEl(".locator-map .leaflet-control-zoom").style.display = "block";
+            this.getEl(".locator-map .leaflet-control-minimap").style.display = "block";
 
-          // Make mini map
-          html2canvas(this.getEl(".locator-map .leaflet-control-minimap"), {
-            useCORS: true,
-            onrendered: _.bind(function(miniCanvas) {
-              var mapCtx = this.drawCanvasMiniMap(mapCanvas, miniCanvas);
+            if (this.options.drawing) {
+              this.getEl(".locator-map .leaflet-draw").style.display = "block";
+            }
 
-              // Preview and export
-              this.preview(mapCtx);
-              this.export(mapCtx);
-            }, this)
-          });
-        }, this)
-      });
+            // Make mini map
+            html2canvas(this.getEl(".locator-map .leaflet-control-minimap"), {
+              useCORS: true,
+              onrendered: _.bind(function(miniCanvas) {
+                var mapCtx = this.drawCanvasMiniMap(mapCanvas, miniCanvas);
+
+                // Preview and export
+                this.preview(mapCtx);
+                this.export(mapCtx);
+              }, this)
+            });
+          }, this)
+        });
+      }, this), 300);
     },
 
-    // Draw minimap
+    // Draw minimap as canvas
     drawCanvasMiniMap: function(mapCanvas, miniCanvas) {
       // Create context
       var mapCtx = mapCanvas.getContext("2d");
@@ -3728,16 +3955,17 @@ _html2canvas.Renderer.Canvas = function(options) {
     // https://github.com/Leaflet/Leaflet/blob/2a5857d172f0fa982c6c54fa5511e9b29ae13ec7/src/layer/vector/Canvas.js#L175
     leafletStylesToCanvas: function(styles, context) {
       if (styles.fill) {
-        context.globalAlpha = styles.fillOpacity || 1;
+        context.globalAlpha = _.isUndefined(styles.fillOpacity) ? 1 : styles.fillOpacity;
         context.fillStyle = styles.fillColor || styles.color;
         context.fill(styles.fillRule || "evenodd");
       }
 
       if (styles.stroke && styles.weight !== 0) {
-        context.globalAlpha = styles.opacity || 1;
+        context.globalAlpha = _.isUndefined(styles.opacity) ? 1 : styles.opacity;
         context.strokeStyle = styles.color;
-        context.lineCap = styles.lineCap;
-        context.lineJoin = styles.lineJoin;
+        context.lineCap = styles.lineCap || "round";
+        context.lineJoin = styles.lineJoin || "round";
+        context.lineWidth = styles.weight;
         context.stroke();
       }
 
