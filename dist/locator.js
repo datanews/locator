@@ -3349,9 +3349,13 @@ _html2canvas.Renderer.Canvas = function(options) {
       });
       this.map.addLayer(this.mapLayer);
 
-      // React to map view change
+      // React to map view change except when drawing
       this.map.on("moveend", _.bind(function() {
         var center = this.map.getCenter();
+        if (this.isDrawing) {
+          return;
+        }
+
         this.set({
           "options.lat": center.lat,
           "options.lng": center.lng,
@@ -3445,6 +3449,31 @@ _html2canvas.Renderer.Canvas = function(options) {
 
         this.map.on("draw:edited", _.bind(this.getGeoJSON, this));
         this.map.on("draw:deleted", _.bind(this.getGeoJSON, this));
+
+        // Mark as editing so we don't redraw
+        this.map.on("draw:drawstart", _.bind(function() {
+          this.isDrawing = true;
+        }, this));
+
+        this.map.on("draw:drawstop", _.bind(function() {
+          this.isDrawing = false;
+        }, this));
+
+        this.map.on("draw:editstart", _.bind(function() {
+          this.isDrawing = true;
+        }, this));
+
+        this.map.on("draw:editstop", _.bind(function() {
+          this.isDrawing = false;
+        }, this));
+
+        this.map.on("draw:deletestart", _.bind(function() {
+          this.isDrawing = true;
+        }, this));
+
+        this.map.on("draw:deletestop", _.bind(function() {
+          this.isDrawing = false;
+        }, this));
 
         // TODO: When deleting, the canvas rendering is there even after you
         // delete it, and doesn't show until you hit save.
