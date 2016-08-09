@@ -2941,7 +2941,7 @@ _html2canvas.Renderer.Canvas = function(options) {
         stroke: true,
         color: "#000000",
         opacity: 0.9,
-        weight: 4
+        weight: 1.5
       },
       miniStyles: {
         backgroundColor: "#FFFFFF",
@@ -2998,6 +2998,17 @@ _html2canvas.Renderer.Canvas = function(options) {
         iconAnchor:   [40, 55],
         popupAnchor:  [-75, 0]
       }),
+
+      // Drawing
+      drawing: true,
+      drawingStyles: {
+        fill: false,
+        stroke: true,
+        color: "#00B8F5",
+        opacity: 0.9,
+        weight: 5
+      },
+      geojson: false,
 
       // Dimensions
       widths: {
@@ -3220,8 +3231,10 @@ _html2canvas.Renderer.Canvas = function(options) {
     // Draw map parts
     drawMaps: function() {
       this.drawMap();
+      this.drawGeoJSON();
       this.drawMarkers();
       this.drawMinimap();
+      this.drawDrawingLayer();
 
       // Some style fixes
       this.fixMapVerticalAlign();
@@ -3242,6 +3255,12 @@ _html2canvas.Renderer.Canvas = function(options) {
       // Tilesets can be just a URL, or an object with a URL and
       // preview
       options.tilesets = this.parseTilesets(options.tilesets);
+
+      // Create an "invisible" drawing style since we render
+      // it separately
+      options.drawingStylesInvisible = _.clone(options.drawingStyles);
+      options.drawingStylesInvisible.opacity = 0;
+      options.drawingStylesInvisible.fillOpacity = 0;
 
       return options;
     },
@@ -3303,30 +3322,10 @@ _html2canvas.Renderer.Canvas = function(options) {
       this.map.setView([view[0], view[1]], view[2]);
 
       // Tile layer
-      this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
-      this.map.addLayer(this.mapLayer);
-
-      // Edit layer
-      this.drawLayer = new L.FeatureGroup();
-      this.map.addLayer(this.editLayer);
-
-      // Initialise the draw control
-      this.mapDraw = new L.Control.Draw({
-        draw: {
-          marker: false,
-          polyline: { metric: (navigator.language !== "en-us" && navigator.language !== "en-US") },
-          polygon: { metric: (navigator.language !== "en-us" && navigator.language !== "en-US") }
-        },
-        edit: {
-          featureGroup: this.drawLayer
-        }
+      this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url, {
+        zIndex: -100
       });
-      this.map.addControl(this.mapDraw);
-
-      // Apparenlty we have to hook this up ourselves
-      this.map.on("draw:created", _.bind(function(e) {
-        this.drawLayer.addLayer(e.layer);
-      }, this));
+      this.map.addLayer(this.mapLayer);
 
       // React to map view change
       this.map.on("moveend", _.bind(function() {
@@ -3337,6 +3336,109 @@ _html2canvas.Renderer.Canvas = function(options) {
           "options.zoom": this.map.getZoom()
         });
       }, this));
+    },
+
+    // Get geojson from draw layer
+    getGeoJSON: function() {
+      var features = [];
+      this.drawLayer.eachLayer(function(l) {
+        if (l && l.toGeoJSON) {
+          features.push(l.toGeoJSON());
+        }
+      });
+
+      this.options.geojson = {
+        type: "FeatureCollection",
+        features: features
+      };
+
+      // Redraw
+      if (this.geojsonCanvasLayer) {
+        this.interface.update();
+      }
+
+      return this.options.geojson;
+    },
+
+    // Set geojson to draw layer
+    setGeoJSON: function() {
+      if (this.drawLayer && this.options.geojson) {
+        this.drawLayer.clearLayers();
+
+        // Add geojson layers then add to editing layer group
+        L.geoJson(this.options.geojson, {
+          style: _.clone(this.options.drawingStylesInvisible)
+        }).eachLayer(_.bind(function(l) {
+          l.addTo(this.drawLayer);
+        }, this));
+      }
+    },
+
+    // Draw editing layer
+    drawDrawingLayer: function() {
+      // Draw layer
+      if (this.options.drawing) {
+        this.drawLayer = new L.FeatureGroup();
+        this.map.addLayer(this.drawLayer);
+
+        // Initialise the draw control
+        this.mapDraw = new L.Control.Draw({
+          draw: {
+            marker: false,
+
+            // Not sure how to render a circle yet
+            circle: false,
+
+            polyline: {
+              metric: (navigator.language !== "en-us" && navigator.language !== "en-US"),
+              shapeOptions: _.clone(this.options.drawingStyles)
+            },
+            polygon: {
+              metric: (navigator.language !== "en-us" && navigator.language !== "en-US"),
+              shapeOptions: _.clone(this.options.drawingStyles)
+            },
+            rectangle: {
+              metric: (navigator.language !== "en-us" && navigator.language !== "en-US"),
+              shapeOptions: _.clone(this.options.drawingStyles)
+            }
+          },
+          edit: {
+            featureGroup: this.drawLayer,
+            edit: {
+              selectedPathOptions: _.clone(this.options.drawingStyles)
+            }
+          }
+        });
+        this.map.addControl(this.mapDraw);
+
+        // Add any existing geojson
+        this.setGeoJSON();
+
+        // Hook up draw events
+        this.map.on("draw:created", _.bind(function(e) {
+          e.layer.setStyle(_.clone(this.options.drawingStylesInvisible));
+          this.drawLayer.addLayer(e.layer);
+          this.getGeoJSON();
+        }, this));
+
+        this.map.on("draw:edited", _.bind(this.getGeoJSON, this));
+        this.map.on("draw:deleted", _.bind(this.getGeoJSON, this));
+
+        // TODO: When deleting, the canvas rendering is there even after you
+        // delete it, and doesn't show until you hit save.
+      }
+    },
+
+    // Draw geojson layer.  Take geojson created from draw layer and render it as
+    // canvas layer
+    drawGeoJSON: function() {
+      this.geojsonCanvasLayer = L.tileLayer.canvas();
+      if (!this.options.geojson) {
+        return this.geojsonCanvasLayer;
+      }
+
+      this.geojsonCanvasLayer.drawTile = _.bind(this.drawGeoJSONTile, this);
+      this.map.addLayer(this.geojsonCanvasLayer);
     },
 
     // Draw minimap
@@ -3629,33 +3731,114 @@ _html2canvas.Renderer.Canvas = function(options) {
       }
     },
 
+    drawGeoJSONTile: function(canvas, tilePoint, zoom) {
+      var ctx = canvas.getContext("2d");
+
+      // Clear out tile
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Get some dimensions
+      var dim = {};
+      dim.nwPoint = tilePoint.multiplyBy(256);
+      dim.sePoint = dim.nwPoint.add(new L.Point(256, 256));
+      dim.nwCoord = this.map.unproject(dim.nwPoint, zoom, true);
+      dim.seCoord = this.map.unproject(dim.sePoint, zoom, true);
+      dim.bCoord = L.latLngBounds([[dim.nwCoord.lat, dim.seCoord.lng],
+        [dim.seCoord.lat, dim.nwCoord.lng]]);
+      dim.bPoint = [dim.nwPoint, dim.sePoint];
+
+      // TODO: Use a buffer or some calculation so that we only draw into tiles
+      // that the marker spills into.
+      // bCoord.contains(bCoord)
+      if (true) {
+        // Draw features
+        _.each(this.options.geojson.features, _.bind(function(f) {
+          var styles = _.clone(this.options.drawingStyles);
+
+          // Determine type
+          if (f.geometry.type === "Polygon") {
+            // Go through each part.  Not sure if this is best way, and if
+            // canvas polygon could handle inner ring stuff
+            ctx.beginPath();
+
+            _.each(f.geometry.coordinates, _.bind(function(a) {
+              // Go through each point
+              _.each(a, _.bind(function(b, bi) {
+                var p = this.map.project([b[1], b[0]], zoom, true);
+
+                if (bi === 0) {
+                  ctx.moveTo(p.x - dim.nwPoint.x, p.y - dim.nwPoint.y);
+                }
+                else {
+                  ctx.lineTo(p.x - dim.nwPoint.x, p.y - dim.nwPoint.y);
+                }
+              }, this));
+
+              // Close and style
+              ctx.closePath();
+              ctx = this.leafletStylesToCanvas(styles, ctx);
+            }, this));
+          }
+          else if (f.geometry.type === "LineString") {
+            styles.fill = false;
+            ctx.beginPath();
+
+            _.each(f.geometry.coordinates, _.bind(function(a, ai) {
+              var p = this.map.project([a[1], a[0]], zoom, true);
+
+              if (ai === 0) {
+                ctx.moveTo(p.x - dim.nwPoint.x, p.y - dim.nwPoint.y);
+              }
+              else {
+                ctx.lineTo(p.x - dim.nwPoint.x, p.y - dim.nwPoint.y);
+              }
+
+              // Style
+              ctx = this.leafletStylesToCanvas(styles, ctx);
+            }, this));
+          }
+        }, this));
+      }
+    },
+
     // Generate image
     generate: function() {
       // Hide parts not to render
       this.getEl(".locator-map .leaflet-control-zoom").style.display = "none";
       this.getEl(".locator-map .leaflet-control-minimap").style.display = "none";
 
+      // Draw geojson
+      if (this.options.drawing) {
+        this.getEl(".locator-map .leaflet-draw").style.display = "none";
+      }
+
       // Turn main map into canvas
-      html2canvas(this.getEl(".locator-map"), {
-        useCORS: true,
-        onrendered: _.bind(function(mapCanvas) {
-          // Re-display parts
-          this.getEl(".locator-map .leaflet-control-zoom").style.display = "block";
-          this.getEl(".locator-map .leaflet-control-minimap").style.display = "block";
+      _.delay(_.bind(function() {
+        html2canvas(this.getEl(".locator-map"), {
+          useCORS: true,
+          onrendered: _.bind(function(mapCanvas) {
+            // Re-display parts
+            this.getEl(".locator-map .leaflet-control-zoom").style.display = "block";
+            this.getEl(".locator-map .leaflet-control-minimap").style.display = "block";
 
-          // Make mini map
-          html2canvas(this.getEl(".locator-map .leaflet-control-minimap"), {
-            useCORS: true,
-            onrendered: _.bind(function(miniCanvas) {
-              var mapCtx = this.drawCanvasMiniMap(mapCanvas, miniCanvas);
+            if (this.options.drawing) {
+              this.getEl(".locator-map .leaflet-draw").style.display = "block";
+            }
 
-              // Preview and export
-              this.preview(mapCtx);
-              this.export(mapCtx);
-            }, this)
-          });
-        }, this)
-      });
+            // Make mini map
+            html2canvas(this.getEl(".locator-map .leaflet-control-minimap"), {
+              useCORS: true,
+              onrendered: _.bind(function(miniCanvas) {
+                var mapCtx = this.drawCanvasMiniMap(mapCanvas, miniCanvas);
+
+                // Preview and export
+                this.preview(mapCtx);
+                this.export(mapCtx);
+              }, this)
+            });
+          }, this)
+        });
+      }, this), 300);
     },
 
     // Draw minimap as canvas
@@ -3750,16 +3933,17 @@ _html2canvas.Renderer.Canvas = function(options) {
     // https://github.com/Leaflet/Leaflet/blob/2a5857d172f0fa982c6c54fa5511e9b29ae13ec7/src/layer/vector/Canvas.js#L175
     leafletStylesToCanvas: function(styles, context) {
       if (styles.fill) {
-        context.globalAlpha = styles.fillOpacity || 1;
+        context.globalAlpha = _.isUndefined(styles.fillOpacity) ? 1 : styles.fillOpacity;
         context.fillStyle = styles.fillColor || styles.color;
         context.fill(styles.fillRule || "evenodd");
       }
 
       if (styles.stroke && styles.weight !== 0) {
-        context.globalAlpha = styles.opacity || 1;
+        context.globalAlpha = _.isUndefined(styles.opacity) ? 1 : styles.opacity;
         context.strokeStyle = styles.color;
-        context.lineCap = styles.lineCap;
-        context.lineJoin = styles.lineJoin;
+        context.lineCap = styles.lineCap || "round";
+        context.lineJoin = styles.lineJoin || "round";
+        context.lineWidth = styles.weight;
         context.stroke();
       }
 
