@@ -8,9 +8,9 @@ Locator is meant to be deployed and customized by your organization so that your
 
 Locator only works in [Google Chrome](https://www.google.com/chrome/) at the moment.  Also, given the goal of Locator, it does not work well on small screens.
 
-![Locator example 1](//datanews.github.io/locator/examples/example-01.png)
-![Locator example 2](//datanews.github.io/locator/examples/example-02.png)
-![Locator example 3](//datanews.github.io/locator/examples/example-03.png)
+![Locator example 1](https://datanews.github.io/locator/examples/example-01.png)
+![Locator example 2](https://datanews.github.io/locator/examples/example-02.png)
+![Locator example 3](https://datanews.github.io/locator/examples/example-03.png)
 
 ## Deploy
 
