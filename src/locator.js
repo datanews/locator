@@ -15,7 +15,7 @@
 
       // Text
       title: "Locator",
-      footer: "Made by the <a href=\"http://datanews.tumblr.com/\" target=\"_blank\">WNYC DataNews</a> team.  Locator only works in <a href=\"http://google.com/chrome\" target=\"_blank\">Chrome</a>.",
+      footer: "Made by the <a href=\"//datanews.tumblr.com/\" target=\"_blank\">WNYC DataNews</a> team.  Locator only works in <a href=\"//google.com/chrome\" target=\"_blank\">Chrome</a> at the moment.  See how to <a href=\"//github.com/datanews/locator/\" target=\"_blank\">deploy Locator</a> for yourself or your organization.",
 
       // Main map
       tilesets: {
@@ -137,14 +137,18 @@
         "#F5003D",
         "#F500B8",
         "#F5B800",
-        "#00F53D"
+        "#00F53D",
+        "#FFFFFF",
+        "#000000"
       ],
       drawingFills: [
         "#00B8F5",
         "#F5003D",
         "#F500B8",
         "#F5B800",
-        "#00F53D"
+        "#00F53D",
+        "#FFFFFF",
+        "#000000"
       ],
 
       // Dimensions
@@ -263,8 +267,10 @@
       this.interface.observe("geocodeInput", _.bind(function(input) {
         if (_.isFunction(this.throttledGeocoder)) {
           this.throttledGeocoder(input, _.bind(function(lat, lng) {
-            this.set("options.lat", lat);
-            this.set("options.lng", lng);
+            if (lat && lng) {
+              this.set("options.lat", lat);
+              this.set("options.lng", lng);
+            }
           }, this));
         }
       }, this), { init: false });
