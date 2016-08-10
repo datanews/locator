@@ -47,7 +47,7 @@ Locator is a browser application.  Include the JS, CSS, and dependencies found i
 
 Locator comes with many options, though all have sane defaults and aren't necessary besides `el`.
 
-*Locator keeps a history of the options; this allows for undo and redo actions, but if you are are updating options in the code, you may not see any updates until you hit the **Reset** button in the top right*
+*Locator keeps a history of the options; this allows for undo and redo actions, but if you are are updating options in the code, you may not see any updates until you hit the* **Reset** *button in the top right*
 
 * `el`: CSS selector to element where Locator will render on the page.
 * `title`: The title used in the top of the controls section.  Can use HTML.
