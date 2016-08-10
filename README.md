@@ -64,7 +64,8 @@ Locator comes with many options, though all have sane defaults and aren't necess
 "CartoDB Positron": {
     url: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
     attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a target=\"_blank\" href=\"http://cartodb.com/attributions\">CartoDB</a>"
-}```   
+}
+```   
 If this option only has 1 value, then the control to choose the tileset will not show up.
 * `tileset`: The default tileset to use; a key value from `tilesets`.
 * `zoom`: Zoom level of the map.
@@ -123,7 +124,8 @@ If this option only has 1 value, then the control to choose the tileset will not
     shadowBlur: 5,
     shadowOffsetX: 1,
     shadowOffsetY: 1
-}```
+}
+```
 
 ### Interface
 
