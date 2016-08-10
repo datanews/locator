@@ -40,7 +40,8 @@ Locator is a browser application.  Include the JS, CSS, and dependencies found i
       });
     </script>
   </body>
-</html>```
+</html>
+```
 
 ## Options
 
