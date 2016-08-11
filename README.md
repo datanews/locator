@@ -30,7 +30,7 @@ Locator is a browser application.  Include the JS, CSS, and dependencies found i
   <body>
     <div class="locator-container"></div>
 
-    <script src="locator.bundled.min.js"></script>
+    <script src="dist/locator.bundled.min.js"></script>
 
     <script type="text/javascript">
       // Create locator here
@@ -210,7 +210,7 @@ To create a new version/release, follow these steps.
 3. Commit: `git add . && git commit -m "Version X.X.X"`
 4. Tag: `git tag X.X.X`
 5. Push: `git push origin master --tags`
-6. Make [Github release](https://github.com/datanews/locator/releases/new).
+6. Make [Github release](https://github.com/datanews/locator/releases/new) with a title named after a [cartographer](https://en.wikipedia.org/wiki/List_of_cartographers).
 
 ## Hacks
 
