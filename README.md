@@ -201,6 +201,17 @@ The main project page is hosted on Github Pages through this repository.  A one-
 
     git checkout gh-pages && git merge master && git push origin gh-pages && git checkout master && bower install
 
+## Releases
+
+To create a new version/release, follow these steps.
+
+1. Update `package.json`.
+2. Generate the Changelog with [Github Changelog Generator](https://github.com/skywinder/github-changelog-generator): `github_changelog_generator --future-release X.X.X`
+3. Commit: `git add . && git commit -m "Version X.X.X"`
+4. Tag: `git tag X.X.X`
+5. Push: `git push origin master --tags`
+6. Make [Github release](https://github.com/datanews/locator/releases/new).
+
 ## Hacks
 
 This project is pushing the limits of browsers and the consistency of their rendering and APIs.  This means we have to hack some libraries to make work; these are stored in `libs`;

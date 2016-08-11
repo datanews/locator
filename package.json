@@ -1,6 +1,6 @@
 {
   "name": "locator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "In browser locator map generator",
   "main": "dist/locator.js",
   "dependencies": {
