@@ -1,5 +1,6 @@
 {
   "name": "locator",
+  "version": "0.0.1",
   "homepage": "https://github.com/datanews/locator",
   "authors": [
     "Alan Palazzolo <github@zzolo.org>"
