@@ -22,8 +22,8 @@ var Locator = function(options) {
     template: "REPLACE-DEFAULT-TEMPLATE",
 
     // Text
-    title: "Locator",
-    footer: "Made by the <a href=\"//datanews.tumblr.com/\" target=\"_blank\">WNYC DataNews</a> team.  Locator only works in <a href=\"//google.com/chrome\" target=\"_blank\">Chrome</a> at the moment.  See how to <a href=\"//github.com/datanews/locator/\" target=\"_blank\">deploy Locator</a> for yourself or your organization.",
+    title: "Locator demo",
+    footer: "Made by the <a href=\"//datanews.tumblr.com/\" target=\"_blank\">WNYC DataNews</a> team.  Locator only works in <a href=\"//google.com/chrome\" target=\"_blank\">Google Chrome</a> at the moment.  See how to <a href=\"//github.com/datanews/locator/\" target=\"_blank\">deploy Locator</a> for yourself or your organization.",
 
     // Main map
     tilesets: {
