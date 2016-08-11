@@ -145,7 +145,7 @@ gulp.task("styles", ["styles-lint"], function() {
 });
 
 // Bundle with libs
-gulp.task("bundle", ["styles", "js-linting", "js"], function() {
+gulp.task("bundle-js", ["js"], function() {
   var jsDeps = [
     "node_modules/ractive/ractive.js",
     "node_modules/ractive-events-tap/dist/ractive-events-tap.umd.js",
@@ -156,24 +156,7 @@ gulp.task("bundle", ["styles", "js-linting", "js"], function() {
     "node_modules/leaflet-draw/dist/leaflet.draw.js",
     "node_modules/leaflet-minimap/dist/Control.MiniMap.min.js"
   ];
-  var cssDeps = [
-    "node_modules/leaflet/dist/leaflet.css",
-    "node_modules/leaflet-draw/dist/leaflet.draw.css",
-    "node_modules/leaflet-minimap/dist/Control.MiniMap.min.css"
-  ];
 
-  // CSS bundle
-  gulp.src(cssDeps.concat(["dist/locator.css"]))
-    .pipe(plumber(plumberHandler()))
-    .pipe(concat("locator.bundled.css"))
-    .pipe(cssminify())
-    .pipe(header(banner, { pkg: pkg }))
-    .pipe(rename({
-      extname: ".min.css"
-    }))
-    .pipe(gulp.dest("dist"));
-
-  // JS bundle
   return gulp.src(jsDeps.concat(["dist/locator.js"]))
     .pipe(plumber(plumberHandler()))
     .pipe(concat("locator.bundled.js"))
@@ -185,11 +168,30 @@ gulp.task("bundle", ["styles", "js-linting", "js"], function() {
     .pipe(gulp.dest("dist"));
 });
 
+// Bundle styles
+gulp.task("bundle-styles", ["styles"], function() {
+  var cssDeps = [
+    "node_modules/leaflet/dist/leaflet.css",
+    "node_modules/leaflet-draw/dist/leaflet.draw.css",
+    "node_modules/leaflet-minimap/dist/Control.MiniMap.min.css"
+  ];
+
+  return gulp.src(cssDeps.concat(["dist/locator.css"]))
+    .pipe(plumber(plumberHandler()))
+    .pipe(concat("locator.bundled.css"))
+    .pipe(cssminify())
+    .pipe(header(banner, { pkg: pkg }))
+    .pipe(rename({
+      extname: ".min.css"
+    }))
+    .pipe(gulp.dest("dist"));
+});
+
 // Watch for files that need to be processed
 gulp.task("watch", function() {
   gulp.watch(["gulpfile.js"], ["support-js"]);
-  gulp.watch(["src/**/*.js", "src/**/*.tpl"], ["js"]);
-  gulp.watch("src/**/*.less", ["styles"]);
+  gulp.watch(["src/**/*.js", "src/**/*.tpl"], ["bundle-js"]);
+  gulp.watch("src/**/*.less", ["bundle-styles"]);
 });
 
 // Web server for conveinence
@@ -213,7 +215,7 @@ gulp.task("webserver", function() {
 });
 
 // Default task is a basic build
-gulp.task("default", ["support-js", "js", "styles", "bundle"]);
+gulp.task("default", ["support-js", "bundle-js", "bundle-styles"]);
 
 // Combine webserver and watch tasks for a more complete server
 gulp.task("server", ["default", "watch", "webserver"]);
