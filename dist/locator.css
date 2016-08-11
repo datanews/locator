@@ -424,6 +424,14 @@
   border: 1px solid #343434;
   margin: 0 auto;
 }
+.locator .locator-map .leaflet-bar a,
+.locator .locator-map .leaflet-bar a:hover {
+  background-color: #FFFFFF;
+}
+.locator .locator-map .leaflet-draw-actions a {
+  background-color: #919187;
+  border-left: 1px solid #AAA;
+}
 .locator .leaflet-control-minimap {
   border: 0;
   box-shadow: none;

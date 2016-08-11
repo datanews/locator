@@ -97,6 +97,17 @@
     height: 40em;
     border: 1px solid @dark-grey;
     margin: 0 auto;
+
+    // Fix some normalize override
+    .leaflet-bar a,
+    .leaflet-bar a:hover {
+      background-color: #FFFFFF;
+    }
+
+    .leaflet-draw-actions a {
+      background-color: #919187;
+      border-left: 1px solid #AAA;
+    }
   }
 
   .leaflet-control-minimap {
