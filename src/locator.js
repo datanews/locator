@@ -55,6 +55,8 @@
       overrideAttribution: undefined,
 
       // Mini map
+      mini: true,
+      miniControl: true,
       miniWidth: "15w",
       miniHeight: "15w",
       miniZoomOffset: -6,
@@ -622,6 +624,11 @@
     drawMinimap: function() {
       var miniEl;
 
+      // Don't worry if not on
+      if (!this.options.mini) {
+        return;
+      }
+
       // Determine height and width.  The value can be a number which
       // we use as pixels, or it can be an percentage of height or width
       var w = this.getEl(".locator-map").getBoundingClientRect().width;
@@ -982,9 +989,11 @@
     generate: function() {
       // Hide parts not to render
       this.getEl(".locator-map .leaflet-control-zoom").style.display = "none";
-      this.getEl(".locator-map .leaflet-control-minimap").style.display = "none";
 
-      // Draw geojson
+      if (this.options.mini) {
+        this.getEl(".locator-map .leaflet-control-minimap").style.display = "none";
+      }
+
       if (this.options.drawing) {
         this.getEl(".locator-map .leaflet-draw").style.display = "none";
       }
@@ -996,13 +1005,22 @@
           onrendered: _.bind(function(mapCanvas) {
             // Re-display parts
             this.getEl(".locator-map .leaflet-control-zoom").style.display = "block";
-            this.getEl(".locator-map .leaflet-control-minimap").style.display = "block";
+
+            if (this.options.mini) {
+              this.getEl(".locator-map .leaflet-control-minimap").style.display = "block";
+            }
 
             if (this.options.drawing) {
               this.getEl(".locator-map .leaflet-draw").style.display = "block";
             }
 
-            // Make mini map
+            // Make mini map if needed
+            if (!this.options.mini) {
+              this.preview(mapCanvas.getContext("2d"));
+              this.export(mapCanvas.getContext("2d"));
+              return;
+            }
+
             html2canvas(this.getEl(".locator-map .leaflet-control-minimap"), {
               useCORS: true,
               onrendered: _.bind(function(miniCanvas) {

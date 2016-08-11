@@ -191,11 +191,17 @@
           </div>
         {{/()}}
 
-        <div class="config-option">
-          <label>Mini-map zoom</label>
+        {{#options.miniControl}}
+          <div class="config-option">
+            <input type="checkbox" checked="{{ options.mini }}" id="config-mini" lazy>
+            <label for="config-mini">Mini-map</label>
 
-          <input type="range" min="-10" max="1" value="{{ options.miniZoomOffset }}" title="Adjust zoom level for map">
-        </div>
+            {{#options.mini}}
+              <label>Mini-map zoom level</label>
+              <input type="range" min="-10" max="1" value="{{ options.miniZoomOffset }}" title="Adjust zoom level for map">
+            {{/options.mini}}
+          </div>
+        {{/options.miniControl}}
 
         <div class="config-option">
           <input type="checkbox" checked="{{ options.embedAttribution }}" id="config-embed-attribution" lazy>
