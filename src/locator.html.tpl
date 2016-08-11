@@ -70,7 +70,7 @@
           <label class="no-markers-label">Markers</label>
           <button class="add-marker action small inline" on-tap="add-marker" title="Add marker at center of map"><i class="fa fa-plus"></i></button>
 
-          <label class="markers-label">Markers.</label>
+          <label class="markers-label">Markers</label>
           <div class="help">Use <code>&lt;br&gt;</code> to make line breaks.</div>
 
           {{#options.markers:mi}}
