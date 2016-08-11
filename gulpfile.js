@@ -17,6 +17,7 @@ var util = require("gulp-util");
 var header = require("gulp-header");
 var concat = require("gulp-concat");
 var uglify = require("gulp-uglify");
+var browserify = require("gulp-browserify");
 var rename = require("gulp-rename");
 var less = require("gulp-less");
 var recess = require("gulp-recess");
@@ -55,6 +56,29 @@ var plumberHandler = function(handled) {
   };
 };
 
+// Browserify function to easily support externals
+var locatorBrowseriy = function(externals) {
+  return gulp.src(["src/locator.js"])
+    .pipe(plumber(plumberHandler()))
+    .pipe(browserify({
+      standalone: "Locator",
+      bundleExternal: externals,
+      shim: {
+        html2canvas: {
+          path: "libs/html2canvas.js",
+          exports: "html2canvas"
+        }
+      }
+    }))
+    .pipe(replace(
+      "REPLACE-DEFAULT-TEMPLATE",
+      fs.readFileSync("src/locator.html.tpl", {
+        encoding: "utf-8"
+      }).replace(/"/g, "\\\"").replace(/(\r\n|\n|\r|\s+)/g, " ")
+    ))
+    .pipe(header(banner, { pkg: pkg }));
+};
+
 // Support JS is a task to look at the supporting JS, like this
 // file
 gulp.task("support-js", function() {
@@ -79,16 +103,7 @@ gulp.task("js-linting", function() {
 // Main JS task.  Takes in files from src and outputs
 // to dist.  Gets template and add header, concats, minify
 gulp.task("js", ["js-linting"], function() {
-  return gulp.src(["libs/*.js", "src/**/*.js"])
-    .pipe(plumber(plumberHandler()))
-    .pipe(replace(
-      "REPLACE-DEFAULT-TEMPLATE",
-      fs.readFileSync("src/locator.html.tpl", {
-        encoding: "utf-8"
-      }).replace(/"/g, "\\\"").replace(/(\r\n|\n|\r|\s+)/g, " ")
-    ))
-    .pipe(concat("locator.js"))
-    .pipe(header(banner, { pkg: pkg }))
+  return locatorBrowseriy(false)
     .pipe(gulp.dest("dist"))
 
     // Create minified version
@@ -145,24 +160,25 @@ gulp.task("styles", ["styles-lint"], function() {
 });
 
 // Bundle with libs
-gulp.task("bundle", ["styles", "js-linting", "js"], function() {
-  var jsDeps = [
-    "bower_components/ractive/ractive.js",
-    "bower_components/ractive-events-tap/dist/ractive-events-tap.umd.js",
-    "bower_components/ractive-transitions-slide/index.js",
-    "bower_components/underscore/underscore.js",
-    "bower_components/leaflet/dist/leaflet.js",
-    "bower_components/leaflet-draw/dist/leaflet.draw.js",
-    "bower_components/leaflet-minimap/dist/Control.MiniMap.min.js"
-  ];
+gulp.task("bundle-js", ["js"], function() {
+  return locatorBrowseriy(true)
+    .pipe(uglify())
+    .pipe(header(banner, { pkg: pkg }))
+    .pipe(rename({
+      extname: ".bundled.min.js"
+    }))
+    .pipe(gulp.dest("dist"));
+});
+
+// Bundle styles
+gulp.task("bundle-styles", ["styles"], function() {
   var cssDeps = [
-    "bower_components/leaflet/dist/leaflet.css",
-    "bower_components/leaflet-draw/dist/leaflet.draw.css",
-    "bower_components/leaflet-minimap/dist/Control.MiniMap.min.css"
+    "node_modules/leaflet/dist/leaflet.css",
+    "node_modules/leaflet-draw/dist/leaflet.draw.css",
+    "node_modules/leaflet-minimap/dist/Control.MiniMap.min.css"
   ];
 
-  // CSS bundle
-  gulp.src(cssDeps.concat(["dist/locator.css"]))
+  return gulp.src(cssDeps.concat(["dist/locator.css"]))
     .pipe(plumber(plumberHandler()))
     .pipe(concat("locator.bundled.css"))
     .pipe(cssminify())
@@ -171,24 +187,13 @@ gulp.task("bundle", ["styles", "js-linting", "js"], function() {
       extname: ".min.css"
     }))
     .pipe(gulp.dest("dist"));
-
-  // JS bundle
-  return gulp.src(jsDeps.concat(["dist/locator.js"]))
-    .pipe(plumber(plumberHandler()))
-    .pipe(concat("locator.bundled.js"))
-    .pipe(uglify())
-    .pipe(header(banner, { pkg: pkg }))
-    .pipe(rename({
-      extname: ".min.js"
-    }))
-    .pipe(gulp.dest("dist"));
 });
 
 // Watch for files that need to be processed
 gulp.task("watch", function() {
   gulp.watch(["gulpfile.js"], ["support-js"]);
-  gulp.watch(["src/**/*.js", "src/**/*.tpl"], ["js"]);
-  gulp.watch("src/**/*.less", ["styles"]);
+  gulp.watch(["src/**/*.js", "src/**/*.tpl"], ["bundle-js"]);
+  gulp.watch("src/**/*.less", ["bundle-styles"]);
 });
 
 // Web server for conveinence
@@ -200,7 +205,7 @@ gulp.task("webserver", function() {
         enable: true,
         filter: function(file) {
           // Only watch dist and examples
-          return (file.match(/dist|examples|index\.html/)) ? true : false;
+          return (file.match(/dist.*bundled|examples|index\.html/)) ? true : false;
         }
       },
 
@@ -212,7 +217,7 @@ gulp.task("webserver", function() {
 });
 
 // Default task is a basic build
-gulp.task("default", ["support-js", "js", "styles", "bundle"]);
+gulp.task("default", ["support-js", "bundle-js", "bundle-styles"]);
 
 // Combine webserver and watch tasks for a more complete server
 gulp.task("server", ["default", "watch", "webserver"]);

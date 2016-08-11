@@ -3,35 +3,21 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Locator</title>
+    <title>Locator demo</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css">
-    <link rel="stylesheet" href="bower_components/leaflet-minimap/dist/Control.MiniMap.min.css">
-    <link rel="stylesheet" href="bower_components/leaflet-draw/dist/leaflet.draw.css">
-    <link rel="stylesheet" href="dist/locator.css">
+    <link rel="stylesheet" href="dist/locator.bundled.min.css">
   </head>
   <body>
-
     <div class="locator-container"></div>
 
-    <script src="bower_components/ractive/ractive.js"></script>
-    <script src="bower_components/ractive-events-tap/dist/ractive-events-tap.umd.js"></script>
-    <script src="bower_components/ractive-transitions-slide/index.js"></script>
-    <script src="bower_components/underscore/underscore.js"></script>
-    <script src="bower_components/leaflet/dist/leaflet.js"></script>
-    <script src="bower_components/leaflet-minimap/dist/Control.MiniMap.min.js"></script>
-    <script src="bower_components/leaflet-draw/dist/leaflet.draw.js"></script>
-
-    <script src="dist/locator.js"></script>
-
+    <script src="dist/locator.bundled.min.js"></script>
     <script type="text/javascript">
       // Create locator
       var l = new window.Locator({
         el: ".locator-container"
       });
     </script>
-
   </body>
 </html>
