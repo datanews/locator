@@ -8,9 +8,9 @@ Locator is meant to be deployed and customized by your organization so that your
 
 Locator only works in [Google Chrome](https://www.google.com/chrome/) at the moment.  Also, given the goal of Locator, it does not work well on small screens.
 
-![Locator example 1](//datanews.github.io/locator/examples/example-01.png)
-![Locator example 2](//datanews.github.io/locator/examples/example-02.png)
-![Locator example 3](//datanews.github.io/locator/examples/example-03.png)
+![Locator example 1](https://datanews.github.io/locator/examples/example-01.png)
+![Locator example 2](https://datanews.github.io/locator/examples/example-02.png)
+![Locator example 3](https://datanews.github.io/locator/examples/example-03.png)
 
 ## Deploy
 
@@ -40,13 +40,14 @@ Locator is a browser application.  Include the JS, CSS, and dependencies found i
       });
     </script>
   </body>
-</html>```
+</html>
+```
 
 ## Options
 
 Locator comes with many options, though all have sane defaults and aren't necessary besides `el`.
 
-*Locator keeps a history of the options; this allows for undo and redo actions, but if you are are updating options in the code, you may not see any updates until you hit the **Reset** button in the top right*
+*Locator keeps a history of the options; this allows for undo and redo actions, but if you are are updating options in the code, you may not see any updates until you hit the* **Reset** *button in the top right*
 
 * `el`: CSS selector to element where Locator will render on the page.
 * `title`: The title used in the top of the controls section.  Can use HTML.
@@ -61,9 +62,10 @@ Locator comes with many options, though all have sane defaults and aren't necess
 * `tilesets`: A object describing the available tilesets.  A tileset can be a string that is a URL template, or an object like the following:  
 ```js
 "CartoDB Positron": {
-    url: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-    attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a target=\"_blank\" href=\"http://cartodb.com/attributions\">CartoDB</a>"
-}```   
+  url: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+  attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a target=\"_blank\" href=\"http://cartodb.com/attributions\">CartoDB</a>"
+}
+```   
 If this option only has 1 value, then the control to choose the tileset will not show up.
 * `tileset`: The default tileset to use; a key value from `tilesets`.
 * `zoom`: Zoom level of the map.
@@ -83,15 +85,15 @@ If this option only has 1 value, then the control to choose the tileset will not
 * `markerDefaults`: The default style for markers.  The options and defaults are:  
 ```js
 {
-    text: "",
-    background: "rgba(0, 0, 0, 0.9)",
-    foreground: "rgba(255, 255, 255, 0.9)",
-    radius: 5,
-    fontSize: 16,
-    font: "'Open Sans', Helvetica, Arial, sans-serif",
-    labelDistance: 20,
-    labelWidth: 3,
-    padding: 10
+  text: "",
+  background: "rgba(0, 0, 0, 0.9)",
+  foreground: "rgba(255, 255, 255, 0.9)",
+  radius: 5,
+  fontSize: 16,
+  font: "'Open Sans', Helvetica, Arial, sans-serif",
+  labelDistance: 20,
+  labelWidth: 3,
+  padding: 10
 }
 ```
 * `markerBackgrounds`: Array of colors for the user to choose from for each marker.  Having 1 or none will remove the option from the interface.
@@ -115,14 +117,15 @@ If this option only has 1 value, then the control to choose the tileset will not
 `miniStyles`: An object that describes how the mini-map is displayed on the map.  The options and defaults are:  
 ```js
 {
-    backgroundColor: "#FFFFFF",
-    padding: 3,
-    shadow: true,
-    shadowColor: "rgba(0, 0, 0, 0.65)",
-    shadowBlur: 5,
-    shadowOffsetX: 1,
-    shadowOffsetY: 1
-}```
+  backgroundColor: "#FFFFFF",
+  padding: 3,
+  shadow: true,
+  shadowColor: "rgba(0, 0, 0, 0.65)",
+  shadowBlur: 5,
+  shadowOffsetX: 1,
+  shadowOffsetY: 1
+}
+```
 
 ### Interface
 
@@ -137,16 +140,17 @@ If this option only has 1 value, then the control to choose the tileset will not
 * `geocoder`: Function that handles the geocoding.  Defaults to using Google's geocoding service.  It should be in the form:  
 ```js
 geocoder: function(address, done) {
-    var a = yourGeoCoderThing(address);
-    done(a.lat, a.lng);
+  var a = yourGeoCoderThing(address);
+  done(a.lat, a.lng);
 }
-```
+```  
+Set to false to not use a geocoder and simply have a latitude and longitude input.
 `preDraw`: A hook function that happens right before the map is re-rendered which occurs when options get updated.  This gets passed the current options object.  For instance:  
 ```js
 preDraw: function(options) {
-    if (options.tileset === "Stamen Toner") {
-      options.embedAttribution = true;
-    }
+  if (options.tileset === "Stamen Toner") {
+    options.embedAttribution = true;
+  }
 }
 ```
 

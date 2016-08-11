@@ -61,7 +61,7 @@
 
         {{#options.geocoder}}
           <div class="config-option">
-            <label>Search location by address</label>
+            <label>Search location by address, or input latitude,longitude.</label>
             <input type="text" placeholder="Address or place" value="{{ geocodeInput }}" lazy disabled="{{ isGeocoding }}">
           </div>
         {{/options.geocoder}}
