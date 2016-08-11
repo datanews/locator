@@ -3,7 +3,15 @@
   "version": "0.0.1",
   "description": "In browser locator map generator",
   "main": "dist/locator.js",
-  "dependencies": {},
+  "dependencies": {
+    "leaflet": "0.7.7",
+    "leaflet-draw": "^0.3.2",
+    "leaflet-minimap": "^3.3.1",
+    "ractive": "^0.7.3",
+    "ractive-events-tap": "^0.3.1",
+    "ractive-transitions-slide": "git+https://github.com/ractivejs/ractive-transitions-slide.git",
+    "underscore": "^1.8.3"
+  },
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",

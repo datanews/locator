@@ -147,18 +147,19 @@ gulp.task("styles", ["styles-lint"], function() {
 // Bundle with libs
 gulp.task("bundle", ["styles", "js-linting", "js"], function() {
   var jsDeps = [
-    "bower_components/ractive/ractive.js",
-    "bower_components/ractive-events-tap/dist/ractive-events-tap.umd.js",
-    "bower_components/ractive-transitions-slide/index.js",
-    "bower_components/underscore/underscore.js",
-    "bower_components/leaflet/dist/leaflet.js",
-    "bower_components/leaflet-draw/dist/leaflet.draw.js",
-    "bower_components/leaflet-minimap/dist/Control.MiniMap.min.js"
+    "node_modules/ractive/ractive.js",
+    "node_modules/ractive-events-tap/dist/ractive-events-tap.umd.js",
+
+    //"node_modules/ractive-transitions-slide/index.js",
+    "node_modules/underscore/underscore.js",
+    "node_modules/leaflet/dist/leaflet.js",
+    "node_modules/leaflet-draw/dist/leaflet.draw.js",
+    "node_modules/leaflet-minimap/dist/Control.MiniMap.min.js"
   ];
   var cssDeps = [
-    "bower_components/leaflet/dist/leaflet.css",
-    "bower_components/leaflet-draw/dist/leaflet.draw.css",
-    "bower_components/leaflet-minimap/dist/Control.MiniMap.min.css"
+    "node_modules/leaflet/dist/leaflet.css",
+    "node_modules/leaflet-draw/dist/leaflet.draw.css",
+    "node_modules/leaflet-minimap/dist/Control.MiniMap.min.css"
   ];
 
   // CSS bundle
