@@ -110,6 +110,8 @@ If this option only has 1 value, then the control to choose the tileset will not
 
 ### Mini-map
 
+* `mini`: Boolean to enable or disable the mini-map.
+* `miniControl`: Boolean to enable or disable the mini-map interface control, as well as the zoom offset control. 
 * `miniWidth`: Width as a number of pixels or as a percent of the width of the full map such as `"15w"`.
 * `miniHeight`: Height as a number of pixels or as a percent of the width of the full map such as `"15w"`.
 * `miniZoomOffset`: An integer that defines the difference in zoom levels from the large map to the mini-map.  The default is `-6`.
