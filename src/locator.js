@@ -6,7 +6,7 @@
 // Dependencies
 var L = require("leaflet");
 var html2canvas = require("../libs/html2canvas.js");
-var _ = require("underscore");
+var _ = require("lodash");
 var Ractive = require("ractive");
 
 // Additions
@@ -17,7 +17,7 @@ require("leaflet-minimap");
 
 // Main contructor
 var Locator = function(options) {
-  this.options = this.extend({
+  this.options = _.extend({
     // Template
     template: "REPLACE-DEFAULT-TEMPLATE",
 
@@ -1189,7 +1189,7 @@ _.extend(Locator.prototype, {
     var savedOptions = window.localStorage.getItem("options");
     if (savedOptions) {
       savedOptions = JSON.parse(savedOptions);
-      return this.extend(options, savedOptions);
+      return _.extend(options, savedOptions);
     }
     else {
       return options;
@@ -1198,14 +1198,14 @@ _.extend(Locator.prototype, {
 
   // Reset all options
   reset: function() {
-    this.options = this.extend(this.options, this.clone(this.originalOptions));
+    this.options = _.extend(this.options, this.clone(this.originalOptions));
   },
 
   // Undo
   undo: function() {
     if (this.historyIndex > 0) {
       this.historyIndex = this.historyIndex - 1;
-      this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
+      this.options = _.extend(this.options, this.clone(this.history[this.historyIndex]));
     }
 
     this.canDo();
@@ -1215,7 +1215,7 @@ _.extend(Locator.prototype, {
   redo: function() {
     if (this.historyIndex < this.history.length - 1) {
       this.historyIndex = this.historyIndex + 1;
-      this.options = this.extend(this.options, this.clone(this.history[this.historyIndex]));
+      this.options = _.extend(this.options, this.clone(this.history[this.historyIndex]));
     }
 
     this.canDo();
@@ -1302,98 +1302,22 @@ _.extend(Locator.prototype, {
     }
   },
 
-  // Extend deep version (simple)
-  // http://andrewdupont.net/2009/08/28/deep-extending-objects-in-javascript/
-  extend: function(destination, source) {
-    if (!_.isObject(destination) && !_.isObject(source)) {
-      return (destination) ? destination : source;
-    }
-
-    _.each(source, _.bind(function(s, property) {
-      // Basic object
-      if (source[property] && source[property].constructor &&
-       source[property].constructor === Object) {
-        destination[property] = destination[property] || {};
-        this.extend(destination[property], source[property]);
-      }
-
-      // Array
-      else if (_.isArray(source[property])) {
-        destination[property] = [];
-        _.each(source[property], _.bind(function(v, i) {
-          destination[property][i] = this.extend(source[property][i]);
-        }, this));
-      }
-      else {
-        destination[property] = source[property];
-      }
-    }, this));
-
-    return destination;
-  },
-
   // Deep clone
   // http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
-  clone: function clone(item) {
-    if (!item) {
-      return item;
-    }
-
-    var types = [Number, String, Boolean];
-    var result;
-    var _this = this;
-
-    // normalizing primitives if someone did new String('aaa'), or new Number('444');
-    types.forEach(function(type) {
-      if (item instanceof type) {
-        result = type(item);
+  clone: function(item) {
+    function cloner(value) {
+      if (_.isElement(value)) {
+        return value.cloneNode(true);
       }
-    });
-
-    if (typeof result === "undefined") {
-      // Check array
-      if (Object.prototype.toString.call(item) === "[object Array]") {
-        result = [];
-        item.forEach(function(child, index) {
-          result[index] = _this.clone(child);
-        });
+      else if (_.isDate(value)) {
+        return new Date(value);
       }
-
-      // Object
-      else if (typeof item === "object") {
-        // testing that this is DOM
-        if (item.nodeType && typeof item.cloneNode === "function") {
-          result = item.cloneNode(true);
-        }
-
-        // Literal possible
-        else if (!item.prototype) {
-          // Date
-          if (item instanceof Date) {
-            result = new Date(item);
-          }
-          else {
-            // it is an object literal
-            result = {};
-            _.each(item, function(v, i) {
-              result[i] = _this.clone(item[i]);
-            });
-          }
-        }
-
-        // Other object
-        else {
-          result = item;
-        }
-      }
-
-      // Something way different
       else {
-        result = item;
+        return _.cloneDeep(value);
       }
     }
 
-    return result;
+    return _.cloneDeepWith(item, cloner);
   }
 });
 
