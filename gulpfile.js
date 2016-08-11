@@ -17,6 +17,7 @@ var util = require("gulp-util");
 var header = require("gulp-header");
 var concat = require("gulp-concat");
 var uglify = require("gulp-uglify");
+var browserify = require("gulp-browserify");
 var rename = require("gulp-rename");
 var less = require("gulp-less");
 var recess = require("gulp-recess");
@@ -55,6 +56,29 @@ var plumberHandler = function(handled) {
   };
 };
 
+// Browserify function to easily support externals
+var locatorBrowseriy = function(externals) {
+  return gulp.src(["src/locator.js"])
+    .pipe(plumber(plumberHandler()))
+    .pipe(browserify({
+      standalone: "Locator",
+      bundleExternal: externals,
+      shim: {
+        html2canvas: {
+          path: "libs/html2canvas.js",
+          exports: "html2canvas"
+        }
+      }
+    }))
+    .pipe(replace(
+      "REPLACE-DEFAULT-TEMPLATE",
+      fs.readFileSync("src/locator.html.tpl", {
+        encoding: "utf-8"
+      }).replace(/"/g, "\\\"").replace(/(\r\n|\n|\r|\s+)/g, " ")
+    ))
+    .pipe(header(banner, { pkg: pkg }));
+};
+
 // Support JS is a task to look at the supporting JS, like this
 // file
 gulp.task("support-js", function() {
@@ -79,16 +103,7 @@ gulp.task("js-linting", function() {
 // Main JS task.  Takes in files from src and outputs
 // to dist.  Gets template and add header, concats, minify
 gulp.task("js", ["js-linting"], function() {
-  return gulp.src(["libs/*.js", "src/**/*.js"])
-    .pipe(plumber(plumberHandler()))
-    .pipe(replace(
-      "REPLACE-DEFAULT-TEMPLATE",
-      fs.readFileSync("src/locator.html.tpl", {
-        encoding: "utf-8"
-      }).replace(/"/g, "\\\"").replace(/(\r\n|\n|\r|\s+)/g, " ")
-    ))
-    .pipe(concat("locator.js"))
-    .pipe(header(banner, { pkg: pkg }))
+  return locatorBrowseriy(false)
     .pipe(gulp.dest("dist"))
 
     // Create minified version
@@ -146,24 +161,11 @@ gulp.task("styles", ["styles-lint"], function() {
 
 // Bundle with libs
 gulp.task("bundle-js", ["js"], function() {
-  var jsDeps = [
-    "node_modules/ractive/ractive.js",
-    "node_modules/ractive-events-tap/dist/ractive-events-tap.umd.js",
-
-    //"node_modules/ractive-transitions-slide/index.js",
-    "node_modules/underscore/underscore.js",
-    "node_modules/leaflet/dist/leaflet.js",
-    "node_modules/leaflet-draw/dist/leaflet.draw.js",
-    "node_modules/leaflet-minimap/dist/Control.MiniMap.min.js"
-  ];
-
-  return gulp.src(jsDeps.concat(["dist/locator.js"]))
-    .pipe(plumber(plumberHandler()))
-    .pipe(concat("locator.bundled.js"))
+  return locatorBrowseriy(true)
     .pipe(uglify())
     .pipe(header(banner, { pkg: pkg }))
     .pipe(rename({
-      extname: ".min.js"
+      extname: ".bundled.min.js"
     }))
     .pipe(gulp.dest("dist"));
 });

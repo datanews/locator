@@ -111,7 +111,7 @@ If this option only has 1 value, then the control to choose the tileset will not
 ### Mini-map
 
 * `mini`: Boolean to enable or disable the mini-map.
-* `miniControl`: Boolean to enable or disable the mini-map interface control, as well as the zoom offset control. 
+* `miniControl`: Boolean to enable or disable the mini-map interface control, as well as the zoom offset control.
 * `miniWidth`: Width as a number of pixels or as a percent of the width of the full map such as `"15w"`.
 * `miniHeight`: Height as a number of pixels or as a percent of the width of the full map such as `"15w"`.
 * `miniZoomOffset`: An integer that defines the difference in zoom levels from the large map to the mini-map.  The default is `-6`.
@@ -210,3 +210,4 @@ This project is pushing the limits of browsers and the consistency of their rend
 * [html2canvas](https://github.com/niklasvh/html2canvas) has been altered to Make the canvas dimensions integers which alleviates some blurring issues.  In function: `Util.Bounds`
     * [Relevant issue](https://github.com/niklasvh/html2canvas/issues/576).
     * No pull request was created because it is unsure if this is actually the best way to fix this issue.
+* [Ractive slide transition](https://ractivejs.github.io/ractive-transitions-slide/) is not in NPM so included here from [this file](https://ractivejs.github.io/ractive-transitions-slide/ractive-transitions-slide.js).
