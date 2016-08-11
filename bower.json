@@ -1,5 +1,6 @@
 {
   "name": "locator",
+  "version": "0.0.1",
   "homepage": "https://github.com/datanews/locator",
   "authors": [
     "Alan Palazzolo <github@zzolo.org>"
@@ -16,7 +17,6 @@
     "tests"
   ],
   "devDependencies": {
-    "normalize-css": "~3.0.3"
   },
   "dependencies": {
     "leaflet": "0.7.7",
