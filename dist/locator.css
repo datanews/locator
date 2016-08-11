@@ -8,6 +8,344 @@
 /**
  * Main CSS for Locator.
  */
+/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+.locator {
+  /* HTML5 display definitions
+     ========================================================================== */
+  /**
+   * Correct `block` display not defined for any HTML5 element in IE 8/9.
+   * Correct `block` display not defined for `details` or `summary` in IE 10/11
+   * and Firefox.
+   * Correct `block` display not defined for `main` in IE 11.
+   */
+  /**
+   * 1. Correct `inline-block` display not defined in IE 8/9.
+   * 2. Normalize vertical alignment of `progress` in Chrome, Firefox, and Opera.
+   */
+  /**
+   * Prevent modern browsers from displaying `audio` without controls.
+   * Remove excess height in iOS 5 devices.
+   */
+  /**
+   * Address `[hidden]` styling not present in IE 8/9/10.
+   * Hide the `template` element in IE 8/9/10/11, Safari, and Firefox < 22.
+   */
+  /* Links
+     ========================================================================== */
+  /**
+   * Remove the gray background color from active links in IE 10.
+   */
+  /**
+   * Improve readability of focused elements when they are also in an
+   * active/hover state.
+   */
+  /* Text-level semantics
+     ========================================================================== */
+  /**
+   * Address styling not present in IE 8/9/10/11, Safari, and Chrome.
+   */
+  /**
+   * Address style set to `bolder` in Firefox 4+, Safari, and Chrome.
+   */
+  /**
+   * Address styling not present in Safari and Chrome.
+   */
+  /**
+   * Address variable `h1` font-size and margin within `section` and `article`
+   * contexts in Firefox 4+, Safari, and Chrome.
+   */
+  /**
+   * Address styling not present in IE 8/9.
+   */
+  /**
+   * Address inconsistent and variable font size in all browsers.
+   */
+  /**
+   * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+   */
+  /* Embedded content
+     ========================================================================== */
+  /**
+   * Remove border when inside `a` element in IE 8/9/10.
+   */
+  /**
+   * Correct overflow not hidden in IE 9/10/11.
+   */
+  /* Grouping content
+     ========================================================================== */
+  /**
+   * Address margin not present in IE 8/9 and Safari.
+   */
+  /**
+   * Address differences between Firefox and other browsers.
+   */
+  /**
+   * Contain overflow in all browsers.
+   */
+  /**
+   * Address odd `em`-unit font size rendering in all browsers.
+   */
+  /* Forms
+     ========================================================================== */
+  /**
+   * Known limitation: by default, Chrome and Safari on OS X allow very limited
+   * styling of `select`, unless a `border` property is set.
+   */
+  /**
+   * 1. Correct color not being inherited.
+   *    Known issue: affects color of disabled elements.
+   * 2. Correct font properties not being inherited.
+   * 3. Address margins set differently in Firefox 4+, Safari, and Chrome.
+   */
+  /**
+   * Address `overflow` set to `hidden` in IE 8/9/10/11.
+   */
+  /**
+   * Address inconsistent `text-transform` inheritance for `button` and `select`.
+   * All other form control elements do not inherit `text-transform` values.
+   * Correct `button` style inheritance in Firefox, IE 8/9/10/11, and Opera.
+   * Correct `select` style inheritance in Firefox.
+   */
+  /**
+   * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+   *    and `video` controls.
+   * 2. Correct inability to style clickable `input` types in iOS.
+   * 3. Improve usability and consistency of cursor style between image-type
+   *    `input` and others.
+   */
+  /**
+   * Re-set default cursor for disabled elements.
+   */
+  /**
+   * Remove inner padding and border in Firefox 4+.
+   */
+  /**
+   * Address Firefox 4+ setting `line-height` on `input` using `!important` in
+   * the UA stylesheet.
+   */
+  /**
+   * It's recommended that you don't attempt to style these elements.
+   * Firefox's implementation doesn't respect box-sizing, padding, or width.
+   *
+   * 1. Address box sizing set to `content-box` in IE 8/9/10.
+   * 2. Remove excess padding in IE 8/9/10.
+   */
+  /**
+   * Fix the cursor style for Chrome's increment/decrement buttons. For certain
+   * `font-size` values of the `input`, it causes the cursor style of the
+   * decrement button to change from `default` to `text`.
+   */
+  /**
+   * 1. Address `appearance` set to `searchfield` in Safari and Chrome.
+   * 2. Address `box-sizing` set to `border-box` in Safari and Chrome.
+   */
+  /**
+   * Remove inner padding and search cancel button in Safari and Chrome on OS X.
+   * Safari (but not Chrome) clips the cancel button when the search input has
+   * padding (and `textfield` appearance).
+   */
+  /**
+   * Define consistent border, margin, and padding.
+   */
+  /**
+   * 1. Correct `color` not being inherited in IE 8/9/10/11.
+   * 2. Remove padding so people aren't caught out if they zero out fieldsets.
+   */
+  /**
+   * Remove default vertical scrollbar in IE 8/9/10/11.
+   */
+  /**
+   * Don't inherit the `font-weight` (applied by a rule above).
+   * NOTE: the default cannot safely be changed in Chrome and Safari on OS X.
+   */
+  /* Tables
+     ========================================================================== */
+  /**
+   * Remove most spacing between table cells.
+   */
+}
+.locator article,
+.locator aside,
+.locator details,
+.locator figcaption,
+.locator figure,
+.locator footer,
+.locator header,
+.locator hgroup,
+.locator main,
+.locator menu,
+.locator nav,
+.locator section,
+.locator summary {
+  display: block;
+}
+.locator audio,
+.locator canvas,
+.locator progress,
+.locator video {
+  display: inline-block;
+  /* 1 */
+  vertical-align: baseline;
+  /* 2 */
+}
+.locator audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+.locator [hidden],
+.locator template {
+  display: none;
+}
+.locator a {
+  background-color: transparent;
+}
+.locator a:active,
+.locator a:hover {
+  outline: 0;
+}
+.locator abbr[title] {
+  border-bottom: 1px dotted;
+}
+.locator b,
+.locator strong {
+  font-weight: bold;
+}
+.locator dfn {
+  font-style: italic;
+}
+.locator h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+.locator mark {
+  background: #ff0;
+  color: #000;
+}
+.locator small {
+  font-size: 80%;
+}
+.locator sub,
+.locator sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+.locator sup {
+  top: -0.5em;
+}
+.locator sub {
+  bottom: -0.25em;
+}
+.locator img {
+  border: 0;
+}
+.locator svg:not(:root) {
+  overflow: hidden;
+}
+.locator figure {
+  margin: 1em 40px;
+}
+.locator hr {
+  box-sizing: content-box;
+  height: 0;
+}
+.locator pre {
+  overflow: auto;
+}
+.locator code,
+.locator kbd,
+.locator pre,
+.locator samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+.locator button,
+.locator input,
+.locator optgroup,
+.locator select,
+.locator textarea {
+  color: inherit;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+  margin: 0;
+  /* 3 */
+}
+.locator button {
+  overflow: visible;
+}
+.locator button,
+.locator select {
+  text-transform: none;
+}
+.locator button,
+.locator html input[type="button"],
+.locator input[type="reset"],
+.locator input[type="submit"] {
+  -webkit-appearance: button;
+  /* 2 */
+  cursor: pointer;
+  /* 3 */
+}
+.locator button[disabled],
+.locator html input[disabled] {
+  cursor: default;
+}
+.locator button::-moz-focus-inner,
+.locator input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+.locator input {
+  line-height: normal;
+}
+.locator input[type="checkbox"],
+.locator input[type="radio"] {
+  box-sizing: border-box;
+  /* 1 */
+  padding: 0;
+  /* 2 */
+}
+.locator input[type="number"]::-webkit-inner-spin-button,
+.locator input[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+.locator input[type="search"] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  box-sizing: content-box;
+  /* 2 */
+}
+.locator input[type="search"]::-webkit-search-cancel-button,
+.locator input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+.locator fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+.locator legend {
+  border: 0;
+  /* 1 */
+  padding: 0;
+  /* 2 */
+}
+.locator textarea {
+  overflow: auto;
+}
+.locator optgroup {
+  font-weight: bold;
+}
+.locator table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.locator td,
+.locator th {
+  padding: 0;
+}
 .locator {
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   font-size: 18px;

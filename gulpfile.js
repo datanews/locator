@@ -7,6 +7,7 @@
 
 // Dependencies
 var fs = require("fs");
+var path = require("path");
 var gulp = require("gulp");
 var jshint = require("gulp-jshint");
 var jscs = require("gulp-jscs");
@@ -39,20 +40,26 @@ var supportedBrowsers = ["> 1%", "last 2 versions", "Firefox ESR", "Opera 12.1"]
 
 // Plumber allows for better error handling and makes it so that
 // gulp doesn"t crash so hard.  Good for watching and linting tasks
-var plumberHandler = function(error) {
-  if (error) {
-    util.beep();
-  }
-  else {
+// that don't have their own reporting
+var plumberHandler = function(handled) {
+  return function(error) {
+    if (error) {
+      if (!handled) {
+        console.log(error.toString());
+      }
+
+      util.beep();
+    }
+
     this.emit("end");
-  }
+  };
 };
 
 // Support JS is a task to look at the supporting JS, like this
 // file
 gulp.task("support-js", function() {
   return gulp.src(["gulpfile.js"])
-    .pipe(plumber(plumberHandler))
+    .pipe(plumber(plumberHandler(true)))
     .pipe(jshint())
     .pipe(jshint.reporter("jshint-stylish"))
     .pipe(jshint.reporter("fail"))
@@ -62,7 +69,7 @@ gulp.task("support-js", function() {
 // Linting and related tasks
 gulp.task("js-linting", function() {
   return gulp.src("src/**/*.js")
-    .pipe(plumber(plumberHandler))
+    .pipe(plumber(plumberHandler(true)))
     .pipe(jshint())
     .pipe(jshint.reporter("jshint-stylish"))
     .pipe(jshint.reporter("fail"))
@@ -73,7 +80,7 @@ gulp.task("js-linting", function() {
 // to dist.  Gets template and add header, concats, minify
 gulp.task("js", ["js-linting"], function() {
   return gulp.src(["libs/*.js", "src/**/*.js"])
-    .pipe(plumber(plumberHandler))
+    .pipe(plumber(plumberHandler()))
     .pipe(replace(
       "REPLACE-DEFAULT-TEMPLATE",
       fs.readFileSync("src/locator.html.tpl", {
@@ -93,16 +100,34 @@ gulp.task("js", ["js-linting"], function() {
     .pipe(gulp.dest("dist"));
 });
 
-// Styles.  Recess linting, Convert LESS to CSS, minify
-gulp.task("styles", function() {
+// Style linting for any less
+gulp.task("styles-lint", function() {
   return gulp.src("src/**/*.less")
-    .pipe(plumber(plumberHandler))
+    .pipe(plumber(plumberHandler(true)))
     .pipe(recess({
       strictPropertyOrder: false,
       noOverqualifying: false,
       noUniversalSelectors: false
     }))
-    .pipe(less())
+    .pipe(recess.reporter({
+      fail: true
+    }));
+});
+
+// Styles.  Convert LESS to CSS, lint, minify
+gulp.task("styles", ["styles-lint"], function() {
+  return gulp.src("src/locator.less")
+    .pipe(plumber(plumberHandler()))
+    .pipe(less({
+      paths: [
+        path.join(__dirname, "src", "styles")
+      ]
+    }))
+    .pipe(recess({
+      strictPropertyOrder: false,
+      noOverqualifying: false,
+      noUniversalSelectors: false
+    }))
     .pipe(recess.reporter({
       fail: true
     }))
@@ -138,7 +163,7 @@ gulp.task("bundle", ["styles", "js-linting", "js"], function() {
 
   // CSS bundle
   gulp.src(cssDeps.concat(["dist/locator.css"]))
-    .pipe(plumber(plumberHandler))
+    .pipe(plumber(plumberHandler()))
     .pipe(concat("locator.bundled.css"))
     .pipe(cssminify())
     .pipe(header(banner, { pkg: pkg }))
@@ -149,7 +174,7 @@ gulp.task("bundle", ["styles", "js-linting", "js"], function() {
 
   // JS bundle
   return gulp.src(jsDeps.concat(["dist/locator.js"]))
-    .pipe(plumber(plumberHandler))
+    .pipe(plumber(plumberHandler()))
     .pipe(concat("locator.bundled.js"))
     .pipe(uglify())
     .pipe(header(banner, { pkg: pkg }))
