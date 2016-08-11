@@ -234,6 +234,7 @@
 }
 .locator .locator-controls .locator-history {
   text-align: right;
+  margin-bottom: 0.5em;
 }
 .locator .locator-controls .config-option {
   margin: 0 -1em 1em -1em;
