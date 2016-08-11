@@ -4,7 +4,7 @@ A customizable, in-browser [locator map](https://en.wikipedia.org/wiki/Locator_m
 
 Checkout the [demo](//datanews.github.com/locator/).
 
-Locator is meant to be deployed and customized by your organization so that your staff (i.e. reports, editors, publishers) or who ever you want can create maps that are appropriate for your organization.
+Locator is meant to be deployed and customized by your organization so that your staff (i.e. reports, editors, publishers) or who ever you want can create maps that are appropriate for your organization.  The options are designed so that you can make Locator fit the design needs of your organization and have control of what parts your users interface with.
 
 Locator only works in [Google Chrome](https://www.google.com/chrome/) at the moment.  Also, given the goal of Locator, it does not work well on small screens.
 
@@ -14,7 +14,7 @@ Locator only works in [Google Chrome](https://www.google.com/chrome/) at the mom
 
 ## Deploy
 
-Locator is a browser application.  Include the JS, CSS, and dependencies found in the `dist`.  You can also use `bower` to install the dependencies.
+Locator is a browser application.  Include the JS, CSS, and dependencies found in the `dist`.  The `bundled` versions include dependencies.
 
 ```html
 <!doctype html>
@@ -35,7 +35,9 @@ Locator is a browser application.  Include the JS, CSS, and dependencies found i
     <script type="text/javascript">
       // Create locator here
       var l = new window.Locator({
-        el: ".locator-container"
+        el: ".locator-container",
+        title: "Locator for You",
+        footer: "If you need help please contact the team@your-org.com.",
         // More options ...
       });
     </script>
@@ -178,30 +180,26 @@ Do keep in mind that Locator is pushing some limits of the browser and the depen
 
 ## Development
 
-1. Get code.
-1. Install development dependencies: `npm install gulp bower -g && npm install`
-1. Install Locator dependencies: `bower install`
+1. Make sure you have [Node](https://nodejs.org/en/) and [git](https://git-scm.com/) installed.
+1. Get code: `git clone https://github.com/datanews/locator.git && cd locator`
+1. Install dependencies: `npm install`
+1. Make a new branch for your work similar to: `git checkout -b bugfix-fixing-this-bug`
 1. Code it up.
 1. See *Build* below.
-
-*TODO: Move away from bower.*
 
 ## Build
 
 Build is managed with [Gulp](http://gulpjs.com/).
 
 1. Install dependencies with `npm install gulp -g && npm install`.
-1. `gulp`: This command will do the default build which combines, lints, etc files from the `src` directory into the `dist` directory.
+1. `gulp`: This command will do the default build which combines, lints, etc files from the `src` directory into the `dist` directory.  The `bundled` version can take a moment since it is including dependencies.
 1. `gulp server`: This starts a webserver for development and watches for changes in the code.
 
 ## Project page
 
-The main project page is hosted on Github Pages through this repository.
+The main project page is hosted on Github Pages through this repository.  A one-liner to push what is in master up to `gh-pages`:
 
-We want to include the Bower dependencies in this branch, so this is a helpful command to make that all happen at once (assuming master is up to date).
-
-* `git checkout gh-pages && git merge master && bower install && bower prune && git add bower_components -f && git add -u bower_components && git commit -m "Updating bower dependencies for project page" && git push origin gh-pages && git checkout master && bower install`
-* If you are not updating the Bower dependencies: `git checkout gh-pages && git merge master && git push origin gh-pages && git checkout master && bower install`
+    git checkout gh-pages && git merge master && git push origin gh-pages && git checkout master && bower install
 
 ## Hacks
 
