@@ -1,6 +1,6 @@
 /**
  * locator - In browser locator map generator
- * @version v0.0.1
+ * @version v0.0.2
  * @link https://github.com/datanews/locator#readme
  * @license MIT
  * @notes External libraries may be bundled here and their respective, original license applies.
@@ -3021,6 +3021,11 @@ _dereq_("../libs/ractive-transitions-slide.js");
 _dereq_("leaflet-draw");
 _dereq_("leaflet-minimap");
 
+// Parts
+var utils = _dereq_("./js/utils.js");
+var dom = _dereq_("./js/dom.js");
+var geocode = _dereq_("./js/geocode.js");
+
 // Main contructor
 var Locator = function(options) {
   this.options = _.extend({
@@ -3187,7 +3192,7 @@ var Locator = function(options) {
     markerToCenter: true,
 
     // Basic defalt geocoder with Google
-    geocoder: this.defaultGeocoder,
+    geocoder: geocode.google,
 
     // Super class is just a top level class that goes in the markup
     // that is helpful for dynamic options and preDraw and styling
@@ -3217,7 +3222,7 @@ var Locator = function(options) {
   this.updateOptions();
 
   // We may want to reset
-  this.originalOptions = this.clone(this.options);
+  this.originalOptions = utils.clone(this.options);
 
   // Attempt to load saved options
   this.options = this.load(this.options);
@@ -4115,7 +4120,7 @@ _.extend(Locator.prototype, {
       this.options.markers[0].text : "";
     var download = this.getEl(".download-link");
     download.href = mapCtx.canvas.toDataURL();
-    download.download = this.makeID(name) + ".png";
+    download.download = utils.makeID(name) + ".png";
     download.click();
   },
 
@@ -4165,7 +4170,7 @@ _.extend(Locator.prototype, {
 
   // Save
   save: function(history) {
-    var options = this.clone(this.options);
+    var options = utils.clone(this.options);
 
     // Remove some parts
     delete options.draggableMarker;
@@ -4185,7 +4190,7 @@ _.extend(Locator.prototype, {
         this.history = this.history.slice(0, this.historyIndex + 1);
       }
 
-      this.history.push(this.clone(options));
+      this.history.push(utils.clone(options));
       this.historyIndex = this.history.length - 1;
       this.canDo();
     }
@@ -4205,14 +4210,14 @@ _.extend(Locator.prototype, {
 
   // Reset all options
   reset: function() {
-    this.options = _.extend(this.options, this.clone(this.originalOptions));
+    this.options = _.extend(this.options, utils.clone(this.originalOptions));
   },
 
   // Undo
   undo: function() {
     if (this.historyIndex > 0) {
       this.historyIndex = this.historyIndex - 1;
-      this.options = _.extend(this.options, this.clone(this.history[this.historyIndex]));
+      this.options = _.extend(this.options, utils.clone(this.history[this.historyIndex]));
     }
 
     this.canDo();
@@ -4222,7 +4227,7 @@ _.extend(Locator.prototype, {
   redo: function() {
     if (this.historyIndex < this.history.length - 1) {
       this.historyIndex = this.historyIndex + 1;
-      this.options = _.extend(this.options, this.clone(this.history[this.historyIndex]));
+      this.options = _.extend(this.options, utils.clone(this.history[this.historyIndex]));
     }
 
     this.canDo();
@@ -4234,28 +4239,6 @@ _.extend(Locator.prototype, {
       canUndo: this.historyIndex > 0,
       canRedo: (this.historyIndex < this.history.length - 1)
     });
-  },
-
-  // A vrey crude geocoder that uses Google goeocoding
-  defaultGeocoder: function(address, done) {
-    var httpRequest = new XMLHttpRequest();
-    var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURIComponent(address);
-    var once = _.once(done);
-
-    httpRequest.onreadystatechange = function() {
-      var data;
-
-      if (httpRequest.status === 200 && httpRequest.responseText) {
-        data = JSON.parse(httpRequest.responseText);
-
-        if (data && data.results && data.results.length) {
-          once(data.results[0].geometry.location.lat, data.results[0].geometry.location.lng);
-        }
-      }
-    };
-
-    httpRequest.open("GET", url);
-    httpRequest.send();
   },
 
   // Standarize tileset options
@@ -4281,56 +4264,120 @@ _.extend(Locator.prototype, {
     return tilesets;
   },
 
-  // Create a slug/id
-  makeID: function(input) {
-    input = input ? input.toString() : "";
-    input = input.toLowerCase().trim().replace(/\W+/g, "-");
-    input = input ? input : "locator";
-    return _.uniqueId(input + "-");
-  },
-
-  // Check if element is overflowed
-  overflowed: function(element, direction) {
-    return (!direction) ?
-      (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth) :
-      (direction === "y") ? (element.scrollHeight > element.clientHeight) :
-      (direction === "x") ? (element.scrollWidth > element.clientWidth) : false;
-  },
-
   // Some hackery to fix the map vertical alignment
   fixMapVerticalAlign: function() {
     var display = this.getEl(".locator-display");
 
-    if (this.overflowed(display, "y")) {
+    if (dom.isOverflowed(display, "y")) {
       display.classList.add("overflowed-y");
     }
     else {
       display.classList.remove("overflowed-y");
     }
-  },
-
-  // Deep clone
-  // http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
-  clone: function(item) {
-    function cloner(value) {
-      if (_.isElement(value)) {
-        return value.cloneNode(true);
-      }
-      else if (_.isDate(value)) {
-        return new Date(value);
-      }
-      else {
-        return _.cloneDeep(value);
-      }
-    }
-
-    return _.cloneDeepWith(item, cloner);
   }
 });
 
 // Export
 module.exports = Locator;
 
-},{"../libs/html2canvas.js":"UzntfK","../libs/ractive-transitions-slide.js":3}]},{},[4])
+},{"../libs/html2canvas.js":"UzntfK","../libs/ractive-transitions-slide.js":3,"./js/dom.js":5,"./js/geocode.js":6,"./js/utils.js":7}],5:[function(_dereq_,module,exports){
+/**
+ * DOM utilities.
+ */
+"use strict";
+
+// Dependencies
+//var _ = require("lodash");
+
+// Determine if element is overflowed with content
+function isOverflowed(element, direction) {
+  return (!direction) ?
+    (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth) :
+    (direction === "y") ? (element.scrollHeight > element.clientHeight) :
+    (direction === "x") ? (element.scrollWidth > element.clientWidth) : false;
+}
+
+// Exports
+module.exports = {
+  isOverflowed: isOverflowed
+};
+
+},{}],6:[function(_dereq_,module,exports){
+/**
+ * Geocoding functions
+ */
+"use strict";
+
+// Dependencies
+var _ = _dereq_("lodash");
+
+// Simple google geocoder
+function google(address, done) {
+  var httpRequest = new XMLHttpRequest();
+  var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURIComponent(address);
+  var once = _.once(done);
+
+  httpRequest.onreadystatechange = function() {
+    var data;
+
+    if (httpRequest.status === 200 && httpRequest.responseText) {
+      data = JSON.parse(httpRequest.responseText);
+
+      if (data && data.results && data.results.length) {
+        once(data.results[0].geometry.location.lat, data.results[0].geometry.location.lng);
+      }
+    }
+  };
+
+  httpRequest.open("GET", url);
+  httpRequest.send();
+}
+
+// Exports
+module.exports = {
+  google: google
+};
+
+},{}],7:[function(_dereq_,module,exports){
+/**
+ * General utility functions.
+ */
+"use strict";
+
+// Dependencies
+var _ = _dereq_("lodash");
+
+// Deep clone
+// http://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
+function clone(item) {
+  function cloner(value) {
+    if (_.isElement(value)) {
+      return value.cloneNode(true);
+    }
+    else if (_.isDate(value)) {
+      return new Date(value);
+    }
+    else {
+      return _.cloneDeep(value);
+    }
+  }
+
+  return _.cloneDeepWith(item, cloner);
+}
+
+// Create a slug/id
+function makeID(input) {
+  input = input ? input.toString() : "";
+  input = input.toLowerCase().trim().replace(/\W+/g, "-");
+  input = input ? input : "locator";
+  return _.uniqueId(input + "-");
+}
+
+module.exports = {
+  clone: clone,
+  makeID: makeID
+};
+
+},{}]},{},[4])
 (4)
 });
