@@ -3484,7 +3484,8 @@ _.extend(Locator.prototype, {
     this.map = new L.Map(mapEl.id, {
       minZoom: this.options.minZoom,
       maxZoom: this.options.maxZoom,
-      attributionControl: false
+      attributionControl: false,
+      trackResize: false
     });
     this.map.setView([view[0], view[1]], view[2]);
 
