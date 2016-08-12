@@ -369,6 +369,8 @@
   background-color: #F1F1F1;
   box-sizing: border-box;
   overflow-x: hidden;
+  -webkit-transition: background-color 0.5s ease-in-out;
+  transition: background-color 0.5s ease-in-out;
 }
 .locator * {
   box-sizing: border-box;
@@ -474,6 +476,9 @@
   opacity: 1;
   -webkit-transition: 0.5s ease-in-out;
   transition: 0.5s ease-in-out;
+}
+.locator.controls-closed {
+  background-color: #121212;
 }
 .locator.controls-closed .locator-map .leaflet-top.leaflet-left,
 .locator.controls-closed .locator-map-help {

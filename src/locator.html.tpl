@@ -35,7 +35,7 @@
 
   <section class="locator-controls">
     <div class="minor-controls">
-      <div class="toggle-controls" on-tap="toggle:'noGenerate.controlsOpen'"></div>
+      <div class="toggle-controls" on-tap="toggle:'noGenerate.controlsOpen'" title="{{#noGenerate.controlsOpen}}Hide controls and preview{{ else }}Show controls{{/noGenerate.controlsOpen}}"></div>
 
       <button class="minor-button minor-generate" on-tap="generate" title="Generate"><i class="fa fa-download"></i></button>
     </div>

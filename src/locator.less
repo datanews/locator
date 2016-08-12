@@ -35,6 +35,7 @@
   background-color: @lighter-grey;
   box-sizing: border-box;
   overflow-x: hidden;
+  transition: background-color 0.5s ease-in-out;
 
   * {
     box-sizing: border-box;
@@ -162,6 +163,7 @@
   }
 
   &.controls-closed {
+    background-color: #121212;
 
     .locator-map .leaflet-top.leaflet-left,
     .locator-map-help {
