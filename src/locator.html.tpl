@@ -61,8 +61,8 @@
 
         {{#options.geocoder}}
           <div class="config-option">
-            <label>Search location by address, or input latitude,longitude.</label>
-            <input type="text" placeholder="Address or place" value="{{ geocodeInput }}" lazy disabled="{{ isGeocoding }}">
+            <label>Search</label>
+            <input type="text" placeholder="Address or lat,lng" value="{{ geocodeInput }}" lazy disabled="{{ isGeocoding }}">
           </div>
         {{/options.geocoder}}
 
@@ -116,7 +116,7 @@
 
         {{#options.drawing}}
           <div class="drawing">
-            <label class="markers-label">Drawing</label>
+            <label class="markers-label">Shapes</label>
             <div class="help">Use the buttons on the map to draw shapes.</div>
 
             <div class="drawing-section">
@@ -157,7 +157,7 @@
 
         {{#(_.size(options.tilesets) > 1)}}
           <div class="config-option">
-            <label>Background map set</label>
+            <label>Background</label>
 
             <div class="image-picker images-{{ _.size(options.tilesets) }}">
               {{#options.tilesets:i}}
@@ -198,7 +198,7 @@
 
             {{#options.mini}}
               <label>Mini-map zoom level</label>
-              <input type="range" min="-10" max="1" value="{{ options.miniZoomOffset }}" title="Adjust zoom level for map">
+              <input type="range" min="-20" max="1" value="{{ options.miniZoomOffset }}" title="Adjust zoom level for map">
             {{/options.mini}}
           </div>
         {{/options.miniControl}}

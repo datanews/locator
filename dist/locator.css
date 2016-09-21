@@ -604,8 +604,8 @@
   margin-bottom: 1em;
 }
 .locator .locator-controls label {
-  font-size: 0.85em;
-  color: #878787;
+  font-size: 1em;
+  color: #343434;
   display: block;
 }
 .locator .locator-controls .help {
@@ -614,7 +614,10 @@
   margin-bottom: 0.5em;
 }
 .locator .locator-controls .config-option label {
-  padding-left: 1.15em;
+  padding-left: 1em;
+}
+.locator .locator-controls .config-option .help {
+  padding-left: 1.5em;
 }
 .locator .locator-controls input,
 .locator .locator-controls select,
