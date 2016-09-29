@@ -5,6 +5,8 @@
 
 // Dependencies
 var L = require("leaflet");
+L.BingLayer = require("../libs/leaflet-plugins.bing.js").BingLayer;
+
 var html2canvas = require("../libs/html2canvas.js");
 var _ = require("lodash");
 var Ractive = require("ractive");
@@ -36,6 +38,10 @@ var Locator = function(options) {
         url: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
         attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a target=\"_blank\" href=\"http://cartodb.com/attributions\">CartoDB</a>"
       },
+      "CartoDB Positron Dark": {
+        url: "http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+        attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a target=\"_blank\" href=\"http://cartodb.com/attributions\">CartoDB</a>"
+      },
       "Stamen Toner": {
         url: "http://tile.stamen.com/toner/{z}/{x}/{y}.png",
         attribution: "Map tiles by <a target=\"_blank\" href=\"http://stamen.com\">Stamen Design</a>, under <a  target=\"_blank\" href=\"http://creativecommons.org/licenses/by/3.0\">CC BY 3.0</a>. Data by <a  target=\"_blank\" href=\"http://openstreetmap.org\">OpenStreetMap</a>, under <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">ODbL</a>"
@@ -44,13 +50,32 @@ var Locator = function(options) {
         url: "https://api.mapbox.com/v4/jkeefe.np44bm6o/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
         attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
       },
+      "Mapbox Run, Bike, Hike (via WNYC)": {
+        url: "https://api.mapbox.com/v4/jkeefe.oee1c53c/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
+        attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+      },
       "Mapbox Satellite (via WNYC)": {
         url: "https://api.mapbox.com/v4/jkeefe.oee0fah0/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
         attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>; &copy; <a target='_blank' href='https://www.digitalglobe.com/'>DigitalGlobe</a>"
       },
-      "Mapbox Run, Bike, Hike (via WNYC)": {
-        url: "https://api.mapbox.com/v4/jkeefe.oee1c53c/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
-        attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+      "Bing Maps Ariel (via WNYC)": {
+        type: "BingLayer",
+        // Don't steal, OK
+        key: "Aj4s_S9wMF1L8vcqCP7_ZWxtllCsUhD-LB8LY4KIOrkzHuMguY8NoZ_Gk4_lf4oD",
+        options: {
+          type: "Aerial",
+        },
+        attribution: "&copy; Bing",
+        preview: "https://ecn.t2.tiles.virtualearth.net/tiles/a0320101103.jpeg?g=5306"
+      },
+      "Bing Maps Aerial w/ Labels (via WNYC)": {
+        type: "BingLayer",
+        key: "Aj4s_S9wMF1L8vcqCP7_ZWxtllCsUhD-LB8LY4KIOrkzHuMguY8NoZ_Gk4_lf4oD",
+        options: {
+          type: "AerialWithLabels",
+        },
+        attribution: "&copy; Bing",
+        preview: "https://ecn.t2.tiles.virtualearth.net/tiles/h0320101103.jpeg?g=5306&mkt="
       },
 
       // Example of just url
@@ -59,7 +84,7 @@ var Locator = function(options) {
     tileset: "CartoDB Positron",
     zoom: 17,
     minZoom: 1,
-    maxZoom: 18,
+    maxZoom: 20,
     lat: 40.74844,
     lng: -73.98566,
 
@@ -489,9 +514,7 @@ _.extend(Locator.prototype, {
     this.map.setView([view[0], view[1]], view[2]);
 
     // Tile layer
-    this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url, {
-      zIndex: -100
-    });
+    this.mapLayer = this.makeTileLayer(this.options.tilesets[this.options.tileset], -100);
     this.map.addLayer(this.mapLayer);
 
     // React to map view change except when drawing
@@ -660,7 +683,7 @@ _.extend(Locator.prototype, {
       +this.options.miniHeight.replace("h", "") / 100 * h;
 
     // Create layer for minimap
-    this.minimapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
+    this.minimapLayer = this.makeTileLayer(this.options.tilesets[this.options.tileset]);
 
     // Create control
     this.miniMap = new L.Control.MiniMap(this.minimapLayer, {
@@ -689,6 +712,22 @@ _.extend(Locator.prototype, {
     _.each(this.miniStylesToCSS(this.options.miniStyles), function(def, prop) {
       miniEl.style[prop] = def;
     });
+  },
+
+  // Make tile layer
+  makeTileLayer: function(tileset, zIndex) {
+    var options = tileset.options ? _.clone(tileset.options) : {};
+    options = zIndex ? _.extend(options, { zIndex: zIndex }) : options;
+    var mapLayer;
+
+    if (tileset.type === "BingLayer") {
+      mapLayer = new L.BingLayer(tileset.key, options);
+    }
+    else {
+      mapLayer = new L.TileLayer(tileset.url, options);
+    }
+
+    return mapLayer;
   },
 
   // Minimap custom canvas layer
@@ -1246,8 +1285,7 @@ _.extend(Locator.prototype, {
       }
 
       // Check for preview
-      if (!tilesets[ti].preview) {
-        // Pick a fairly arbitrary tile to use
+      if (!tilesets[ti].preview && tilesets[ti].url) {
         tilesets[ti].preview = tilesets[ti].url.replace("{s}", "a")
           .replace("{x}", "301")
           .replace("{y}", "385")

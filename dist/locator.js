@@ -2887,6 +2887,151 @@ _html2canvas.Renderer.Canvas = function(options) {
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],3:[function(_dereq_,module,exports){
+/**
+ * Adapted from here to be able to work with require()
+ * https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.js
+ */
+
+var L = _dereq_("leaflet");
+
+var BingLayer = L.TileLayer.extend({
+	options: {
+		subdomains: [0, 1, 2, 3],
+		type: 'Aerial',
+		attribution: 'Bing',
+		culture: ''
+	},
+
+	initialize: function (key, options) {
+		L.Util.setOptions(this, options);
+
+		this._key = key;
+		this._url = null;
+		this._providers = [];
+		this.metaRequested = false;
+	},
+
+	tile2quad: function (x, y, z) {
+		var quad = '';
+		for (var i = z; i > 0; i--) {
+			var digit = 0;
+			var mask = 1 << (i - 1);
+			if ((x & mask) !== 0) digit += 1;
+			if ((y & mask) !== 0) digit += 2;
+			quad = quad + digit;
+		}
+		return quad;
+	},
+
+	getTileUrl: function (tilePoint) {
+		var zoom = this._getZoomForUrl();
+		var subdomains = this.options.subdomains,
+			s = this.options.subdomains[Math.abs((tilePoint.x + tilePoint.y) % subdomains.length)];
+		return this._url.replace('{subdomain}', s)
+				.replace('{quadkey}', this.tile2quad(tilePoint.x, tilePoint.y, zoom))
+				.replace('{culture}', this.options.culture);
+	},
+
+	loadMetadata: function () {
+		if (this.metaRequested) return;
+		this.metaRequested = true;
+		var _this = this;
+		var cbid = '_bing_metadata_' + L.Util.stamp(this);
+		window[cbid] = function (meta) {
+			window[cbid] = undefined;
+			var e = document.getElementById(cbid);
+			e.parentNode.removeChild(e);
+			if (meta.errorDetails) {
+				throw new Error(meta.errorDetails);
+				return;
+			}
+			_this.initMetadata(meta);
+		};
+		var urlScheme = (document.location.protocol === 'file:') ? 'http' : document.location.protocol.slice(0, -1);
+		var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/'
+					+ this.options.type + '?include=ImageryProviders&jsonp=' + cbid +
+					'&key=' + this._key + '&UriScheme=' + urlScheme;
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = url;
+		script.id = cbid;
+		document.getElementsByTagName('head')[0].appendChild(script);
+	},
+
+	initMetadata: function (meta) {
+		var r = meta.resourceSets[0].resources[0];
+		this.options.subdomains = r.imageUrlSubdomains;
+		this._url = r.imageUrl;
+		if (r.imageryProviders) {
+			for (var i = 0; i < r.imageryProviders.length; i++) {
+				var p = r.imageryProviders[i];
+				for (var j = 0; j < p.coverageAreas.length; j++) {
+					var c = p.coverageAreas[j];
+					var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
+					var bounds = new L.LatLngBounds(
+							new L.LatLng(c.bbox[0]+0.01, c.bbox[1]+0.01),
+							new L.LatLng(c.bbox[2]-0.01, c.bbox[3]-0.01)
+					);
+					coverage.bounds = bounds;
+					coverage.attrib = p.attribution;
+					this._providers.push(coverage);
+				}
+			}
+		}
+		this._update();
+	},
+
+	_update: function () {
+		if (this._url === null || !this._map) return;
+		this._update_attribution();
+		L.TileLayer.prototype._update.apply(this, []);
+	},
+
+	_update_attribution: function () {
+		var bounds = L.latLngBounds(this._map.getBounds().getSouthWest().wrap(),this._map.getBounds().getNorthEast().wrap());
+		var zoom = this._map.getZoom();
+		for (var i = 0; i < this._providers.length; i++) {
+			var p = this._providers[i];
+			if ((zoom <= p.zoomMax && zoom >= p.zoomMin) &&
+					bounds.intersects(p.bounds)) {
+				if (!p.active && this._map.attributionControl)
+					this._map.attributionControl.addAttribution(p.attrib);
+				p.active = true;
+			} else {
+				if (p.active && this._map.attributionControl)
+					this._map.attributionControl.removeAttribution(p.attrib);
+				p.active = false;
+			}
+		}
+	},
+
+	onAdd: function (map) {
+		this.loadMetadata();
+		L.TileLayer.prototype.onAdd.apply(this, [map]);
+	},
+
+	onRemove: function (map) {
+		for (var i = 0; i < this._providers.length; i++) {
+			var p = this._providers[i];
+			if (p.active && this._map.attributionControl) {
+				this._map.attributionControl.removeAttribution(p.attrib);
+				p.active = false;
+			}
+		}
+		L.TileLayer.prototype.onRemove.apply(this, [map]);
+	}
+});
+
+var bingLayer = function (key, options) {
+    return new BingLayer(key, options);
+};
+
+module.exports = {
+  BingLayer: BingLayer,
+  bingLayer: bingLayer
+};
+
+},{}],4:[function(_dereq_,module,exports){
 /*
 
 	ractive-transitions-slide
@@ -3003,7 +3148,7 @@ _html2canvas.Renderer.Canvas = function(options) {
 
 }));
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 /**
  * Main locator file
  */
@@ -3011,6 +3156,8 @@ _html2canvas.Renderer.Canvas = function(options) {
 
 // Dependencies
 var L = _dereq_("leaflet");
+L.BingLayer = _dereq_("../libs/leaflet-plugins.bing.js").BingLayer;
+
 var html2canvas = _dereq_("../libs/html2canvas.js");
 var _ = _dereq_("lodash");
 var Ractive = _dereq_("ractive");
@@ -3042,6 +3189,10 @@ var Locator = function(options) {
         url: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
         attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a target=\"_blank\" href=\"http://cartodb.com/attributions\">CartoDB</a>"
       },
+      "CartoDB Positron Dark": {
+        url: "http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+        attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, &copy; <a target=\"_blank\" href=\"http://cartodb.com/attributions\">CartoDB</a>"
+      },
       "Stamen Toner": {
         url: "http://tile.stamen.com/toner/{z}/{x}/{y}.png",
         attribution: "Map tiles by <a target=\"_blank\" href=\"http://stamen.com\">Stamen Design</a>, under <a  target=\"_blank\" href=\"http://creativecommons.org/licenses/by/3.0\">CC BY 3.0</a>. Data by <a  target=\"_blank\" href=\"http://openstreetmap.org\">OpenStreetMap</a>, under <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">ODbL</a>"
@@ -3050,13 +3201,32 @@ var Locator = function(options) {
         url: "https://api.mapbox.com/v4/jkeefe.np44bm6o/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
         attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
       },
+      "Mapbox Run, Bike, Hike (via WNYC)": {
+        url: "https://api.mapbox.com/v4/jkeefe.oee1c53c/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
+        attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+      },
       "Mapbox Satellite (via WNYC)": {
         url: "https://api.mapbox.com/v4/jkeefe.oee0fah0/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
         attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>; &copy; <a target='_blank' href='https://www.digitalglobe.com/'>DigitalGlobe</a>"
       },
-      "Mapbox Run, Bike, Hike (via WNYC)": {
-        url: "https://api.mapbox.com/v4/jkeefe.oee1c53c/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamtlZWZlIiwiYSI6ImVCXzdvUGsifQ.5tFwEhRfLmH36EUxuvUQLA",
-        attribution: "&copy; <a target='_blank' href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; <a target='_blank' href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+      "Bing Maps Ariel (via WNYC)": {
+        type: "BingLayer",
+        // Don't steal, OK
+        key: "Aj4s_S9wMF1L8vcqCP7_ZWxtllCsUhD-LB8LY4KIOrkzHuMguY8NoZ_Gk4_lf4oD",
+        options: {
+          type: "Aerial",
+        },
+        attribution: "&copy; Bing",
+        preview: "https://ecn.t2.tiles.virtualearth.net/tiles/a0320101103.jpeg?g=5306"
+      },
+      "Bing Maps Aerial w/ Labels (via WNYC)": {
+        type: "BingLayer",
+        key: "Aj4s_S9wMF1L8vcqCP7_ZWxtllCsUhD-LB8LY4KIOrkzHuMguY8NoZ_Gk4_lf4oD",
+        options: {
+          type: "AerialWithLabels",
+        },
+        attribution: "&copy; Bing",
+        preview: "https://ecn.t2.tiles.virtualearth.net/tiles/h0320101103.jpeg?g=5306&mkt="
       },
 
       // Example of just url
@@ -3065,7 +3235,7 @@ var Locator = function(options) {
     tileset: "CartoDB Positron",
     zoom: 17,
     minZoom: 1,
-    maxZoom: 18,
+    maxZoom: 20,
     lat: 40.74844,
     lng: -73.98566,
 
@@ -3495,9 +3665,7 @@ _.extend(Locator.prototype, {
     this.map.setView([view[0], view[1]], view[2]);
 
     // Tile layer
-    this.mapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url, {
-      zIndex: -100
-    });
+    this.mapLayer = this.makeTileLayer(this.options.tilesets[this.options.tileset], -100);
     this.map.addLayer(this.mapLayer);
 
     // React to map view change except when drawing
@@ -3666,7 +3834,7 @@ _.extend(Locator.prototype, {
       +this.options.miniHeight.replace("h", "") / 100 * h;
 
     // Create layer for minimap
-    this.minimapLayer = new L.TileLayer(this.options.tilesets[this.options.tileset].url);
+    this.minimapLayer = this.makeTileLayer(this.options.tilesets[this.options.tileset]);
 
     // Create control
     this.miniMap = new L.Control.MiniMap(this.minimapLayer, {
@@ -3695,6 +3863,22 @@ _.extend(Locator.prototype, {
     _.each(this.miniStylesToCSS(this.options.miniStyles), function(def, prop) {
       miniEl.style[prop] = def;
     });
+  },
+
+  // Make tile layer
+  makeTileLayer: function(tileset, zIndex) {
+    var options = tileset.options ? _.clone(tileset.options) : {};
+    options = zIndex ? _.extend(options, { zIndex: zIndex }) : options;
+    var mapLayer;
+
+    if (tileset.type === "BingLayer") {
+      mapLayer = new L.BingLayer(tileset.key, options);
+    }
+    else {
+      mapLayer = new L.TileLayer(tileset.url, options);
+    }
+
+    return mapLayer;
   },
 
   // Minimap custom canvas layer
@@ -4252,8 +4436,7 @@ _.extend(Locator.prototype, {
       }
 
       // Check for preview
-      if (!tilesets[ti].preview) {
-        // Pick a fairly arbitrary tile to use
+      if (!tilesets[ti].preview && tilesets[ti].url) {
         tilesets[ti].preview = tilesets[ti].url.replace("{s}", "a")
           .replace("{x}", "301")
           .replace("{y}", "385")
@@ -4280,7 +4463,7 @@ _.extend(Locator.prototype, {
 // Export
 module.exports = Locator;
 
-},{"../libs/html2canvas.js":"UzntfK","../libs/ractive-transitions-slide.js":3,"./js/dom.js":5,"./js/geocode.js":6,"./js/utils.js":7}],5:[function(_dereq_,module,exports){
+},{"../libs/html2canvas.js":"UzntfK","../libs/leaflet-plugins.bing.js":3,"../libs/ractive-transitions-slide.js":4,"./js/dom.js":6,"./js/geocode.js":7,"./js/utils.js":8}],6:[function(_dereq_,module,exports){
 /**
  * DOM utilities.
  */
@@ -4302,7 +4485,7 @@ module.exports = {
   isOverflowed: isOverflowed
 };
 
-},{}],6:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 /**
  * Geocoding functions
  */
@@ -4338,7 +4521,7 @@ module.exports = {
   google: google
 };
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 /**
  * General utility functions.
  */
@@ -4378,6 +4561,6 @@ module.exports = {
   makeID: makeID
 };
 
-},{}]},{},[4])
-(4)
+},{}]},{},[5])
+(5)
 });

@@ -192,7 +192,7 @@ gulp.task("bundle-styles", ["styles"], function() {
 // Watch for files that need to be processed
 gulp.task("watch", function() {
   gulp.watch(["gulpfile.js"], ["support-js"]);
-  gulp.watch(["src/**/*.js", "src/**/*.tpl"], ["bundle-js"]);
+  gulp.watch(["src/**/*.js", "libs/**/*.js", "src/**/*.tpl"], ["bundle-js"]);
   gulp.watch("src/**/*.less", ["bundle-styles"]);
 });
 
