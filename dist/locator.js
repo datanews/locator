@@ -3265,6 +3265,8 @@ var Locator = function(options) {
       shadowOffsetX: 1,
       shadowOffsetY: 1
     },
+    miniAimingMinWidth: 10,
+    miniAimingMinHeight: 10,
 
     // Markers
     markers: [{
@@ -3907,10 +3909,21 @@ _.extend(Locator.prototype, {
         var bounds = this.map.getBounds();
         var nw = this.map.project(bounds.getNorthWest(), zoom, true);
         var se = this.map.project(bounds.getSouthEast(), zoom, true);
+        var width = this.options.miniAimingMinWidth ?
+          Math.max(this.options.miniAimingMinWidth, se.x - nw.x) :
+          se.x - nw.x;
+        var height = this.options.miniAimingMinHeight ?
+          Math.max(this.options.miniAimingMinHeight, se.y - nw.y) :
+          se.y - nw.y;
+        var adjustX = this.options.miniAimingMinWidth && width > se.x - nw.x ?
+          ((se.x - nw.x) - width) / 2 : 0;
+        var adjustY = this.options.miniAimingMinHeight && height > se.y - nw.y ?
+          ((se.y - nw.y) - height) / 2 : 0;
 
         // Draw box
         ctx.beginPath();
-        ctx.rect(nw.x - dim.nwPoint.x, nw.y - dim.nwPoint.y, se.x - nw.x, se.y - nw.y);
+        console.log(adjustX, adjustY);
+        ctx.rect(nw.x - dim.nwPoint.x + adjustX, nw.y - dim.nwPoint.y + adjustY, width, height);
         ctx = this.leafletStylesToCanvas(styles, ctx);
         ctx.closePath();
       }
