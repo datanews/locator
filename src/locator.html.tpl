@@ -80,32 +80,32 @@
               </div>
 
               <div class="marker-actions">
-                {{#options.markerToCenter}}
-                  <button class="action small" on-tap="marker-to-center:{{ mi }}" title="Move marker to center of map"><i class="fa fa-compass"></i></button>
-                {{/}}
-
-                {{#options.centerToMarker}}
-                  <button class="action small" on-tap="center-to-marker:{{ mi }}" title="Center map on marker"><i class="fa fa-plus-square-o"></i></button>
-                {{/}}
-
                 {{#(_.size(options.markerBackgrounds) > 1)}}
-                  <div class="color-picker" title="Set marker background color">
+                  <div class="color-picker color-picker-backgrounds" title="Set marker background color">
                     {{#options.markerBackgrounds:bi}}
                       <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].background === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
                         style="background-color: {{ this }}"
                         on-tap="setMarker:{{ mi }},'background',{{ this }}">
                     {{/}}
-                  </div>
+                  </div>&nbsp;
                 {{/}}
 
                 {{#(_.size(options.markerForegrounds) > 1)}}
-                  <div class="color-picker" title="Set marker foreground color">
+                  <div class="color-picker color-picker-foregrounds" title="Set marker foreground color">
                     {{#options.markerForegrounds:bi}}
                       <div class="color-picker-item {{#(options.markers[mi] && options.markers[mi].foreground === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
                         style="background-color: {{ this }}"
                         on-tap="setMarker:{{ mi }},'foreground',{{ this }}">
                     {{/}}
                   </div>
+                {{/}}
+
+                {{#options.markerToCenter}}
+                  <button class="action small" on-tap="marker-to-center:{{ mi }}" title="Move marker to center of map"><i class="fa fa-compass"></i></button>&nbsp;
+                {{/}}
+
+                {{#options.centerToMarker}}
+                  <button class="action small" on-tap="center-to-marker:{{ mi }}" title="Center map on marker"><i class="fa fa-plus-square-o"></i></button>&nbsp;
                 {{/}}
 
                 <button class="destructive small" on-tap="remove-marker:{{ mi }}" title="Remove marker"><i class="fa fa-close"></i></button>

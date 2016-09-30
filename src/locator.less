@@ -406,11 +406,13 @@
     }
 
     select {
-      width: 90%;
+      width: 100%;
       margin: 0 auto;
       background-color: @lighter-grey;
       cursor: pointer;
       border-radius: 0;
+      border-left: none;
+      border-right: none;
     }
 
     .config-select {
@@ -583,9 +585,18 @@
         display: inline-block;
       }
 
+      .marker-actions {
+        justify-content: space-between;
+        display: flex;
+
+        .color-picker-foregrounds {
+          margin-right: auto;
+        }
+      }
+
       .color-picker {
         display: inline-block;
-        max-width: 4.25em;
+        max-width: 5em;
         line-height: 0.8em;
 
         .color-picker-item {
@@ -620,7 +631,7 @@
         }
 
         .drawing-option {
-          width: 40%;
+          width: 5.5em;
         }
 
         .color-picker {
