@@ -117,8 +117,8 @@ If this option only has 1 value, then the control to choose the tileset will not
 * `miniWidth`: Width as a number of pixels or as a percent of the width of the full map such as `"15w"`.
 * `miniHeight`: Height as a number of pixels or as a percent of the width of the full map such as `"15w"`.
 * `miniZoomOffset`: An integer that defines the difference in zoom levels from the large map to the mini-map.  The default is `-6`.
-`miniExtentStyles`: Object to describe the stylings for the mini-map square.  See *Path options* below.
-`miniStyles`: An object that describes how the mini-map is displayed on the map.  The options and defaults are:  
+* `miniExtentStyles`: Object to describe the stylings for the mini-map square.  See *Path options* below.
+* `miniStyles`: An object that describes how the mini-map is displayed on the map.  The options and defaults are:  
 ```js
 {
   backgroundColor: "#FFFFFF",
@@ -130,6 +130,8 @@ If this option only has 1 value, then the control to choose the tileset will not
   shadowOffsetY: 1
 }
 ```
+* `miniAimingMinWidth`: Minimum width in pixels for the aiming rectangle in the mini-map.  Default is `8`.
+* `miniAimingMinHeight`: Minimum height in pixels for the aiming rectangle in the mini-map.  Default is `6`.
 
 ### Interface
 

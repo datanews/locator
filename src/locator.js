@@ -114,8 +114,8 @@ var Locator = function(options) {
       shadowOffsetX: 1,
       shadowOffsetY: 1
     },
-    miniAimingMinWidth: 10,
-    miniAimingMinHeight: 10,
+    miniAimingMinWidth: 8,
+    miniAimingMinHeight: 6,
 
     // Markers
     markers: [{
@@ -771,7 +771,6 @@ _.extend(Locator.prototype, {
 
         // Draw box
         ctx.beginPath();
-        console.log(adjustX, adjustY);
         ctx.rect(nw.x - dim.nwPoint.x + adjustX, nw.y - dim.nwPoint.y + adjustY, width, height);
         ctx = this.leafletStylesToCanvas(styles, ctx);
         ctx.closePath();
