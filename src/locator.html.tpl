@@ -130,7 +130,7 @@
                   {{#options.drawingStrokes:di}}
                     <div class="color-picker-item {{#(options.drawingStyles.color === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
                       style="background-color: {{ this }}"
-                      on-tap="setDrawing:'color',{{ this }}">
+                      on-tap="setDrawing:'color',{{ this }}"></div>
                   {{/}}
                 </div>
               {{/}}
@@ -147,7 +147,7 @@
                   {{#options.drawingFills:di}}
                     <div class="color-picker-item {{#(options.drawingStyles.fillColor === this)}}active{{ else }}inactive{{/()}} {{#(this.indexOf('255, 255, 255') !== -1 || this.indexOf('FFFFFF') !== -1)}}is-white{{/()}}"
                       style="background-color: {{ this }}"
-                      on-tap="setDrawing:'fillColor',{{ this }}">
+                      on-tap="setDrawing:'fillColor',{{ this }}"></div>
                   {{/}}
                 </div>
               {{/}}
